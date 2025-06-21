@@ -1,6 +1,7 @@
 import HomePage from "./pages/Home"
 import LogIn from "./pages/Login"
 import SignUp from "./pages/SignUp"
+import Dashboard from "./pages/Dashboard"
 
 export default function App(){
   return(
@@ -8,6 +9,7 @@ export default function App(){
       <HomePage/>
       <LogIn/>
       <SignUp />
+      <Dashboard/>
     </>
   )
 }
