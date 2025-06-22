@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import NavBar from '../components/NavBar';
 import Button from "../components/Button"
+import Footer from '../components/Footer';
 
 export default function HomePage(){
   return(
@@ -15,11 +16,7 @@ export default function HomePage(){
           <Button isTransparent={true} className='px-6 py-3'>Get Started <ArrowRight/></Button>
         </div>
       </main>
-      <footer className="w-full bg-gray-950 text-gray-400 border-t border-t-white/5">
-        <p className="text-center py-2 text-sm  text-gray-300 tracking-wide">
-          © 2025 CodeCollab . All rights reserved .
-        </p>
-      </footer>
+      <Footer/>
     </section>
 
   )
