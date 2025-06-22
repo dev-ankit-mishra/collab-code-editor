@@ -1,6 +1,8 @@
 import NavBar from "../components/NavBar";
 import { FcGoogle } from "react-icons/fc";
 import { SiGithub } from "react-icons/si";
+import Button from "../components/Button";
+import Input from "../components/Input";
 export default function SignUp() {
   return (
     <section className="w-full h-screen flex flex-col ">
@@ -17,39 +19,38 @@ export default function SignUp() {
           <form className="flex flex-col gap-5">
             <div>
               <label className="block pb-1">Full Name</label>
-              <input
-                className="w-full py-2 px-3 rounded-md transition-all duration-200 bg-gray-800 border border-white/10 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              <Input
+                
                 type="text"
                 placeholder="John Smith"
               />
             </div>
             <div>
               <label className="block pb-1">Email</label>
-              <input
-                className="w-full py-2 px-3 rounded-md transition-all duration-200 bg-gray-800 border border-white/10 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              <Input
+                
                 type="email"
                 placeholder="you@email.com"
               />
             </div>
             <div>
               <label className="block pb-1">Password</label>
-              <input
-                className="w-full py-2 px-3 rounded-md transition-all duration-200 bg-gray-800 border border-white/10 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              <Input
+                
                 type="password"
                 placeholder="••••••••"
               />
             </div>
             <div>
               <label className="block pb-1">Confirm Password</label>
-              <input
-                className="w-full py-2 px-3 rounded-md transition-all duration-200 bg-gray-800 border border-white/10 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              <Input
                 type="password"
                 placeholder="••••••••"
               />
             </div>
-            <button className="mt-4 bg-green-700 text-base transition-all duration-200 hover:bg-green-800 cursor-pointer text-white py-2 px-4 rounded-md">
+            <Button className="mt-4">
               Sign Up
-            </button>
+            </Button>
           </form>
           <p className="text-center mt-4">
             Already have an account? <a className="text-blue-500 hover:text-blue-600 underline">Log in</a>
