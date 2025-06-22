@@ -1,6 +1,8 @@
 import NavBar from "../components/NavBar";
 import { FcGoogle } from "react-icons/fc";
 import { SiGithub } from "react-icons/si";
+import Button from "../components/Button";
+import Input from "../components/Input"
 export default function LogIn() {
   return (
     <section className="w-full h-screen flex flex-col">
@@ -17,9 +19,8 @@ export default function LogIn() {
           <form className="flex flex-col gap-5">
             <div>
               <label className="block text-sm text-gray-300 mb-1">Email</label>
-              <input
+              <Input
                 type="email"
-                className="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
                 placeholder="you@example.com"
               />
             </div>
@@ -28,19 +29,18 @@ export default function LogIn() {
               <label className="block text-sm text-gray-300 mb-1">
                 Password
               </label>
-              <input
+              <Input
                 type="password"
-                className="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
                 placeholder="••••••••"
               />
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="mt-4 bg-green-700 hover:bg-green-800 cursor-pointer text-white py-2 px-4 rounded-md transition"
+              className="mt-4 "
             >
               Submit
-            </button>
+            </Button>
           </form>
           <a 
             
