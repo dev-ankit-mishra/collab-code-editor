@@ -1,80 +1,65 @@
 import NavBar from "../components/NavBar";
+import Button from "../components/Button";
+import {useState} from "react"
+import RecentCard from "../components/RecentCard";
 import {
-  Clock,
-  User,
-  FolderGit2,
-  UserPlus,
-  Users,
-  FileStack,
-  Bell,
-  Settings,
-  LogOut,
-  PlusCircle
+ 
+  PlusCircle,
+  X,
 } from "lucide-react";
+import Menu from "../components/Menu";
 
 export default function Dashboard() {
+
+  const [showModals,setShowModals]=useState(false);
+
   return (
-    <section className="h-screen w-full flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white ">
+    <section className="h-screen w-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#000000]
+ text-white ">
       <NavBar authRequired={false} userRequired={true}/>
 
       <main className=" flex flex-1 ">
-        <nav className="w-68 bg-blue-500 px-10 py-6  border-r border-r-white/10 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 flex flex-col justify-between">
-          <ul className=" space-y-8">
-            <ul className="space-y-6 text-white">
-              <li className="flex items-center gap-2">
-                <Clock size={18} /> Recent
-              </li>
-              <li className="flex items-center gap-2">
-                <User size={18} /> My Profile
-              </li>
-              <li className="flex items-center gap-2">
-                <FolderGit2 size={18} /> All Repository
-              </li>
-              <li className="flex items-center gap-2">
-                <UserPlus size={18} /> Invite Members
-              </li>
-              <li className="flex items-center gap-2">
-                <Users size={18} /> Share with me
-              </li>
-              <li className="flex items-center gap-2">
-                <FileStack size={18} /> Templates
-              </li>
-              <li className="flex items-center gap-2">
-                <Bell size={18} /> Notifications
-              </li>
-              <li className="flex items-center gap-2">
-                <Settings size={18} /> Settings
-              </li>
-            </ul>
-          </ul>
-          <button className="bg-transparent border border-green-600 hover:bg-green-600/20 py-2 px-8 text-center flex gap-2 items-center rounded-md hover:scale-102 shadow-md shadow-black/20 cursor-pointer transition-all duration-200">
-            <LogOut size={18} />
-  Sign out
-          </button>
-        </nav>
+        <Menu/>
+        
         <div className="w-full flex flex-col">
           <div className=" flex justify-between p-6">
             <h1 className="text-2xl font-semibold tracking-wide">Recent</h1>
-            <button className="px-3 py-2 bg-green-700 text-white rounded-md flex gap-2 items-center hover:bg-green-600 hover:scale-102 transition-all duration-200 shadow-md shadow-black/20 cursor-pointer">
+            <Button
+              onClick={()=>setShowModals(true)}
+             >
               <PlusCircle size={18}/> New Projects
-            </button>
+            </Button>
           </div>
-          <div className="flex items-center gap-20 p-6">
-            <div className="border border-blue-500 p-4">
-              <h1>Project name</h1>
-              <p>Last Updated: Time</p>
-              <p>Collaborators: name</p>
-              <a>open editor</a>
-            </div>
-            <div className="border border-blue-500 p-4">
-              <h1>Project name</h1>
-              <p>Last Updated: Time</p>
-              <p>Collaborators: name</p>
-              <a>open editor</a>
-            </div>
+          <div className="flex items-center flex-wrap gap-8 p-6">
+            
+            <RecentCard/>
+            
           </div>
         </div>
       </main>
+      {
+        showModals && (
+         <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="w-100 bg-neutral-900 p-10 rounded-xl relative border border-white/10 shadow-md">
+              <button className="absolute top-5 right-5 cursor-pointer" onClick={()=>setShowModals(false)}>
+                <X size={18}/>
+              </button>
+              <form className="space-y-4">
+                <div className="flex flex-col gap-6 pb-2">
+                  <label className="block text-xl font-medium tracking-wide">
+                  Create New Project
+                </label>
+                <input type="text" placeholder="Project Name" className="py-2 px-3 border border-white/10 bg-gray-800 text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"/>
+                </div>
+                
+                <Button>
+                  <PlusCircle size={18}/> Create 
+                </Button>
+              </form>
+          </div>
+        </div>
+        )
+      }
     </section>
   );
 }
