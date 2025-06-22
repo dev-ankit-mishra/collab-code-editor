@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import NavBar from '../components/NavBar';
+import Button from "../components/Button"
 
 export default function HomePage(){
   return(
@@ -9,8 +10,9 @@ export default function HomePage(){
         <h1 className="text-4xl font-bold mb-4 tracking-wide shadow-lg">Collaborative Code Editing Made Simple</h1>
         <p className="text-center max-w-xl mb-8 tracking-wide leading-relaxed">Write, edit and share code in real-time with your team. No setup required just open the editor and start coding.</p>
         <div className="flex gap-6">
-          <button className="rounded-lg bg-green-700  font-medium px-6 py-3 shadow-lg shadow-black/40 hover:bg-green-600 hover:shadow-xl hover:scale-102 transition-all duration-200 cursor-pointer">Try Live Editor</button>
-          <button className="rounded-lg px-6 py-3 font-medium text-green-600 border border-green-700 shadow-lg shadow-black/40 hover:shadow-xl flex gap-2 transition-all duration-200 hover:bg-green-500/20 hover:scale-102 cursor-pointer">Get Started <ArrowRight/></button>
+          
+          <Button className='px-6 py-3'>Try Live Editor</Button>
+          <Button isTransparent={true} className='px-6 py-3'>Get Started <ArrowRight/></Button>
         </div>
       </main>
       <footer className="w-full bg-gray-950 text-gray-400 border-t border-t-white/5">
