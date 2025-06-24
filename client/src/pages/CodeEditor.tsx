@@ -1,10 +1,33 @@
-
+import { useState,useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import NavBar from '../components/NavBar';
 import { Download,Settings,Plus,Play } from 'lucide-react';
 import Button from '../components/Button';
+import {executeCode} from "../components/Api"
 
 export default function CodeEditor() {
+  const editorRef=useRef()
+  const[value,setValue]=useState<string>('')
+  const [output,setOutput]=useState('')
+
+
+  const result = async () => {
+  try {
+    const { run: result } = await executeCode(value);
+    setOutput(result.output);
+  } catch (err: any) {
+    console.error("Execution error:", err.response?.data || err.message);
+    setOutput("❌ Error running code. Check the console.");
+  }
+};
+
+
+
+  function onMount(editor){
+    editorRef.current=editor
+    editor.focus()
+  }
+
   return(
     <section className='w-full h-screen flex flex-col bg-gradient-to-br from-neutral-950 via-neutral-800 to-neutral-950 text-white'>
       <NavBar  shareRequired userRequired={true}/>
@@ -26,13 +49,24 @@ export default function CodeEditor() {
               <option>TypeScript</option>
               <option>React</option>
               </select></li>
-            <li><Button isTransparent className=''><Play size={20}/>Run</Button></li>
+            <li><Button onClick={result} isTransparent className=''><Play size={20}/>Run</Button></li>
             <li>Project Name</li>
           </ul>
 
-          <div className='w-full h-full flex items-center justify-between gap-3 '>
-            <Editor height="full" width={"55rem"} theme='vs-dark' defaultLanguage="javascript" defaultValue="// some comment" />
-            <Editor height="full" width={"36rem"} theme='vs-dark' defaultLanguage="javascript" defaultValue="// some comment" />
+          <div className='w-full  h-full flex items-center  gap-4 '>
+            <Editor 
+             theme='vs-dark'
+             height="40vw"
+             width={"60vw"}
+              defaultLanguage="javascript"
+              onMount={onMount}
+              value={value}
+              onChange={(value)=>setValue(value)}
+                />
+
+              <div className='w-full h-full bg-gray-900'>
+                  {output}
+              </div>
           </div>
 
         
