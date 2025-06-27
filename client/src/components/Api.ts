@@ -4,10 +4,15 @@ const API = axios.create({
   baseURL: "https://emkc.org/api/v2/piston",
 });
 
-export const executeCode = async (sourceCode: string) => {
+
+
+export const executeCode = async ({label,version}:{
+    label: string
+    version: string
+  },sourceCode: string) => {
   const response = await API.post("/execute", {
-    language: "javascript",
-    version: "1.32.3", // ✅ replace with latest version
+    language: label.toLowerCase(),
+    version: version, 
     files: [
       {
         content: sourceCode,
