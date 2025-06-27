@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import Editor from '@monaco-editor/react';
+
 import { language } from './languages';
 import Output from './Output';
 import { executeCode } from './Api';
 import type { editor } from 'monaco-editor';
+import Editor from "@monaco-editor/react";
+
 
 export default function CodeArea() {
   const [value, setValue] = useState<string>(language[0].boilerplate);
@@ -47,6 +49,8 @@ export default function CodeArea() {
     const selectedLang = language.find(lang => lang.label === selectedLabel);
     if (selectedLang) setLanguages(selectedLang);
   };
+
+
 
   return (
     <main className='w-full h-full flex items-center justify-between gap-1 px-1'>
