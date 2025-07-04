@@ -7,7 +7,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,userRe
   
   return (
     <nav className="bg-[#0c0f1a] opacity-96 shadow-md shadow-black/40 border-b border-b-white/5 w-full py-2 flex flex-row justify-between items-center px-10">
-      <h1 className="text-xl font-semibold text-gray-200 hover:text-green-500"><Link to={"/"}>CodeCollab</Link></h1>
+      <h1 className="text-xl font-semibold text-gray-200 hover:text-green-500"><Link to={"/"}>CoDevSpace</Link></h1>
       <div className='flex gap-4 items-center'>
         {authRequired && (
         <div className="flex flex-row gap-6 items-center">
