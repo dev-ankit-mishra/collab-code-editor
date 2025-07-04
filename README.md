@@ -35,16 +35,14 @@ codeCollab is a real-time collaborative code editor that allows multiple users t
 
 ## 🚀 Live Demo
 
-🔗 **Live Link:** [collab-code-editor.netlify.app](https://collab-code-editor.netlify.app)  
+🔗 **Live Link:** [collab-code-editor.netlify.app](https://codevspace.netlify.app)  
 🔗 **GitHub Repo:** [github.com/dev-ankit-mishra/collab-code-editor](https://github.com/dev-ankit-mishra/collab-code-editor)
 
 ---
 
 ## 📸 Screenshots
-
-> _Add screenshots here (optional for visual appeal)_  
-> You can drag & drop images into the repo and reference like:  
-> ![Editor Screenshot](./client/src/assets/home.png)
+ 
+> ![Home Page Screenshot](./client/src/assets/home.png)
 
 ---
 
