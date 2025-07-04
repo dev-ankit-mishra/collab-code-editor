@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import NavBar from '../components/NavBar';
 import Button from "../components/Button"
 import Footer from '../components/Footer';
+import {Link} from "react-router-dom"
 
 export default function HomePage(){
   return(
@@ -12,8 +13,8 @@ export default function HomePage(){
         <p className="text-center max-w-xl mb-8 tracking-wide leading-relaxed">Write, edit and share code in real-time with your team. No setup required just open the editor and start coding.</p>
         <div className="flex gap-6">
           
-          <Button className='px-6 py-3'>Try Live Editor</Button>
-          <Button isTransparent={true} className='px-6 py-3'>Get Started <ArrowRight/></Button>
+          <Button className='px-6 py-3'><Link to={"/editor"}>Try Live Editor</Link></Button>
+          <Button isTransparent={true} className='px-6 py-3'><Link to={"/login"} className='flex gap-2'>Get Started  <ArrowRight/></Link></Button>
         </div>
       </main>
       <Footer/>

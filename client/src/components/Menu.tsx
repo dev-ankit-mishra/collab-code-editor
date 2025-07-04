@@ -10,6 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 import Button from "./Button";
+import {Link} from "react-router-dom"
 
 export default function Menu(){
   return(
@@ -44,7 +45,7 @@ export default function Menu(){
           </ul>
           
           <Button className="mx-8" isTransparent={true}><LogOut size={18} />
-              Sign out</Button>
+              <Link to={"/"}>Sign out</Link></Button>
         </nav>
   )
 }

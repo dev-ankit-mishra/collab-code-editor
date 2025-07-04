@@ -3,6 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import {Link} from "react-router-dom"
+
 export default function SignUp() {
   return (
     <section className="w-full h-screen flex flex-col ">
@@ -53,7 +55,7 @@ export default function SignUp() {
             </Button>
           </form>
           <p className="text-center mt-4">
-            Already have an account? <a className="text-blue-500 hover:text-blue-600 underline">Log in</a>
+            Already have an account? <Link to={"/login"} className="text-blue-500 hover:text-blue-600 underline">Log in</Link>
           </p>
           <div className="flex gap-2 justify-between mt-4">
             <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-sm flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">

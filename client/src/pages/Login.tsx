@@ -3,6 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input"
+import {Link} from "react-router-dom"
+
 export default function LogIn() {
   return (
     <section className="w-full h-screen flex flex-col">
@@ -53,7 +55,7 @@ export default function LogIn() {
             <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-sm flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer"><SiGithub size={18}/>Continue with github</button>
           </div>
 
-          <p className="text-sm text-center mt-6 text-gray-300">New to CodeCollab? <a className="text-blue-500 underline hover:text-blue-400 cursor-pointer">Sign up</a> </p>
+          <p className="text-sm text-center mt-6 text-gray-300">New to CodeCollab? <Link to={"/signup"} className="text-blue-500 underline hover:text-blue-400 cursor-pointer">Sign up</Link> </p>
 
         </div>
       </main>

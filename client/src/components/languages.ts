@@ -35,7 +35,7 @@ async function getRuntimes() {
       }
     });
 
-    console.log(language); // See the final filtered list
+     // See the final filtered list
   }
 }
 
