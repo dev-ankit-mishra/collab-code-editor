@@ -42,7 +42,7 @@ codeCollab is a real-time collaborative code editor that allows multiple users t
 
 ## 📸 Screenshots
  
-> ![Home Page Screenshot](./client/src/assets/home.png)
+> ![Home Page Screenshot](/client/src/assets/home.png)
 
 ---
 
