@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { connectDB } from "./db";
-import projectRoutes from "./routes/projectRoutes";
+import { connectDB } from "./db.js";
+import projectRoutes from "./routes/projectRoutes.js";
 
 dotenv.config();
 
