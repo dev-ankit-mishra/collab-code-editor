@@ -2,17 +2,23 @@ import NavBar from "../components/NavBar";
 import Button from "../components/Button";
 import {useState} from "react"
 import RecentCard from "../components/RecentCard";
-
+import Modals from "../components/Modals";
+import type { ProjectDetails } from "../components/Types";
 import {
  
   PlusCircle,
-  X,
 } from "lucide-react";
 import Menu from "../components/Menu";
 
+
 export default function Dashboard() {
 
-  const [showModals,setShowModals]=useState(false);
+  const [showModals,setShowModals]=useState<boolean>(false);
+  const [project,setProject]=useState<ProjectDetails[]>([])
+
+  function handleCreate(project:ProjectDetails){
+    setProject(prev=>[...prev,project])
+  }
 
   return (
     <section className="h-screen w-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#000000]
@@ -33,32 +39,14 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center flex-wrap gap-8 p-6">
             
-            <RecentCard/>
+            <RecentCard project={project}/>
             
           </div>
         </div>
       </main>
       {
         showModals && (
-         <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-          <div className="w-100 bg-neutral-900 p-10 rounded-xl relative border border-white/10 shadow-md">
-              <button className="absolute top-5 right-5 cursor-pointer" onClick={()=>setShowModals(false)}>
-                <X size={18}/>
-              </button>
-              <form className="space-y-4">
-                <div className="flex flex-col gap-6 pb-2">
-                  <label className="block text-xl font-medium tracking-wide">
-                  Create New Project
-                </label>
-                <input type="text" placeholder="Project Name" className="py-2 px-3 border border-white/10 bg-gray-800 text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"/>
-                </div>
-                
-                <Button>
-                  <PlusCircle size={18}/> Create 
-                </Button>
-              </form>
-          </div>
-        </div>
+         <Modals setShowModals={setShowModals} create={handleCreate}/>
         )
       }
     </section>
