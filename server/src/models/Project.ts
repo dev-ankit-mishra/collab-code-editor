@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  projectName: { type: String, required: true },
+  username: { type: String },
+  code: { type: String },
   time: { type: Date, default: Date.now },
 });
 
