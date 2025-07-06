@@ -17,6 +17,7 @@ export default function App(){
         <Route path="/signup" element={<SignUp/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/editor" element={<CodeEditor/>}/>
+        <Route path="/editor/:id" element={<CodeEditor/>}/>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>  
