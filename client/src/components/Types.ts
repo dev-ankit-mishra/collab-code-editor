@@ -3,7 +3,10 @@ export interface ModalProps {
   create: (val:ProjectDetails)=>void
 }
 export type ProjectDetails={
-  name:string,
+  _id?: string;
+  projectName:string,
+  username:string,
+  code:string,
   time:Date
 }
 export interface RecentCardProps {
