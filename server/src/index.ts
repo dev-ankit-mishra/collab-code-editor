@@ -8,6 +8,22 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:3000",                  
+  "https://your-frontend.netlify.app"      
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
 
 app.get("/",(req,res)=>{
   res.json("hello")
