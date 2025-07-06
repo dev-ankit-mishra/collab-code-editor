@@ -1,19 +1,22 @@
 import { Ellipsis } from "lucide-react";
 import type {RecentCardProps } from "./Types";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow  } from "date-fns";
+import {useNavigate} from "react-router-dom"
 
 
 
 export default function RecentCard({ project }: RecentCardProps) {
+  const navigate=useNavigate()
   return (
     <>
-      {project.map((p, index) => (
+      {project.map((p) => (
         <div
-          key={index}
+          key={p._id}
           className="w-68 h-40 bg-gray-700/30 border border-white/10 shadow-md hover:scale-102 hover:shadow-xl transition-all cursor-pointer duration-300 p-5 rounded-md"
+          onClick={()=>navigate(`/editor/${p._id}`)}
         >
           <div className="flex items-center justify-between">
-            <span className="text-lg">{p.name}</span>
+            <span className="text-lg">{p.projectName}</span>
             <Ellipsis size={16} className="cursor-pointer" />
           </div>
 
