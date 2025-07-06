@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {Project} from "../models/Project.js";
+import { error } from "console";
 
 const router = Router();
 
@@ -36,5 +37,18 @@ router.get("/", async (_req, res) => {
     res.status(500).json({ message: "Error fetching projects", error: err });
   }
 });
+
+router.get("/:id",async (req,res)=>{
+  const {id}=req.params
+  try{
+    const data=await Project.findById(id)
+    if(!data){
+      res.status(400).json({message: "Project Not Found"})
+    }
+    res.status(200).json(data)
+  }catch (err){
+    res.status(500).json({message:"Error fetching project",error:err});
+  }
+})
 
 export default router;
