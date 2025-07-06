@@ -16,11 +16,15 @@ export default function Modals({ setShowModals,create }: ModalProps) {
   const projectName = typeof rawValue === "string" ? rawValue : "";
 
   const projectObject:ProjectDetails={
-    name: projectName,
+    projectName: projectName,
+    username:"",
+    code:"",
     time: new Date(Date.now() - 2 * 60 * 1000),
   };
 
   create(projectObject)
+  setShowModals(false);
+
   navigate("/editor")
   
 
