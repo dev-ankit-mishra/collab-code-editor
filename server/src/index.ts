@@ -9,8 +9,8 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:3000",                  
-  "https://your-frontend.netlify.app"      
+  "http://localhost:5143",                  
+  "https://coDevSpace.netlify.app"      
 ];
 
 app.use(cors({
