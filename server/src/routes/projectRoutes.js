@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {Project} from "../models/Project.js";
-import { error } from "console";
+import { Request, Response } from "express";
 
 const router = Router();
 
@@ -29,6 +29,22 @@ router.post("/", async (req, res) => {
 });
 
 // Fetch all projects
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({ message: "Project Not Found" });
+    }
+
+    res.status(200).json(project);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching project", error: err });
+  }
+});
+
+
 router.get("/", async (_req, res) => {
   try {
     const projects = await Project.find();
@@ -38,20 +54,7 @@ router.get("/", async (_req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
 
-  try {
-    const data = await Project.findById(id);
-    if (!data) {
-      return res.status(404).json({ message: "Project Not Found" });
-    }
-
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching project", error: err });
-  }
-});
 
 
 export default router;
