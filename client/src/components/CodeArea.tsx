@@ -6,14 +6,21 @@ import { executeCode } from './Api';
 import type { editor } from 'monaco-editor';
 import Editor from "@monaco-editor/react";
 
+type codeAreaProps={
+  code:string
+}
 
-export default function CodeArea() {
-  const [value, setValue] = useState<string>(language[0].boilerplate);
+export default function CodeArea({code}:codeAreaProps) {
+  const [value, setValue] = useState<string>(code || language[0].boilerplate);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [languages, setLanguages] = useState(language[0]);
   const [output, setOutput] = useState("");
 
   const [consoleText,setConsoleText]=useState<string>("text-white");
+
+  useEffect(()=>{
+    if(code) setValue(code)
+  },[code])
 
   useEffect(() => {
     setValue(languages.boilerplate);
