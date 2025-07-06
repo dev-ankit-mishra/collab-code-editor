@@ -10,7 +10,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5143",                  
-  "https://coDevSpace.netlify.app"      
+  "https://codevspace.netlify.app"      
 ];
 
 app.use(cors({
