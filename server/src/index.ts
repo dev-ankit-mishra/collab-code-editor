@@ -8,8 +8,10 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.json());
+
 const allowedOrigins = [
-  "http://localhost:5143",                  
+  "http://localhost:5173",                  
   "https://codevspace.netlify.app"      
 ];
 
@@ -23,6 +25,9 @@ app.use(cors({
   },
   credentials: true
 }));
+
+
+app.use("/api/projects",projectRoutes);
 
 
 app.get("/",(req,res)=>{
