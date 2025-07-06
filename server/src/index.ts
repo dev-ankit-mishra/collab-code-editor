@@ -7,17 +7,14 @@ import projectRoutes from "./routes/projectRoutes.js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-app.use("/api", projectRoutes);
 
-const allowedOrigins = ["http://localhost:5173", "https://coDevSpace.netlify.app"];
+app.get("/",(req,res)=>{
+  res.json("hello")
+})
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+
+
 
 const PORT = process.env.PORT || 5000;
 
