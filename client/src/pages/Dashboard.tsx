@@ -1,9 +1,10 @@
 import NavBar from "../components/NavBar";
 import Button from "../components/Button";
-import {useState} from "react"
+import {useState,useEffect} from "react"
 import RecentCard from "../components/RecentCard";
 import Modals from "../components/Modals";
 import type { ProjectDetails } from "../components/Types";
+import axios from "axios"
 import {
  
   PlusCircle,
@@ -16,8 +17,34 @@ export default function Dashboard() {
   const [showModals,setShowModals]=useState<boolean>(false);
   const [project,setProject]=useState<ProjectDetails[]>([])
 
-  function handleCreate(project:ProjectDetails){
-    setProject(prev=>[...prev,project])
+ useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const res = await fetch("https://codevspace-aqhw.onrender.com/api/projects");
+      const data = await res.json();
+      setProject(data);
+    } catch (err) {
+      console.error("Fetch failed:", err);
+    }
+  };
+
+  fetchProjects();
+}, []);
+
+
+
+
+
+
+  async function handleCreate(project:ProjectDetails){
+    try {
+      await axios.post("https://codevspace-aqhw.onrender.com/api/projects", project);
+      alert("Project created!");
+      setProject(prev => [...prev, project]);
+    } catch (err) {
+      console.error(err);
+      alert("Error creating project");
+    }
   }
 
   return (
