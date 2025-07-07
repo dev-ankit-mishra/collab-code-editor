@@ -1,15 +1,12 @@
 import NavBar from "../components/NavBar";
-import Button from "../components/Button";
 import {useState,useEffect} from "react"
-import RecentCard from "../components/RecentCard";
 import Modals from "../components/Modals";
 import type { ProjectDetails } from "../components/Types";
 import axios from "axios"
-import {
- 
-  PlusCircle,
-} from "lucide-react";
+
+
 import Menu from "../components/Menu";
+import { Outlet } from "react-router-dom";
 
 
 export default function Dashboard() {
@@ -57,21 +54,8 @@ export default function Dashboard() {
       <main className=" flex flex-1 ">
         <Menu/>
         
-        <div className="w-full flex flex-col">
-          <div className=" flex justify-between p-6">
-            <h1 className="text-2xl font-semibold tracking-wide">Recent</h1>
-            <Button
-              onClick={()=>setShowModals(true)}
-             >
-              <PlusCircle size={18}/> New Projects
-            </Button>
-          </div>
-          <div className="flex items-center flex-wrap gap-8 p-6">
-            
-            <RecentCard project={project}/>
-            
-          </div>
-        </div>
+        <Outlet context={{ project, setShowModals }} />
+
       </main>
       {
         showModals && (
