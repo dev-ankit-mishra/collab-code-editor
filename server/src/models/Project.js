@@ -4,6 +4,7 @@ const projectSchema = new mongoose.Schema({
   projectName: { type: String, required: true },
   username: { type: String },
   code: { type: String },
+  template: {type: String, default: "JavaScript"},
   time: { type: Date, default: Date.now },
 });
 
