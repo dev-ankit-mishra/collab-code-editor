@@ -15,8 +15,14 @@ export type ProjectDetails={
   projectName:string,
   username:string,
   code:string,
+  template:string,
   time?:Date
 }
 export interface RecentCardProps {
   project: ProjectDetails[];
+}
+
+export type DashboardOutlet={
+  project:ProjectDetails[],
+  setShowModals:(val:boolean)=>void
 }
