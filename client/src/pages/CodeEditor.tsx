@@ -17,8 +17,8 @@ export default function CodeEditor() {
   
   
   useEffect(()=>{
-    setProjectName(location.state?.projectName || "")
-    setTemplate(location.state?.language || language[0])
+    setProjectName(location.state?.projectObject.projectName || "")
+    setTemplate(location.state?.lang || language[0])
   },[location.state])
 
   useEffect(() => {
