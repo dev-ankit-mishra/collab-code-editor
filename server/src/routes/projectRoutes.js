@@ -28,6 +28,26 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+router.put("/:id",async (req,res)=>{
+
+  try{
+    const updated=await Project.findByIdAndUpdate(
+      req.params.id,
+      {$set:req.body},
+      {new:true}  
+    )
+    if (!updated) {
+  return res.status(404).json({ message: "Project not found" });
+}
+    res.status(200).json(updated)
+  }catch (err){
+    res.status(500).json({message: "Could not save the data.Something went wrong", error: err.message})
+  }
+
+
+})
+
 // Fetch all projects
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
