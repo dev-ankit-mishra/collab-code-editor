@@ -20,7 +20,7 @@ export default function RecentCard({ project }: RecentCardProps) {
             <Ellipsis size={16} className="cursor-pointer" />
           </div>
 
-          <p className="text-sm text-gray-300">{formatDistanceToNow(new Date(p.time), { addSuffix: true })}</p>
+          <p className="text-sm text-gray-300">{formatDistanceToNow(new Date(p.time ?? 0), { addSuffix: true })}</p>
 
           <p className="text-sm text-gray-300 mt-12">Created by you</p>
         </div>
