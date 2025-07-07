@@ -2,16 +2,23 @@ import NavBar from '../components/NavBar';
 import CodeArea from '../components/CodeArea';
 import SideBar from '../components/SideBar';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useLocation } from 'react-router-dom';
 
 export default function CodeEditor() {
   const { id } = useParams();
   const [code, setCode] = useState<string>("Loading...");
+  const [projectName,setProjectName]=useState<string>("")
+
+  const location=useLocation()
+  
+  useEffect(()=>{
+    setProjectName(location.state?.projectName || "")
+  },[location.state])
 
   useEffect(() => {
     const fetchByProject = async () => {
       if (!id) {
-        setCode("// Invalid Project ID");
+        setCode("");
         return;
       }
 
@@ -27,6 +34,7 @@ export default function CodeEditor() {
         const data = await res.json();
 
         setCode(data.code || "// No code found in project");
+        setProjectName(data.projectName || "");
       } catch (err) {
         console.error("❌ Failed to load project code:", err);
         setCode("// Error loading project");
@@ -38,7 +46,7 @@ export default function CodeEditor() {
 
   return (
     <section className='w-full h-screen flex flex-col bg-gradient-to-br from-neutral-950 via-neutral-800 to-neutral-950 text-white'>
-      <NavBar shareRequired userRequired={true} />
+      <NavBar shareRequired userRequired={true} projectName={projectName} />
       <main className='w-full h-full flex-1 flex'>
         <SideBar />
         <div className='flex-1'>
