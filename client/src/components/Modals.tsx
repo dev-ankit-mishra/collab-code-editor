@@ -1,33 +1,48 @@
 import Button from "./Button";
 import { PlusCircle, X } from "lucide-react";
 import {useNavigate} from "react-router-dom"
+import { useState,useEffect } from "react";
 
 import type { ModalProps,ProjectDetails } from "./Types";
 
 
-export default function Modals({ setShowModals,create }: ModalProps) {
+export default function Modals({ setShowModals,create,isCreated }: ModalProps) {
 
   const navigate=useNavigate()
 
+  const [isError,setIsError]=useState<boolean>(false)
+
+  useEffect(()=>{
+    if(isError){
+      const timer=setTimeout(()=>setIsError(false),5000);
+
+      return ()=>clearTimeout(timer)
+    }
+    
+  },[isError])
+
   function actionFunction(formData: FormData) {
   const rawValue = formData.get("project");
-  
-  // Ensure it's a string before using
   const projectName = typeof rawValue === "string" ? rawValue : "";
 
   const projectObject:ProjectDetails={
     projectName: projectName,
     username:"",
     code:"",
-    time: new Date(Date.now() - 2 * 60 * 1000),
   };
 
-  create(projectObject)
-  setShowModals(false);
+  create(projectObject);
 
-  navigate("/editor")
-  
-
+  if(isCreated){
+    navigate("/editor",{
+      state : {
+        projectName:projectName
+      }
+    })
+    setShowModals(false);
+  }else{
+    setIsError(true);
+  }
 }
 
 
@@ -57,6 +72,7 @@ export default function Modals({ setShowModals,create }: ModalProps) {
           <Button type="submit">
             <PlusCircle size={18} /> Create
           </Button>
+          {isError && <p className="text-red pt-4">Something went wrong.Please try agin later.</p>}
         </form>
       </div>
     </div>
