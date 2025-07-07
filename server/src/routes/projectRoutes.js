@@ -5,13 +5,14 @@ const router = Router();
 
 // Create a new project
 router.post("/", async (req, res) => {
-  const { projectName, username, code } = req.body;
+  const { projectName, username, code, template } = req.body;
 
   try {
     const newProject = new Project({
       projectName,
       username,
       code,
+      template,
       timeOfCreation: new Date()
     });
 
