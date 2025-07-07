@@ -5,7 +5,6 @@ const lang = [
   { label: "C++", boilerplate: `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}` },
   { label: "C", boilerplate: `#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}` },
   { label: "JavaScript", boilerplate: `console.log("Hello, World!");` },
-  { label: "TypeScript", boilerplate: `const greet = (name: string): void => {\n    console.log("Hello, " + name);\n};\n\ngreet("World");` },
   { label: "Ruby", boilerplate: `puts "Hello, World!"` },
   { label: "Go", boilerplate: `package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}` },
   { label: "Rust", boilerplate: `fn main() {\n    println!("Hello, World!");\n}` },
