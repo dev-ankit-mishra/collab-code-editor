@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Output from './Output';
 import { executeCode } from './Api';
-import type { editor } from 'monaco-editor';
+import { editor } from 'monaco-editor';
 import Editor from "@monaco-editor/react";
 import Button from './Button';
 import {Save} from "lucide-react"
@@ -51,6 +51,10 @@ export default function CodeArea({code,template}:codeAreaProps) {
     editor.focus();
   }
 
+  function handleSaveBtn(){
+
+
+  }
   
 
 
@@ -60,7 +64,7 @@ export default function CodeArea({code,template}:codeAreaProps) {
       <div className='w-[56rem] flex flex-col p-4 gap-4'>
         
         <Button className='w-fit'>
-          <Save size={18}/>Save
+          <Save onClick={handleSaveBtn} size={18}/>Save
         </Button>
 
         <div className='flex-1  rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]'>
