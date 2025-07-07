@@ -1,4 +1,4 @@
-import { CircleUserRound,UserPlus } from 'lucide-react';
+import { CircleUserRound,UserPlus,FolderOpen } from 'lucide-react';
 import Button from './Button';
 import {Link} from "react-router-dom"
 
@@ -12,7 +12,14 @@ export default function NavBar({ authRequired = false,shareRequired=false,userRe
       <h1 className="text-xl font-semibold text-gray-200 hover:text-green-500"><Link to={"/"}>CoDevSpace</Link></h1>
 
       <div>
-        <span>{projectName===""? null : projectName}</span>
+        {
+          projectName==="" ? null : (
+            <span className='flex gap-2 items-center text-lg tracking-wide'>
+              <FolderOpen size={20} />
+              {projectName}
+            </span>
+          )
+        }
       </div>
 
 
