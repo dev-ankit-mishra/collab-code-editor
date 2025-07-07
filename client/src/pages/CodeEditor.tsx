@@ -3,16 +3,22 @@ import CodeArea from '../components/CodeArea';
 import SideBar from '../components/SideBar';
 import { useState, useEffect } from 'react';
 import { useParams,useLocation } from 'react-router-dom';
+import { language } from '../components/languages';
 
 export default function CodeEditor() {
   const { id } = useParams();
   const [code, setCode] = useState<string>("Loading...");
-  const [projectName,setProjectName]=useState<string>("")
-
   const location=useLocation()
+  const [projectName,setProjectName]=useState<string>("")
+  const [template,setTemplate]=useState(language[0])
+
+
+
+  
   
   useEffect(()=>{
     setProjectName(location.state?.projectName || "")
+    setTemplate(location.state?.language || language[0])
   },[location.state])
 
   useEffect(() => {
@@ -50,7 +56,7 @@ export default function CodeEditor() {
       <main className='w-full h-full flex-1 flex'>
         <SideBar />
         <div className='flex-1'>
-          <CodeArea code={code} />
+          <CodeArea code={code} template={template}/>
         </div>
       </main>
     </section>
