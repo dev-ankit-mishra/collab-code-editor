@@ -25,13 +25,15 @@ export default function Modals({ setShowModals,create,isCreated }: ModalProps) {
   },[isError])
 
   function actionFunction(formData: FormData) {
-  const rawValue = formData.get("project");
-  const projectName = typeof rawValue === "string" ? rawValue : "";
+  const projectRawValue = formData.get("project");
+  const projectName = typeof projectRawValue === "string" ? projectRawValue : "";
+
 
   const projectObject:ProjectDetails={
     projectName: projectName,
     username:"",
     code:"",
+    template:lang.label
   };
 
   create(projectObject);
@@ -39,8 +41,7 @@ export default function Modals({ setShowModals,create,isCreated }: ModalProps) {
   if(isCreated){
     navigate("/editor",{
       state : {
-        projectName:projectName,
-        language:lang
+        projectObject,lang
 
       }
     })
