@@ -1,13 +1,21 @@
-export interface ModalProps {
+export type NavbarProp={
+  authRequired?:boolean,
+  shareRequired?:boolean,
+  userRequired?:boolean,
+  projectName?:string
+}
+
+export type ModalProps={
   setShowModals: (val: boolean) => void;
   create: (val:ProjectDetails)=>void
+  isCreated: boolean
 }
 export type ProjectDetails={
   _id?: string;
   projectName:string,
   username:string,
   code:string,
-  time:Date
+  time?:Date
 }
 export interface RecentCardProps {
   project: ProjectDetails[];
