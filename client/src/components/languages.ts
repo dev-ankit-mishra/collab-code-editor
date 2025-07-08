@@ -1,4 +1,8 @@
-export const language: { label: string; version: string; boilerplate: string }[] = [];
+import type { Language } from "./Types";
+
+
+
+export const language: Language[] = [];
 
 const lang = [
   { label: "Java", boilerplate: `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}` },
