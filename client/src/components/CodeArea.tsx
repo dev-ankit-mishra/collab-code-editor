@@ -8,10 +8,11 @@ import Button from './Button';
 import {Save} from "lucide-react"
 import type { codeAreaProps } from './Types';
 import { toast } from "react-hot-toast";
+import { formatDistanceToNow } from 'date-fns';
 
 
 export default function CodeArea({projectObject}:codeAreaProps) {
-  const [value, setValue] = useState<string>(projectObject.code===""? projectObject.template.boilerplate : projectObject.code);
+  const [value, setValue] = useState<string>(projectObject.code.trim()===""? projectObject.template.boilerplate : projectObject.code);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [output, setOutput] = useState("Waiting for output...");
 
@@ -39,7 +40,7 @@ export default function CodeArea({projectObject}:codeAreaProps) {
     } catch (err: any) {
       setConsoleText('bg-red-500')
       console.error("Execution error:", err.response?.data || err.message);
-      setOutput("❌ Error running code. Check the console.");
+      setOutput("Error running code. Check the console.");
     }
   };
 
@@ -65,10 +66,13 @@ export default function CodeArea({projectObject}:codeAreaProps) {
   return (
     <main className='w-full h-full flex items-center justify-between gap-1 px-1'>
       <div className='w-[56rem] flex flex-col p-4 gap-4'>
-        
-        <Button className='w-fit' onClick={handleSaveBtn}>
+        <div className='flex items-center gap-4'>
+          <Button className='w-fit' onClick={handleSaveBtn}>
             <Save size={18} /> Save
-        </Button>
+          </Button>
+          <p className='text-gray-300 text-base'>Last Updated:  <span>{formatDistanceToNow(new Date(projectObject.updatedAt ?? 0),{addSuffix:true})}</span></p>
+        </div>
+        
 
         <div className='flex-1  rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]'>
           <Editor
