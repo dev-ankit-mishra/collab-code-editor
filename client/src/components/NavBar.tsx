@@ -14,7 +14,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,userRe
       <div>
         {
           projectName==="" ? null : (
-            <span className='flex gap-2 items-center text-lg tracking-wide'>
+            <span className='flex gap-2 items-center text-lg font-medium tracking-wide'>
               <FolderOpen size={20} />
               {projectName}
             </span>
