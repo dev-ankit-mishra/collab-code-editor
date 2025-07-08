@@ -13,7 +13,6 @@ export default function Dashboard() {
 
   const [showModals,setShowModals]=useState<boolean>(false);
   const [project,setProject]=useState<ProjectDetails[]>([])
-  const [isCreated,setIsCreated]=useState<boolean>(false);
   
 
  useEffect(() => {
@@ -22,10 +21,8 @@ export default function Dashboard() {
       const res = await fetch("https://codevspace-aqhw.onrender.com/api/projects");
       const data = await res.json();
       setProject(data);
-      setIsCreated(true);
     } catch (err) {
       console.error("Fetch failed:", err);
-      setIsCreated(false);
     }
   };
 
@@ -39,8 +36,10 @@ export default function Dashboard() {
 
   async function handleCreate(project:ProjectDetails){
     try {
-      await axios.post("https://codevspace-aqhw.onrender.com/api/projects", project);
+      const response =await axios.post("https://codevspace-aqhw.onrender.com/api/projects", project);
+      const {_id}=response.data
       setProject(prev => [...prev, project]);
+      return _id
     } catch (err) {
       console.error(err);
     }
@@ -59,7 +58,7 @@ export default function Dashboard() {
       </main>
       {
         showModals && (
-         <Modals setShowModals={setShowModals} create={handleCreate} isCreated={isCreated}/>
+         <Modals setShowModals={setShowModals} create={handleCreate}/>
         )
       }
     </section>
