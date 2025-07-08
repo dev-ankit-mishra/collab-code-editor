@@ -7,7 +7,7 @@ import { language } from "./languages.ts";
 import type { ModalProps,ProjectDetails } from "./Types";
 
 
-export default function Modals({ setShowModals,create,isCreated }: ModalProps) {
+export default function Modals({ setShowModals,create}: ModalProps) {
 
   const navigate=useNavigate()
 
@@ -24,25 +24,25 @@ export default function Modals({ setShowModals,create,isCreated }: ModalProps) {
     
   },[isError])
 
-  function actionFunction(formData: FormData) {
+  async function actionFunction(formData: FormData) {
   const projectRawValue = formData.get("project");
   const projectName = typeof projectRawValue === "string" ? projectRawValue : "";
 
 
-  const projectObject:ProjectDetails={
+  const projectObj:ProjectDetails={
     projectName: projectName,
     username:"",
     code:"",
-    template:lang.label
+    template:lang
   };
 
-  create(projectObject);
+  const newId = await create(projectObj);
 
-  if(isCreated){
-    navigate("/editor",{
+if (newId) {
+    const projectObject = { ...projectObj, _id: newId };
+    navigate(`/editor/${newId}`,{
       state : {
-        projectObject,lang
-
+        projectObject
       }
     })
     setShowModals(false);
