@@ -1,3 +1,4 @@
+import type { Session } from "@supabase/supabase-js";
 
 export type NavbarProp={
   authRequired?:boolean,
@@ -36,4 +37,10 @@ export type DashboardOutlet={
 export type codeAreaProps={
   projectObject:ProjectDetails
 
+}
+
+export type AuthContextType ={
+  session: Session | null;
+  signInUser: (email: string, password: string) => Promise<{ success: boolean; message?: string; data?: any }>;
+  signOutUser: () => Promise<{ success: boolean; message: string }>;
 }
