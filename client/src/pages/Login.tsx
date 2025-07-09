@@ -4,8 +4,48 @@ import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input"
 import {Link} from "react-router-dom"
+import { useState, type FormEvent } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function LogIn() {
+
+  const auth = useAuth();
+  const signInUser = auth?.signInUser;
+
+  if (!signInUser) {
+  throw new Error("Auth context not initialized");
+  }
+  const navigate=useNavigate()
+
+  const [error, setError] = useState<string | null>(null);
+
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    const { success, data, error } = await signInUser(email, password);
+
+    if (!success) {
+      throw new Error(error);
+    }
+
+    if (success && data?.session) {
+      navigate("/Dashboard");
+    }
+  } catch (err: any) {
+    console.error(err);
+    setError("Something went wrong. Please try again later.");
+  }
+};
+
+
+
+
   return (
     <section className="w-full h-screen flex flex-col">
       <NavBar authRequired={false} />
@@ -18,20 +58,22 @@ export default function LogIn() {
             Access your projects, join your team, and start coding together.
           </p>
 
-          <form className="flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div>
-              <label className="block text-sm text-gray-300 mb-1">Email</label>
+              <label htmlFor="email" className="block text-sm text-gray-300 mb-1">Email</label>
               <Input
+                name="email"
                 type="email"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-300 mb-1">
+              <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
                 Password
               </label>
               <Input
+                name="password"
                 type="password"
                 placeholder="••••••••"
               />
@@ -44,6 +86,11 @@ export default function LogIn() {
               Submit
             </Button>
           </form>
+          {
+            error!=null && (
+              <p className="text-red-500 py-2">Error occured.Something went wrong Please try again later.</p>
+            )
+          }
           <a 
             
             className="text-blue-500  hover:text-blue-400 text-sm cursor-pointer underline block text-center pt-6"
