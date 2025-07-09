@@ -10,8 +10,7 @@ import type { FormEvent } from "react";
 
 export default function SignUp() {
 
-  const auth=useAuth()
-  const signUpUser=auth?.signUpUser
+  const {signUpUser}=useAuth()
   const navigate=useNavigate()
 
   const [error,setError]=useState<string | null>(null)
@@ -27,7 +26,7 @@ export default function SignUp() {
           throw new Error(error);
         }
         if(success && data?.session){
-          navigate("/dashboard")
+          navigate("/dashboard",{replace:true})
         }
       }catch (err){
         setError("Something went wrong.")
@@ -46,7 +45,7 @@ export default function SignUp() {
       <main className="flex-1 flex flex-col text-gray-300 text-sm  bg-gradient-to-b from-black via-gray-900 to-[#0c0f1a]">
         <div className="flex flex-col p-8 max-w-md bg-black/40 shadow-2xl border border-white/10 rounded-lg mx-auto my-auto">
           <h1 className="text-2xl text-center text-white font-bold mb-3">
-            Create your CodeCollab account
+            Create your CoDevSpace account
           </h1>
           <p className="text-center mb-5">
             Start coding together — join projects, connect with your team, and
