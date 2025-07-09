@@ -20,8 +20,7 @@ export default function Menu(){
 
     const navigate=useNavigate()
 
-  const auth=useAuth()
-  const signOutUser=auth?.signOutUser
+  const {signOutUser}=useAuth()
 
   async function handleSignOut(){
     try{
