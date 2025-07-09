@@ -4,8 +4,9 @@ import {Link} from "react-router-dom"
 
 import type { NavbarProp } from './Types';
 
-export default function NavBar({ authRequired = false,shareRequired=false,userRequired=false,projectName=""}:NavbarProp) {
+export default function NavBar({ authRequired = false,shareRequired=false,user="",projectName=""}:NavbarProp) {
 
+  const userId=user?.split("@")[0];
   
   return (
     <nav className="bg-[#0c0f1a] opacity-96 shadow-md shadow-black/40 border-b border-b-white/5 w-full py-2 flex flex-row justify-between items-center px-10">
@@ -39,10 +40,10 @@ export default function NavBar({ authRequired = false,shareRequired=false,userRe
         )
       }
       {
-        userRequired && (
+        user!=="" && (
           <div className='text-white flex  gap-2 items-center'>
              <CircleUserRound size={24} />
-             <span>amishra26445</span>
+             <span>{userId}</span>
           </div>
         )
       }
