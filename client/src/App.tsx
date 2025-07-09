@@ -8,6 +8,8 @@ import CodeEditor from "./pages/CodeEditor"
 import {BrowserRouter,Routes,Route} from "react-router-dom"
 import AllRepository from "./components/AllRepository"
 import Recent from "./components/Recent"
+import ProtectedRoutes from "./routes/ProtectedRoutes"
+import PublicRoute from "./routes/PublicRoute"
 
 export default function App(){
   return(
@@ -15,14 +17,39 @@ export default function App(){
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage/>}/>
-        <Route path="/login" element={<LogIn/>}/>
-        <Route path="/signup" element={<SignUp/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}>
+        <Route path="/login" element={
+          <PublicRoute>
+            <LogIn/>
+          </PublicRoute>
+          
+          }/>
+        <Route path="/signup" element=
+        {
+          <PublicRoute>
+            <SignUp/>
+          </PublicRoute>
+        
+        }/>
+        <Route path="/dashboard" element={
+          <ProtectedRoutes>
+            <Dashboard/>
+          </ProtectedRoutes>
+          
+          }>
           <Route index element={<Recent/>}/>
           <Route path="allrepository" element={<AllRepository/>}  />
         </Route>
-        <Route path="/editor" element={<CodeEditor/>}/>
-        <Route path="/editor/:id" element={<CodeEditor/>}/>
+        <Route path="/editor" element={
+          <ProtectedRoutes>
+              <CodeEditor/>
+          </ProtectedRoutes>
+          
+          }/>
+        <Route path="/editor/:id" element={
+          <ProtectedRoutes>
+              <CodeEditor/>
+          </ProtectedRoutes>
+          }/>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>  
