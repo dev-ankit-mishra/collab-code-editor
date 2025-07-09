@@ -10,9 +10,36 @@ import {
   LogOut,
 } from "lucide-react";
 import Button from "./Button";
-import {NavLink,Link} from "react-router-dom"
+import {NavLink,useNavigate} from "react-router-dom"
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 export default function Menu(){
+
+  const [error,setError] =useState<string | undefined>(undefined)
+
+    const navigate=useNavigate()
+
+  const auth=useAuth()
+  const signOutUser=auth?.signOutUser
+
+  async function handleSignOut(){
+    try{
+      const data =await signOutUser!()
+      if(!data?.success){
+        setError(data.error)
+        return
+      }
+      else{
+        navigate("/")
+      }
+    }catch (err){
+      console.log(err)
+      setError("error occured")
+
+    }
+  }
+
   return(
     <nav className="w-68 px-2  py-6  border-r border-r-white/10  flex flex-col justify-between">
           <ul className=" space-y-8">
@@ -44,8 +71,11 @@ export default function Menu(){
             </ul>
           </ul>
           
-          <Button className="mx-8" isTransparent={true}><LogOut size={18} />
-              <Link to={"/"}>Sign out</Link></Button>
+          <Button className="mx-8" isTransparent={true} onClick={handleSignOut} ><LogOut size={18} />
+              Sign out</Button>
+          {error!=undefined && (
+            <p className="pt-4">Error Occured</p>
+          )}
         </nav>
   )
 }
