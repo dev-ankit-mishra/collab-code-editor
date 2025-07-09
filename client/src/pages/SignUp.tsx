@@ -3,9 +3,43 @@ import { FcGoogle } from "react-icons/fc";
 import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import {Link} from "react-router-dom"
+import {Link,useNavigate} from "react-router-dom"
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+import type { FormEvent } from "react";
 
 export default function SignUp() {
+
+  const auth=useAuth()
+  const signUpUser=auth?.signUpUser
+  const navigate=useNavigate()
+
+  const [error,setError]=useState<string | null>(null)
+
+  async function handleSignUp(e : FormEvent<HTMLFormElement>){
+      e.preventDefault()
+      const formData=new FormData(e.currentTarget)
+      const email=formData.get("email") as string
+      const password=formData.get("password") as string
+      try{
+        const {success,data,error}=await signUpUser!(email,password)
+        if(error){
+          throw new Error(error);
+        }
+        if(success && data?.session){
+          navigate("/dashboard")
+        }
+      }catch (err){
+        setError("Something went wrong.")
+        console.log(err)
+      }
+  }
+
+
+
+
+
+
   return (
     <section className="w-full h-screen flex flex-col ">
       <NavBar authRequired={false} />
@@ -18,11 +52,11 @@ export default function SignUp() {
             Start coding together — join projects, connect with your team, and
             build collaboratively.
           </p>
-          <form className="flex flex-col gap-5">
+          <form onSubmit={handleSignUp} className="flex flex-col gap-5">
             <div>
               <label className="block pb-1">Full Name</label>
               <Input
-                
+                name="name"
                 type="text"
                 placeholder="John Smith"
               />
@@ -30,7 +64,7 @@ export default function SignUp() {
             <div>
               <label className="block pb-1">Email</label>
               <Input
-                
+                name="email"
                 type="email"
                 placeholder="you@email.com"
               />
@@ -38,21 +72,17 @@ export default function SignUp() {
             <div>
               <label className="block pb-1">Password</label>
               <Input
-                
+                name="password"
                 type="password"
                 placeholder="••••••••"
               />
             </div>
-            <div>
-              <label className="block pb-1">Confirm Password</label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-            <Button className="mt-4">
+            <Button type="submit" className="mt-4">
               Sign Up
             </Button>
+            {
+              error!=null && <p>Error Occured</p>
+            }
           </form>
           <p className="text-center mt-4">
             Already have an account? <Link to={"/login"} className="text-blue-500 hover:text-blue-600 underline">Log in</Link>
