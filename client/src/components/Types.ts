@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 export type NavbarProp={
   authRequired?:boolean,
   shareRequired?:boolean,
-  userRequired?:boolean,
+  user?:string,
   projectName?:string
 }
 
@@ -40,7 +40,8 @@ export type codeAreaProps={
 }
 
 export type AuthContextType ={
-  session: Session | null;
-  signInUser: (email: string, password: string) => Promise<{ success: boolean; message?: string; data?: any }>;
-  signOutUser: () => Promise<{ success: boolean; message: string }>;
+  session: Session | null | undefined;
+  signInUser: (email: string, password: string) => Promise<{ success: boolean; error?: string; data?: any }>;
+  signOutUser: () => Promise<{ success: boolean; error?: string }>;
+  signUpUser: (email:string,password:string)=>Promise<{success:boolean,error?:string,data?:any}>;
 }
