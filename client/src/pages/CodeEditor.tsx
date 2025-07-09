@@ -4,11 +4,14 @@ import SideBar from "../components/SideBar";
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
+import { useAuth } from "../context/AuthContext";
 
 export default function CodeEditor() {
   const { id } = useParams();
   const location = useLocation();
   const [project, setProject] = useState<ProjectDetails | null>(null);
+  const auth=useAuth()
+  const session=auth?.session
 
   useEffect(() => {
     if (!location.state?.projectObject) {
@@ -38,7 +41,7 @@ export default function CodeEditor() {
     <section className="w-full h-screen flex flex-col bg-gradient-to-br from-neutral-950 via-neutral-800 to-neutral-950 text-white">
       <NavBar
         shareRequired
-        userRequired={true}
+        user={session?.user?.email}
         projectName={project?.projectName + "  /  " + project?.template?.label}
       />
       <main className="w-full h-full flex-1 flex">
