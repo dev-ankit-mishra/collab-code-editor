@@ -12,9 +12,6 @@ const projectSchema = new Schema(
       type: String, 
       required: true // Supabase user ID 
     },
-    username: { 
-      type: String 
-    },
     code: { 
       type: String, 
       default: "" 
