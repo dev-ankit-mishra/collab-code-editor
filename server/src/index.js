@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./db.js";
-import projectRoutes from "./routes/projectRoutes.js";
+import projectRouter from "./routes/projectRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 
 dotenv.config();
@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/users", userRouter);
-app.use("/api/projects", projectRoutes);
+app.use("/api/projects", projectRouter);
 
 // Default route
 app.get("/", (req, res) => {

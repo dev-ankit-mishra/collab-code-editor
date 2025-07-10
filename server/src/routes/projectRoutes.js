@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { Project } from "../models/Project.js";
 
-const router = Router();
+const projectRouter = Router();
 
 // Create a new project for a user
-router.post("/:userId", async (req, res) => {
+projectRouter.post("/:userId", async (req, res) => {
   const { userId } = req.params;
   const { projectName, username, code, template } = req.body;
 
@@ -33,7 +33,7 @@ router.post("/:userId", async (req, res) => {
 });
 
 // Get all projects for a user
-router.get("/:userId", async (req, res) => {
+projectRouter.get("/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -48,7 +48,7 @@ router.get("/:userId", async (req, res) => {
 });
 
 // Get a specific project by user and project ID
-router.get("/:userId/:projectId", async (req, res) => {
+projectRouter.get("/:userId/:projectId", async (req, res) => {
   const { userId, projectId } = req.params;
 
   try {
@@ -67,7 +67,7 @@ router.get("/:userId/:projectId", async (req, res) => {
 });
 
 // Update a project for a user
-router.put("/:userId/:projectId", async (req, res) => {
+projectRouter.put("/:userId/:projectId", async (req, res) => {
   const { userId, projectId } = req.params;
 
   try {
@@ -89,3 +89,5 @@ router.put("/:userId/:projectId", async (req, res) => {
     });
   }
 });
+
+export default projectRouter;
