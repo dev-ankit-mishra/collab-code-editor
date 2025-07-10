@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Collection } from "mongoose";
 
 const { Schema, model } = mongoose;
 
@@ -22,7 +22,7 @@ const UserSpecificSchema = new Schema(
       }
     ]
   },
-  { timestamps: true }
+  { timestamps: true,Collection:"UserData"}
 );
 
 export const UserData = model("UserData", UserSpecificSchema);
