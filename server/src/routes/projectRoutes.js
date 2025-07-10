@@ -1,80 +1,91 @@
 import { Router } from "express";
-import {Project} from "../models/Project.js";
+import { Project } from "../models/Project.js";
 
 const router = Router();
 
-// Create a new project
-router.post("/", async (req, res) => {
+// Create a new project for a user
+router.post("/:userId", async (req, res) => {
+  const { userId } = req.params;
   const { projectName, username, code, template } = req.body;
 
   try {
+    const existing = await Project.findOne({ projectName, userId });
+    if (existing) {
+      return res.status(409).json({ message: "Project already exists for this user" });
+    }
+
     const newProject = new Project({
+      userId,
       projectName,
       username,
       code,
       template,
-      timeOfCreation: new Date()
     });
 
-    await newProject.save();
-    console.log("Project created successfully");
-    res.status(201).json(newProject);
-
+    const saved = await newProject.save();
+    res.status(201).json(saved);
   } catch (err) {
     res.status(500).json({
-      message: "Error occurred, project not created",
-      error: err
+      message: "Error creating project",
+      error: err.message,
     });
   }
 });
 
-
-router.put("/:id",async (req,res)=>{
-
-  try{
-    const updated=await Project.findByIdAndUpdate(
-      req.params.id,
-      {$set:req.body},
-      {new:true}  
-    )
-    if (!updated) {
-  return res.status(404).json({ message: "Project not found" });
-}
-    res.status(200).json(updated)
-  }catch (err){
-    res.status(500).json({message: "Could not save the data.Something went wrong", error: err.message})
-  }
-
-
-})
-
-// Fetch all projects
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
+// Get all projects for a user
+router.get("/:userId", async (req, res) => {
+  const { userId } = req.params;
 
   try {
-    const project = await Project.findById(id);
+    const projects = await Project.find({ userId });
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json({
+      message: "Error fetching user projects",
+      error: err.message,
+    });
+  }
+});
+
+// Get a specific project by user and project ID
+router.get("/:userId/:projectId", async (req, res) => {
+  const { userId, projectId } = req.params;
+
+  try {
+    const project = await Project.findOne({ _id: projectId, userId });
     if (!project) {
-      return res.status(404).json({ message: "Project Not Found" });
+      return res.status(404).json({ message: "Project not found for this user" });
     }
 
     res.status(200).json(project);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching project", error: err });
+    res.status(500).json({
+      message: "Error fetching the project",
+      error: err.message,
+    });
   }
 });
 
+// Update a project for a user
+router.put("/:userId/:projectId", async (req, res) => {
+  const { userId, projectId } = req.params;
 
-router.get("/", async (_req, res) => {
   try {
-    const projects = await Project.find();
-    res.status(200).json(projects);
+    const project = await Project.findOneAndUpdate(
+      { _id: projectId, userId },
+      { $set: req.body },
+      { new: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found or unauthorized" });
+    }
+
+    res.status(200).json(project);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching projects", error: err });
+    res.status(500).json({
+      message: "Error updating project",
+      error: err.message,
+    });
   }
 });
-
-
-
-
-export default router;
