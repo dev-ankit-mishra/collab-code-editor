@@ -22,7 +22,7 @@ const projectSchema = new Schema(
       boilerplate: { type: String, default: "" }
     }
   },
-  { timestamps: true,Collection:"Project"}
+  { timestamps: true,collection:"Project"}
 );
 
 export const Project = model("Project", projectSchema);
