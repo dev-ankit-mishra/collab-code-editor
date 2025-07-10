@@ -1,12 +1,31 @@
-import { timeStamp } from "console";
 import mongoose from "mongoose";
 
-const projectSchema = new mongoose.Schema({
-  projectName: { type: String, required: true },
-  username: { type: String },
-  code: { type: String },
-  template: { label: {type: String}, version: {type: String}, boilerplate: {type: String} },
-  time: { type: Date, default: Date.now },
-},{timestamps:true});
+const { Schema, model } = mongoose;
 
-export const Project = mongoose.model("Project", projectSchema);
+const projectSchema = new Schema(
+  {
+    projectName: { 
+      type: String, 
+      required: true 
+    },
+    userId: { 
+      type: String, 
+      required: true // Supabase user ID 
+    },
+    username: { 
+      type: String 
+    },
+    code: { 
+      type: String, 
+      default: "" 
+    },
+    template: {
+      label: { type: String, default: "custom" },
+      version: { type: String, default: "1.0.0" },
+      boilerplate: { type: String, default: "" }
+    }
+  },
+  { timestamps: true }
+);
+
+export const Project = model("Project", projectSchema);
