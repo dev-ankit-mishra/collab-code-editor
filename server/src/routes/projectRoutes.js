@@ -22,8 +22,14 @@ projectRouter.post("/:userId", async (req, res) => {
       template,
     });
 
-    const saved = await newProject.save();
-    res.status(201).json(saved);
+  
+    const savedProject = await newProject.save();
+
+    await UserData.updateOne(
+    { userId: savedProject.userId },
+    { $push: { projectObject: savedProject._id } }
+    );
+    res.status(201).json(savedProject);
   } catch (err) {
     res.status(500).json({
       message: "Error creating project",
