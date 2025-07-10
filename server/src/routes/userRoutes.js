@@ -4,9 +4,9 @@ import { UserData } from "../models/UserData.js";
 const userRouter = express.Router();
 
 userRouter.post("/create-user", async (req, res) => {
-  const { userName, userId } = req.body;
+  const { userName, userId, userEmail } = req.body;
 
-  if (!userName || !userId) {
+  if (!userName || !userId || !userEmail) {
     return res.status(400).json({ message: "userName and userId are required" });
   }
 
@@ -16,7 +16,7 @@ userRouter.post("/create-user", async (req, res) => {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    const newUser = new UserData({ userName, userId });
+    const newUser = new UserData({ userName, userId, userEmail });
     const savedUser = await newUser.save();
 
     res.status(201).json({

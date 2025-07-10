@@ -15,6 +15,10 @@ const UserSpecificSchema = new Schema(
       required: true,
       trim: true
     },
+    userEmail: {
+      type: String,
+      required: true,
+    },
     projectObject: [
       {
         type: Schema.Types.ObjectId,
