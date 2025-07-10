@@ -4,7 +4,7 @@ import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input"
 import {Link} from "react-router-dom"
-import { useState, type FormEvent } from "react";
+import { useState, useEffect , type FormEvent } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +14,7 @@ export default function LogIn() {
   const navigate=useNavigate()
 
   const [error, setError] = useState<string | null>(null);
+  const [userId,setUserId] = useState<string | null>(null);
 
 const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -30,7 +31,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     }
 
     if (success && data?.session) {
-      navigate("/Dashboard",{replace:true});
+      setUserId(data.session?.user?.id)
     }
   } catch (err: any) {
     console.error(err);
@@ -38,6 +39,27 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
   }
 };
 
+
+useEffect(()=>{
+  const fetchUserData=async ()=>{
+    try{
+      const res=await fetch(`https://codevspace-aqhw.onrender.com/api/user/${userId}`)
+      const data=await res.json()
+
+      if(!data){
+        throw new Error("User Data not found!")
+      }
+      console.log(data)
+      navigate("/dashboard",{replace:true})
+    }catch (err){
+      console.log(err)
+    }
+  }
+
+  if(userId){
+    fetchUserData()
+  }
+},[userId])
 
 
 
@@ -82,7 +104,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             </Button>
           </form>
           {
-            error!=null && (
+            error && (
               <p className="text-red-500 py-2">Error occured.Something went wrong Please try again later.</p>
             )
           }
