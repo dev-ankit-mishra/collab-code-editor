@@ -95,5 +95,30 @@ projectRouter.put("/:userId/:projectId", async (req, res) => {
     });
   }
 });
+projectRouter.delete("/:userId/:projectId", async (req, res) => {
+  const { userId, projectId } = req.params;
+
+  try {
+    const deletedProject = await Project.findOneAndDelete({ _id: projectId, userId });
+
+    if (!deletedProject) {
+      return res.status(404).json({ message: "Project not found or unauthorized" });
+    }
+
+    // Optional: remove the project reference from UserData
+    await UserData.updateOne(
+      { userId },
+      { $pull: { projectObject: projectId } }
+    );
+
+    res.status(200).json({ message: "Project deleted", data: deletedProject });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error deleting project",
+      error: err.message,
+    });
+  }
+});
+
 
 export default projectRouter;
