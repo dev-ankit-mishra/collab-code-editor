@@ -3,31 +3,34 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./db.js";
 import projectRoutes from "./routes/projectRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 dotenv.config();
 
 const app = express();
-
-app.use(express.json());
-
-app.use(cors());
-
-
-
-app.use("/api/projects",projectRoutes);
-
-
-app.get("/",(req,res)=>{
-  res.json("hello")
-})
-
-
-
-
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use("/api/users", userRouter);
+app.use("/api/projects", projectRoutes);
+
+// Default route
+app.get("/", (req, res) => {
+  res.json({ message: "🚀 API is running!" });
 });
+
+// Start server only after DB connects
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Failed to connect to DB:", err);
+    process.exit(1);
+  });
