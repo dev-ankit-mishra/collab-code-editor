@@ -26,7 +26,7 @@ codeCollab is a real-time collaborative code editor that allows multiple users t
 `Node.js` · `Express` · `WebSocket`
 
 **Auth & DB:**  
-`Supabase` (Auth + Realtime)
+`Supabase` (Auth + Realtime) · `MongoDB`
 
 **Tools:**  
 `Vite` · `GitHub Actions` · `Postman`
