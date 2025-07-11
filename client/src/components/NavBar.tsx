@@ -1,12 +1,15 @@
 import { CircleUserRound,UserPlus,FolderOpen } from 'lucide-react';
 import Button from './Button';
 import {Link} from "react-router-dom"
+import { useAuth } from '../context/AuthContext';
 
 import type { NavbarProp } from './Types';
 
-export default function NavBar({ authRequired = false,shareRequired=false,user="",projectName=""}:NavbarProp) {
+export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
 
-  const userId=user?.split("@")[0];
+  
+  const {session}=useAuth()
+  const userId=session?.user?.email?.split("@")[0]
   
   return (
     <nav className="bg-[#0c0f1a] opacity-96 shadow-md shadow-black/40 border-b border-b-white/5 w-full py-2 flex flex-row justify-between items-center px-10">
@@ -25,28 +28,28 @@ export default function NavBar({ authRequired = false,shareRequired=false,user="
 
 
       <div className='flex gap-4 items-center'>
-        {authRequired && (
-        <div className="flex flex-row gap-6 items-center">
-          
-          <Button isTransparent={true}><Link to={"/login"}>Log In</Link></Button>
-          <Button><Link to="/signup">Sign Up</Link></Button>
-          
-        </div>
-      )}
-      
-      {
+        {
         shareRequired && (
           <Button isTransparent><UserPlus size={20}/> Share  </Button>
         )
       }
-      {
-        user!=="" && (
+        {authRequired && (
+          (session===undefined || session===null) ?
+          (<div className="flex flex-row gap-6 items-center">
+          
+          <Button isTransparent={true}><Link to={"/login"}>Log In</Link></Button>
+          <Button><Link to="/signup">Sign Up</Link></Button>
+        </div>) : (
           <div className='text-white flex  gap-2 items-center'>
              <CircleUserRound size={24} />
              <span>{userId}</span>
           </div>
         )
-      }
+        
+      )}
+      
+      
+      
       </div>
       
       
