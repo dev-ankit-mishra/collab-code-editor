@@ -3,7 +3,6 @@ import type { Session } from "@supabase/supabase-js";
 export type NavbarProp={
   authRequired?:boolean,
   shareRequired?:boolean,
-  user?:string,
   projectName?:string
 }
 
@@ -17,7 +16,7 @@ export type Language={ label: string; version: string; boilerplate: string }
 export type ProjectDetails={
   _id?: string;
   projectName:string,
-  username:string,
+  userId:string,
   code:string,
   template:Language,
   createdAt?:Date,
