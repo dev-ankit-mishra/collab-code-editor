@@ -2,11 +2,34 @@ import type {RecentCardProps } from "./Types";
 import { formatDistanceToNow  } from "date-fns";
 import {useNavigate} from "react-router-dom"
 import { Code, User, Clock,Ellipsis } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 
 
 export default function RecentCard({ project }: RecentCardProps) {
   const navigate=useNavigate()
+  const[showOptionId,setShowOptionId]=useState<string | undefined>(undefined)
+  const {session}=useAuth()
+
+  async function handleClick(_id:string|undefined){
+    if(!_id){
+      return
+    }
+    try{
+      const res=await fetch(`https://codevspace-aqhw.onrender.com/api/${session?.user?.id}/${_id}`,{method:"DELETE"})
+       const data=await res.json()
+
+      if(!data){
+        throw new Error("Could not Delete")
+       }
+       console.log("Deleted Successfully")
+    }catch (err){
+      console.log(err)
+    }
+    
+  }
+
   return (
     <>
       {project.map((p) => (
@@ -16,17 +39,27 @@ export default function RecentCard({ project }: RecentCardProps) {
   onClick={() => navigate(`/editor/${p._id}`)}
 >
   {/* Top Section */}
-  <div className="flex items-center justify-between">
+  <div className="relative flex items-center justify-between">
     <span className="text-lg font-semibold text-white">{p.projectName}</span>
-    <button
+    <div>
+        <button
       className="text-gray-400 hover:text-white cursor-pointer"
       onClick={(e) => {
         e.stopPropagation();
-        // open dropdown menu logic
+        setShowOptionId(prev=>prev===p._id? undefined : p._id);
       }}
     >
       <Ellipsis size={16} />
     </button>
+    {showOptionId===p._id && (
+        <div className="absolute top-full mt-0.5 w-20 bg-neutral-900 rounded shadow">
+          <ul className="p-1">
+            <li onClick={()=>handleClick(p._id)} className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Delete</li>
+          </ul>
+        </div>
+    )}
+    </div>
+    
   </div>
 
   {/* Metadata */}
