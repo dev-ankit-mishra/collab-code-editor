@@ -6,43 +6,57 @@ import { useParams, useLocation } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
 import { useAuth } from "../context/AuthContext";
 
+interface LocationState {
+  projectObject?: ProjectDetails;
+}
+
 export default function CodeEditor() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
+  const state = location.state as LocationState | null;
   const [project, setProject] = useState<ProjectDetails | null>(null);
-  const auth=useAuth()
-  const session=auth?.session
+  const { session } = useAuth();
+  const userId = session?.user?.id;
 
   useEffect(() => {
-    if (!location.state?.projectObject) {
-      const fetchByProject = async () => {
-        try {
-          const res = await fetch(
-            `https://codevspace-aqhw.onrender.com/api/projects/${id}`
-          );
-          if (!res.ok) {
-            const errMsg = await res.text();
-            throw new Error(`Fetch failed: ${res.status} - ${errMsg}`);
-          }
-          const data = await res.json();
-          setProject(data);
-        } catch (err) {
-          console.error("❌ Failed to load project code:", err);
-        }
-      };
+    // Only fetch if no state is passed
+    const fetchByProject = async () => {
+      if (!userId || !id) return;
 
-      fetchByProject();
+      try {
+        const res = await fetch(
+          `https://codevspace-aqhw.onrender.com/api/projects/${userId}/${id}`
+        );
+
+        if (!res.ok) {
+          const errMsg = await res.text();
+          throw new Error(`Fetch failed: ${res.status} - ${errMsg}`);
+        }
+
+        const data: ProjectDetails = await res.json();
+        setProject(data);
+      } catch (err) {
+        console.error("❌ Failed to load project code:", err);
+      }
+    };
+
+    if (state?.projectObject) {
+      setProject(state.projectObject);
     } else {
-      setProject(location.state.projectObject);
+      fetchByProject();
     }
-  }, [id, location.state]);
+  }, [id, state?.projectObject, userId]);
 
   return (
     <section className="w-full h-screen flex flex-col bg-gradient-to-br from-neutral-950 via-neutral-800 to-neutral-950 text-white">
       <NavBar
         shareRequired
-        user={session?.user?.email}
-        projectName={project?.projectName + "  /  " + project?.template?.label}
+        authRequired
+        projectName={
+          project
+            ? `${project.projectName} / ${project.template?.label || "No Label"}`
+            : ""
+        }
       />
       <main className="w-full h-full flex-1 flex">
         <SideBar />
