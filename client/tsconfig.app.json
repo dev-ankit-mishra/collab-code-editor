@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "supabase-client.ts"]
+  "include": ["src", "vite-env.d.ts", "src/supabase-client.ts"]
 }
