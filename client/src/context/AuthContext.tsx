@@ -22,7 +22,7 @@ export default function AuthContextProvider({ children }: { children: React.Reac
 
     getInitialState();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event : unknown, session:Session | null) => {
       setSession(session);
       console.log("Session Changed");
     });
