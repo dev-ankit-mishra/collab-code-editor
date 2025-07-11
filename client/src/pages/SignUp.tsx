@@ -5,7 +5,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import {Link,useNavigate} from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 export default function SignUp() {
@@ -15,58 +15,50 @@ export default function SignUp() {
 
   const [error,setError]=useState<string | null>(null)
 
-  const[userId,setUserId]=useState<string | null>(null)
-  const [name, setName] = useState<string | null>(null);
 
 
-  async function handleSignUp(e : FormEvent<HTMLFormElement>){
-      e.preventDefault()
-      const formData=new FormData(e.currentTarget)
-      const name=formData.get("name") as string
-      const email=formData.get("email") as string
-      const password=formData.get("password") as string
-      try{
-        const {success,data,error}=await signUpUser!(email,password)
-        if(error){
-          throw new Error(error);
-        }
-        if(success && data?.session){
-          setUserId(data.session?.user?.id)
-          setName(name)
-        }
-      }catch (err){
-        setError("Something went wrong.")
-        console.log(err)
-      }
-  }
+async function handleSignUp(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+  const formData = new FormData(e.currentTarget);
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
+  try {
+    const { success, data, error } = await signUpUser!(email, password);
+    if (error) {
+      throw new Error(error);
+    }
 
-useEffect(() => {
-  const createNewUser = async () => {
-    try {
-      const res = await fetch("https://codevspace-aqhw.onrender.com/api/create-user", {
+    if (success && data?.session) {
+      const userId = data.session.user.id;
+
+      // Create user immediately after signup
+      const res = await fetch("https://codevspace-aqhw.onrender.com/api/users/create-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          userId: userId,
-          userName: name
+          userId,
+          userName: name,
+          userEmail:email
         })
       });
 
-      const data = await res.json();
-      console.log(data);
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
-      console.error("Error creating user:", err);
-    }
-  };
+      const responseData = await res.json();
+      console.log("User creation response:", responseData);
 
-  if (userId && name) {
-    createNewUser(); 
+      if (!res.ok) throw new Error(responseData.message || "Failed to create user");
+
+      navigate("/dashboard", { replace: true });
+    }
+  } catch (err) {
+    setError("Something went wrong.");
+    console.error("Signup error:", err);
   }
-}, [userId]);
+}
+
 
 
 
