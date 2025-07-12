@@ -2,9 +2,29 @@ import { ArrowRight } from 'lucide-react';
 import NavBar from '../components/NavBar';
 import Button from "../components/Button"
 import Footer from '../components/Footer';
-import {Link} from "react-router-dom"
+import {useNavigate} from "react-router-dom"
+import { useAuth } from '../context/AuthContext';
 
 export default function HomePage(){
+  const {session}=useAuth()
+  const navigate=useNavigate()
+
+  function tryEditorBtn(){
+    if(session){
+      navigate("/dashboard")
+    }else{
+      navigate("/signup")
+    }
+  }
+
+  function getStartedBtn(){
+    if(session){
+      navigate("/dashboard")
+    }else{
+      navigate("/signup")
+    }
+  }
+
   return(
     <section className="w-full min-h-screen flex flex-col text-white ">
       <NavBar authRequired={true}/>
@@ -13,8 +33,8 @@ export default function HomePage(){
         <p className="text-center max-w-xl mb-8 tracking-wide leading-relaxed">Write, edit and share code in real-time with your team. No setup required just open the editor and start coding.</p>
         <div className="flex gap-6">
           
-          <Button className='px-6 py-3'><Link to={"/editor"}>Try Live Editor</Link></Button>
-          <Button isTransparent={true} className='px-6 py-3'><Link to={"/login"} className='flex gap-2'>Get Started  <ArrowRight/></Link></Button>
+          <Button className='px-4 py-2 text-gray-300' onClick={tryEditorBtn}>Try Live Editor</Button>
+          <Button isTransparent={true} className='px-4 py-2' onClick={getStartedBtn}>Get Started  <ArrowRight size={20}/></Button>
         </div>
       </main>
       <Footer/>
