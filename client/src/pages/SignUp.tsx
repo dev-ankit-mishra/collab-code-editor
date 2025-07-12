@@ -5,7 +5,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import {Link,useNavigate} from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import type { FormEvent } from "react";
 
 export default function SignUp() {
@@ -14,11 +14,20 @@ export default function SignUp() {
   const navigate=useNavigate()
 
   const [error,setError]=useState<string | null>(null)
+  const [loading,setLoading] = useState<boolean>(false)
+
+   useEffect(() => {
+        if (error) {
+          const timer = setTimeout(() => setError(null), 5000);
+          return () => clearTimeout(timer);
+        }
+      }, [error]);
 
 
 
 async function handleSignUp(e: FormEvent<HTMLFormElement>) {
   e.preventDefault();
+  setLoading(true)
   const formData = new FormData(e.currentTarget);
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
@@ -27,6 +36,7 @@ async function handleSignUp(e: FormEvent<HTMLFormElement>) {
   try {
     const { success, data, error } = await signUpUser!(email, password);
     if (error) {
+      setError(error)
       throw new Error(error);
     }
 
@@ -49,22 +59,19 @@ async function handleSignUp(e: FormEvent<HTMLFormElement>) {
       const responseData = await res.json();
       console.log("User creation response:", responseData);
 
-      if (!res.ok) throw new Error(responseData.message || "Failed to create user");
+      if (!res.ok){
+        setError(responseData.message || "Failed to create user")
+        throw new Error(responseData.message || "Failed to create user");
+      } 
 
       navigate("/dashboard", { replace: true });
+      setLoading(false)
     }
   } catch (err) {
-    setError("Something went wrong.");
     console.error("Signup error:", err);
+    setLoading(false)
   }
 }
-
-
-
-
-
-
-
 
   return (
     <section className="w-full h-screen flex flex-col ">
@@ -78,47 +85,51 @@ async function handleSignUp(e: FormEvent<HTMLFormElement>) {
             Start coding together — join projects, connect with your team, and
             build collaboratively.
           </p>
-          <form onSubmit={handleSignUp} className="flex flex-col gap-5">
+          <form onSubmit={handleSignUp} className="flex flex-col gap-4">
             <div>
-              <label className="block pb-1">Full Name</label>
+              <label htmlFor="name" className="block pb-1">Full Name</label>
               <Input
+                id="name"
                 name="name"
                 type="text"
                 placeholder="John Smith"
               />
             </div>
             <div>
-              <label className="block pb-1">Email</label>
+              <label htmlFor="email" className="block pb-1">Email</label>
               <Input
+                id="email"
                 name="email"
                 type="email"
                 placeholder="you@email.com"
               />
             </div>
             <div>
-              <label className="block pb-1">Password</label>
+              <label htmlFor="password" className="block pb-1">Password</label>
               <Input
+                id="password"
                 name="password"
                 type="password"
                 placeholder="••••••••"
               />
             </div>
-            <Button type="submit" className="mt-4">
-              Sign Up
+            <Button type="submit" disabled={loading}
+             className="mt-4">
+              {loading ?"Signing up" :"Sign up"}
             </Button>
             {
-              error && <p className="text-red-500">{error}</p>
+              error && <p className="text-red-500 pt-2 text-center">{error}</p>
             }
           </form>
           <p className="text-center mt-4">
             Already have an account? <Link to={"/login"} className="text-blue-500 hover:text-blue-600 underline">Log in</Link>
           </p>
           <div className="flex gap-2 justify-between mt-4">
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-sm flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
+            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
               <FcGoogle size={18} />
               Continue with google
             </button>
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-sm flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
+            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
               <SiGithub size={18} />
               Continue with github
             </button>
