@@ -4,7 +4,7 @@ import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent,useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function LogIn() {
@@ -12,10 +12,18 @@ export default function LogIn() {
   const navigate = useNavigate();
 
   const [error, setError] = useState<string | null>(null);
+  const [loading,setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+      if (error) {
+        const timer = setTimeout(() => setError(null), 5000);
+        return () => clearTimeout(timer);
+      }
+    }, [error]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true)
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
@@ -24,6 +32,7 @@ export default function LogIn() {
       const { success, data, error } = await signInUser(email, password);
 
       if (!success || !data?.session?.user?.id) {
+        setError(error || "Login failed")
         throw new Error(error || "Login failed");
       }
 
@@ -34,16 +43,18 @@ export default function LogIn() {
       const result = await res.json();
 
       if (res.status === 404 || !result?.data) {
+        setError("User not found in database.")
         throw new Error("User not found in database.");
       }
 
       // Success — user exists, proceed
       console.log("User data:", result.data);
       navigate("/dashboard", { replace: true });
+      setLoading(false)
 
     } catch (err) {
       console.error("Login error:", err);
-      setError("Invalid credentials or user not registered.");
+      setLoading(false)
     }
   };
 
@@ -57,36 +68,36 @@ export default function LogIn() {
             Access your projects, join your team, and start coding together.
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label htmlFor="email" className="block text-sm text-gray-300 mb-1">Email</label>
-              <Input name="email" type="email" placeholder="you@example.com" />
+              <Input id="email" name="email" type="email" placeholder="you@example.com" />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm text-gray-300 mb-1">Password</label>
-              <Input name="password" type="password" placeholder="••••••••" />
+              <Input id="password" name="password" type="password" placeholder="••••••••" />
             </div>
 
-            <Button type="submit" className="mt-4">Submit</Button>
+            <Button type="submit" disabled={loading} className="mt-4">{loading?"Logging...":"Log in"}</Button>
           </form>
 
-          {error && <p className="text-red-500 py-2">{error}</p>}
+          {error && <p className="text-red-500 pt-4 text-center">{error}</p>}
 
-          <a className="text-blue-500 hover:text-blue-400 text-sm cursor-pointer underline block text-center pt-6">
+          <a className="text-blue-500 hover:text-blue-400 text-sm cursor-pointer underline block text-center mt-4">
             Forgot Password?
           </a>
 
-          <div className="flex gap-2 justify-between mt-6">
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-sm flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
+          <div className="flex gap-2 justify-between mt-4">
+            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
               <FcGoogle size={18} /> Continue with Google
             </button>
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-sm flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
+            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
               <SiGithub size={18} /> Continue with GitHub
             </button>
           </div>
 
-          <p className="text-sm text-center mt-6 text-gray-300">
+          <p className="text-sm text-center mt-4 text-gray-300">
             New to CoDevSpace? <Link to="/signup" className="text-blue-500 underline hover:text-blue-400 cursor-pointer">Sign up</Link>
           </p>
         </div>
