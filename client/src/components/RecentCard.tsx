@@ -3,7 +3,7 @@ import { formatDistanceToNow  } from "date-fns";
 import {useNavigate} from "react-router-dom"
 import { Code, User, Clock,Ellipsis } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 
 
