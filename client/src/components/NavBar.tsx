@@ -1,7 +1,7 @@
 import { CircleUserRound,UserPlus,FolderOpen } from 'lucide-react';
 import Button from './Button';
 import {Link} from "react-router-dom"
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/useAuth" ;
 import  Logo  from '../assets/default.svg?react';
 
 import type { NavbarProp } from './Types';
