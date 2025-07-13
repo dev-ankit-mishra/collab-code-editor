@@ -3,7 +3,7 @@ import { PlusCircle, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { language } from "./languages";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 import type { ModalProps, ProjectDetails } from "./Types";
 
