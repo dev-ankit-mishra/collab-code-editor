@@ -42,5 +42,8 @@ export type AuthContextType ={
   session: Session | null | undefined;
   signInUser: (email: string, password: string) => Promise<{ success: boolean; error?: string; data?: any }>;
   signOutUser: () => Promise<{ success: boolean; error?: string }>;
-  signUpUser: (email:string,password:string)=>Promise<{success:boolean,error?:string,data?:any}>;
+  signUpUser: (name:string,email:string,password:string)=>Promise<{success:boolean,error?:string,data?:any}>;
+  signInWithGoogle:()=>Promise<{success:boolean,error?:string}>;
+  signInWithGithub:()=>Promise<{success:boolean,error?:string}>;
+
 }
