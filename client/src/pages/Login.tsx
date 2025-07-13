@@ -5,10 +5,10 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent,useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 export default function LogIn() {
-  const { signInUser } = useAuth();
+  const { signInUser,signInWithGithub,signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [error, setError] = useState<string | null>(null);
@@ -36,27 +36,49 @@ export default function LogIn() {
         throw new Error(error || "Login failed");
       }
 
-      const userId = data.session.user.id;
-
-      // Fetch user data from your backend (do NOT create user)
-      const res = await fetch(`https://codevspace-aqhw.onrender.com/api/users/${userId}`);
-      const result = await res.json();
-
-      if (res.status === 404 || !result?.data) {
-        setError("User not found in database.")
-        throw new Error("User not found in database.");
-      }
-
-      // Success — user exists, proceed
-      console.log("User data:", result.data);
       navigate("/dashboard", { replace: true });
-      setLoading(false)
 
     } catch (err) {
       console.error("Login error:", err);
-      setLoading(false)
+    
     }
+    finally {
+    setLoading(false);
+  }
   };
+
+  async function handleGoogleClick() {
+  setLoading(true);
+  try {
+    const login = await signInWithGoogle();
+    if (login.error) {
+      setError(login.error);
+      throw new Error(login.error);
+    }
+
+  } catch (err) {
+    console.log(err);
+    setError("Google login failed."); 
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function handleGithubClick() {
+  setLoading(true);
+  try {
+    const login = await signInWithGithub();
+    if (login.error) {
+      setError(login.error);
+      throw new Error(login.error);
+    }
+  } catch (err) {
+    console.log(err);
+    setError("GitHub login failed."); 
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <section className="w-full h-screen flex flex-col">
@@ -89,10 +111,10 @@ export default function LogIn() {
           </a>
 
           <div className="flex gap-2 justify-between mt-4">
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
+            <button onClick={handleGoogleClick} className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
               <FcGoogle size={18} /> Continue with Google
             </button>
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
+            <button onClick={handleGithubClick} className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
               <SiGithub size={18} /> Continue with GitHub
             </button>
           </div>
