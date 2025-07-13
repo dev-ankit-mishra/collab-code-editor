@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Button from "./Button";
 import {NavLink,useNavigate} from "react-router-dom"
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { useState,useEffect } from "react";
 
 export default function Menu(){
