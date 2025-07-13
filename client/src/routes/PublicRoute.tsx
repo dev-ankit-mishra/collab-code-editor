@@ -1,6 +1,6 @@
 // routes/PublicRoute.tsx
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 export default function PublicRoute({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
