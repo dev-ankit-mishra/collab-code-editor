@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Modals from "../components/Modals";
 import type { ProjectDetails } from "../components/Types";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth"
 import Menu from "../components/Menu";
 import { Outlet } from "react-router-dom";
 
