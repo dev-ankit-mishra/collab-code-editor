@@ -9,7 +9,7 @@ import { Save } from "lucide-react";
 import type { codeAreaProps } from './Types';
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from 'date-fns';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function CodeArea({ projectObject }: codeAreaProps) {
   const [value, setValue] = useState<string>(
