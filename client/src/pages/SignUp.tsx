@@ -4,13 +4,13 @@ import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import {Link,useNavigate} from "react-router-dom"
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { useState,useEffect } from "react";
 import type { FormEvent } from "react";
 
 export default function SignUp() {
 
-  const {signUpUser}=useAuth()
+  const {signUpUser,signInWithGithub,signInWithGoogle}=useAuth()
   const navigate=useNavigate()
 
   const [error,setError]=useState<string | null>(null)
@@ -34,44 +34,58 @@ async function handleSignUp(e: FormEvent<HTMLFormElement>) {
   const password = formData.get("password") as string;
 
   try {
-    const { success, data, error } = await signUpUser!(email, password);
+    const { success, data, error } = await signUpUser!(name, email, password);
     if (error) {
       setError(error)
       throw new Error(error);
     }
 
     if (success && data?.session) {
-      const userId = data.session.user.id;
-
-      // Create user immediately after signup
-      const res = await fetch("https://codevspace-aqhw.onrender.com/api/users/create-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          userId,
-          userName: name,
-          userEmail:email
-        })
-      });
-
-      const responseData = await res.json();
-      console.log("User creation response:", responseData);
-
-      if (!res.ok){
-        setError(responseData.message || "Failed to create user")
-        throw new Error(responseData.message || "Failed to create user");
-      } 
-
       navigate("/dashboard", { replace: true });
-      setLoading(false)
+
     }
   } catch (err) {
     console.error("Signup error:", err);
-    setLoading(false)
+
+  }
+  finally {
+  setLoading(false);
+}
+}
+async function handleGoogleClick() {
+  setLoading(true);
+  try {
+    const login = await signInWithGoogle();
+    if (login.error) {
+      setError(login.error);
+      throw new Error(login.error);
+    }
+
+  } catch (err) {
+    console.log(err);
+    setError("Google login failed."); 
+  } finally {
+    setLoading(false);
   }
 }
+
+async function handleGithubClick() {
+  setLoading(true);
+  try {
+    const login = await signInWithGithub();
+    if (login.error) {
+      setError(login.error);
+      throw new Error(login.error);
+    }
+  } catch (err) {
+    console.log(err);
+    setError("GitHub login failed."); 
+  } finally {
+    setLoading(false);
+  }
+}
+
+
 
   return (
     <section className="w-full h-screen flex flex-col ">
@@ -125,11 +139,11 @@ async function handleSignUp(e: FormEvent<HTMLFormElement>) {
             Already have an account? <Link to={"/login"} className="text-blue-500 hover:text-blue-600 underline">Log in</Link>
           </p>
           <div className="flex gap-2 justify-between mt-4">
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
+            <button onClick={handleGoogleClick} className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
               <FcGoogle size={18} />
               Continue with google
             </button>
-            <button className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
+            <button onClick={handleGithubClick} className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:scale-102 hover:bg-gray-900 transition-all duration-200 cursor-pointer">
               <SiGithub size={18} />
               Continue with github
             </button>
