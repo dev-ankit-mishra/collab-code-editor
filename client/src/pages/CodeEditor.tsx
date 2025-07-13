@@ -4,7 +4,7 @@ import SideBar from "../components/SideBar";
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 interface LocationState {
   projectObject?: ProjectDetails;
