@@ -3,7 +3,7 @@ import NavBar from '../components/NavBar';
 import Button from "../components/Button"
 import Footer from '../components/Footer';
 import {useNavigate} from "react-router-dom"
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 export default function HomePage(){
   const {session}=useAuth()
