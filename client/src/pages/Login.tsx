@@ -106,9 +106,9 @@ async function handleGithubClick() {
 
           {error && <p className="text-red-500 pt-4 text-center">{error}</p>}
 
-          <a className="text-blue-500 hover:text-blue-400 text-sm cursor-pointer underline block text-center mt-4">
+          <Link to={"/forgotpassword"} className="text-blue-500 hover:text-blue-400 text-sm cursor-pointer underline block text-center mt-4">
             Forgot Password?
-          </a>
+          </Link>
 
           <div className="flex gap-2 justify-between mt-4">
             <button onClick={handleGoogleClick} className="rounded-md bg-gray-800 text-gray-300 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900 transition-all duration-200 hover:scale-102 cursor-pointer">
