@@ -9,7 +9,7 @@ import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import SplashScreen from "./components/SplashScreen";
 import ForgotPassword from "./pages/ForgotPassword";
-import ConfirmPassword from "./pages/ConfirmPassword";
+import ConfirmPassword from "./pages/ResetPassword";
 
 // Lazy load only heavy components
 const Dashboard = lazy(() => import("./pages/Dashboard"));
