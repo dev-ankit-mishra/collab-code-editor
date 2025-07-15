@@ -8,6 +8,8 @@ import NotFoundPage from "./pages/NotFound";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import SplashScreen from "./components/SplashScreen";
+import ForgotPassword from "./pages/ForgotPassword";
+import ConfirmPassword from "./pages/ConfirmPassword";
 
 // Lazy load only heavy components
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -35,6 +37,24 @@ export default function App() {
           element={
             <PublicRoute>
               <SignUp />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/forgotpassword"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/confirmpassword"
+          element={
+            <PublicRoute>
+              <ConfirmPassword />
             </PublicRoute>
           }
         />
