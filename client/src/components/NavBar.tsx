@@ -3,9 +3,10 @@ import Button from './Button';
 import {Link} from "react-router-dom"
 import { useAuth } from "../context/useAuth" ;
 import  Logo  from '../assets/default.svg?react';
+import {useNavigate } from 'react-router-dom';
 
 import type { NavbarProp } from './Types';
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useRef } from 'react';
 
 export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
 
@@ -16,6 +17,34 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
   const [isOpen,setIsOpen]=useState(false)
   const {session}=useAuth()
   const userId=session?.user?.email?.split("@")[0]
+  const navigate=useNavigate()
+
+  const dropDownRef=useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+  function handleOutside(event: MouseEvent) {
+    if (dropDownRef.current && !dropDownRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  }
+
+  function handleEsc(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      setIsOpen(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleOutside);
+  document.addEventListener("keydown", handleEsc);
+
+  return () => {
+    document.removeEventListener("mousedown", handleOutside);
+    document.removeEventListener("keydown", handleEsc);
+  };
+}, [isOpen]);
+
+// Separate useEffect for route change
+
 
 
   
@@ -55,17 +84,23 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
           <Link to={"/login"}><Button isTransparent={true}>Log In</Button></Link>
           <Link to="/signup"><Button>Sign Up</Button></Link>
         </div>) : (
-          <div className='relative flex flex-col'>
+          <div className='relative flex flex-col' ref={dropDownRef}>
             <div onClick={()=>setIsOpen(prev=>!prev)} className=' text-white flex  gap-2 items-center cursor-pointer'>
              <CircleUserRound size={24} />
              <span>{userId}</span>
             </div>
             {isOpen &&
             (
-              <div className='w-fit text-sm p-1 absolute top-full mt-2 rounded bg-neutral-900'>
-                <ul className='p-1'>
-                  <li className='px-3 py-1'>Dashboard</li>
-                  <li className=''>Settings</li>
+              <div className='w-fit  absolute top-full mt-2 rounded bg-neutral-900'>
+                <ul className='p-2'>
+                  <li onClick={()=>{
+                    navigate("/dashboard")
+                    setIsOpen(false)
+                  }} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Dashboard</li>
+                  <li onClick={()=>{
+                    navigate("/settings")
+                    setIsOpen(false)
+                  }} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Settings</li>
                 </ul>
               </div>
             )}

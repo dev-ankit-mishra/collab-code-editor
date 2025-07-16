@@ -12,6 +12,8 @@ export default function RecentCard({ project }: RecentCardProps) {
   const[showOptionId,setShowOptionId]=useState<string | undefined>(undefined)
   const {session}=useAuth()
 
+
+
   async function handleClick(_id:string|undefined){
     if(!_id){
       return
@@ -52,8 +54,8 @@ export default function RecentCard({ project }: RecentCardProps) {
       <Ellipsis size={16} />
     </button>
     {showOptionId===p._id && (
-        <div className="absolute top-full mt-0.5 w-20 bg-neutral-900 rounded shadow">
-          <ul className="p-1">
+        <div className="absolute top-full mt-0.5 w-fit bg-neutral-900 rounded shadow">
+          <ul className="p-2">
             <li  className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Rename</li>
             <li onClick={()=>handleClick(p._id)} className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Delete</li>
           </ul>
