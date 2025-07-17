@@ -106,7 +106,7 @@ async function handleGithubClick() {
 
           {error && <p className="text-red-500 pt-4 text-center">{error}</p>}
 
-          <Link to={"/forgotpassword"} className="text-blue-500 hover:text-blue-400 text-sm cursor-pointer underline block text-center mt-4">
+          <Link to={"/reset-password"} className="text-blue-500 hover:text-blue-400 text-sm cursor-pointer underline block text-center mt-4">
             Forgot Password?
           </Link>
 
