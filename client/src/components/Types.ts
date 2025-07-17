@@ -45,5 +45,7 @@ export type AuthContextType ={
   signUpUser: (name:string,email:string,password:string)=>Promise<{success:boolean,error?:string,data?:any}>;
   signInWithGoogle:()=>Promise<{success:boolean,error?:string}>;
   signInWithGithub:()=>Promise<{success:boolean,error?:string}>;
+  resetPassword:(email:string)=>Promise<{success:boolean,error?:string}>;
+  updateUser:(password:string)=>Promise<{success:boolean,error?:string}>;
 
 }
