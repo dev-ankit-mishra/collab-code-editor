@@ -135,7 +135,7 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword=async (email:string)=>{
     try{
       const {error}=await supabase.auth.resetPasswordForEmail(email,{
-        redirectTo:"https://codevspace/change-password",
+        redirectTo:"https://codevspace.netlify.app/change-password",
       })
       if(error){
         return {success:false,error:error.message}
