@@ -132,6 +132,36 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetPassword=async (email:string)=>{
+    try{
+      const {error}=await supabase.auth.resetPasswordForEmail(email,{
+        redirectTo:"https://codevspace/change-password",
+      })
+      if(error){
+        return {success:false,error:error.message}
+      }
+      return {success:true}
+
+    }catch (err:any){
+      return {success:false,error:err?.message}
+    }
+  }
+
+  const updateUser=async(password:string)=>{
+    try{
+      const {error}=await supabase.auth.updateUser({
+        password:password
+      })
+      if(error){
+        return {success:false,error:error.message}
+      }
+      return {success:true}
+
+    }catch (err: any) {
+    return { success: false, error: err?.message || "Something went wrong." };
+  }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -141,6 +171,8 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
         signUpUser,
         signInWithGoogle,
         signInWithGithub,
+        resetPassword,
+        updateUser
       }}
     >
       {children}
