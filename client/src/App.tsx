@@ -53,9 +53,9 @@ export default function App() {
         <Route
           path="/change-password"
           element={
-            <PublicRoute>
+            <ProtectedRoutes>
               <ChangePassword />
-            </PublicRoute>
+            </ProtectedRoutes> 
           }
         />
 
