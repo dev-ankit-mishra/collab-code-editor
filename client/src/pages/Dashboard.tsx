@@ -6,10 +6,13 @@ import axios from "axios";
 import { useAuth } from "../context/useAuth"
 import Menu from "../components/Menu";
 import { Outlet } from "react-router-dom";
+import SplashScreen from "../components/SplashScreen";
+
 
 export default function Dashboard() {
   const [showModals, setShowModals] = useState(false);
   const [project, setProject] = useState<ProjectDetails[]>([]);
+  const [loading,setLoading] = useState(false);
   const { session } = useAuth();
   const id = session?.user?.id;
 
@@ -17,12 +20,15 @@ export default function Dashboard() {
     if (!id) return;
 
     const fetchProjects = async () => {
+      setLoading(true)
       try {
         const res = await fetch(`https://codevspace-aqhw.onrender.com/api/projects/${id}`);
         const data = await res.json();
         setProject(data);
       } catch (err) {
         console.error("Fetch failed:", err);
+      } finally{
+        setLoading(false)
       }
     };
 
@@ -45,8 +51,9 @@ export default function Dashboard() {
       <NavBar authRequired={true} />
 
       <main className="flex flex-1">
-        <Menu />
-        <Outlet context={{ project, setShowModals }} />
+        <Menu setShowModals={setShowModals} />
+
+        {loading? <SplashScreen/>: <Outlet context={{ project, setShowModals }} />}
       </main>
 
       {showModals && (
