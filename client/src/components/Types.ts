@@ -1,4 +1,14 @@
 import type { Session } from "@supabase/supabase-js";
+import type { IconType } from "react-icons";
+
+export type Language = {
+  label: string;
+  version: string;
+  icon?: IconType;
+  color?: string;
+  boilerplate: string;
+};
+
 
 export type NavbarProp={
   authRequired?:boolean,
@@ -11,7 +21,7 @@ export type ModalProps={
   create: (val:ProjectDetails)=> Promise<string | undefined>; 
 }
 
-export type Language={ label: string; version: string; boilerplate: string }
+
 
 export type ProjectDetails={
   _id?: string;
