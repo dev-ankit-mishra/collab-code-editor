@@ -1,9 +1,10 @@
 import Button from "./Button";
 import { PlusCircle, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import { language } from "./languages";
 import { useAuth } from "../context/useAuth";
+import type { Language } from "./Types";
 
 import type { ModalProps, ProjectDetails } from "./Types";
 
@@ -34,11 +35,17 @@ export default function Modals({ setShowModals, create }: ModalProps) {
       return;
     }
 
+    const langObj={
+      label:lang.label,
+      version:lang.version,
+      boilerplate:lang.boilerplate
+    }
+
     const projectObj: ProjectDetails = {
       projectName,
       userId,
       code: "",
-      template: lang,
+      template: langObj,
     };
 
     try {
@@ -60,13 +67,12 @@ export default function Modals({ setShowModals, create }: ModalProps) {
     }
   }
 
-  function handleLangChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const selectedLabel = e.target.value;
-    const selectedLang = language.find((l) => l.label === selectedLabel);
-    if (selectedLang) {
-      setLang(selectedLang);
-    }
+  function handleLangChange(selectedLang: Language) {
+  console.log("Selected:", selectedLang.label);
+  setLang(selectedLang);
   }
+
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
@@ -90,7 +96,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
           <div className="flex flex-col gap-1.5">
             <h2 className="text-2xl font-semibold mb-4">Create New Project</h2>
 
-            <label htmlFor="project" className="block font-medium">
+            <label htmlFor="project" className="block ">
               Enter Project Name
             </label>
             <input
@@ -99,15 +105,15 @@ export default function Modals({ setShowModals, create }: ModalProps) {
               type="text"
               autoComplete="off"
               placeholder="Project Name"
-              className="py-1 px-3 border border-white/10 bg-gray-800 text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+              className="py-1 px-3 bg-gray-900 text-white placeholder-gray-400 border border-white/20 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
               required
               disabled={loading}
             />
 
-            <label htmlFor="template" className="block font-medium mt-5">
+            <label htmlFor="template" className="block  mt-5">
               Select Template
             </label>
-            <select
+            {/* <select
               id="template"
               className="px-3 py-1 rounded bg-gray-800 border border-white/10 text-gray-100"
               value={lang.label}
@@ -119,10 +125,35 @@ export default function Modals({ setShowModals, create }: ModalProps) {
                   {lang.label}
                 </option>
               ))}
-            </select>
+            </select> */}
+            <div className="grid grid-cols-3 gap-12 gap-x-16 py-8 p-6">
+              {
+                language.map((item)=>{
+                  const Icon=item.icon
+
+                  if(Icon){
+                    return(
+                    <div key={item.label} className="flex flex-col items-center justify-center gap-2">
+                      <div onClick={()=>handleLangChange(item)} className={`p-2 rounded cursor-pointer border transition-all duration-200
+                      ${lang.label === item.label
+                      ? "border-blue-400 bg-blue-900/30 shadow-[0_0_0_2px_#3b82f6]"
+                    : "hover:bg-neutral-800 border-white/20"}`}
+                        >
+                        <Icon size={28} className={item.color}/>
+                      </div>
+                      <p className="text-xs text-gray-200">{item.label}</p>
+                    </div>
+                  )
+                  }
+                
+                  
+                })
+              }
+
+            </div>
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full block mt-8">
+          <Button type="submit" disabled={loading} className="w-full block">
             <PlusCircle size={18} /> {loading ? "Creating..." : "Create"}
           </Button>
 
