@@ -49,3 +49,7 @@ export type AuthContextType ={
   updateUser:(password:string)=>Promise<{success:boolean,error?:string}>;
 
 }
+
+export type MenuProps={
+  setShowModals:(val:boolean)=>void
+}
