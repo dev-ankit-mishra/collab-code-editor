@@ -5,11 +5,12 @@ import { useState } from "react"
 import { useAuth } from "../context/useAuth"
 
 
-export default function ForgotPassword(){
+export default function ResetPassword(){
 
   const [loading,setLoading]=useState(false)
   const [error,setError]=useState()
   const {resetPassword}=useAuth()
+  const [success,setSuccess]=useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
@@ -24,7 +25,7 @@ export default function ForgotPassword(){
     if (data?.error) {
       throw new Error(data.error);
     }
-
+    setSuccess(true);
   } catch (err: any) {
     setError(err?.message || "An unexpected error occurred.");
     console.error(err);
@@ -52,7 +53,14 @@ export default function ForgotPassword(){
             <Button type="submit" disabled={loading} className="mt-4">{loading?"Submitting...":"Submit"}</Button>
           </form>
 
-          {error && <p className="text-red-500 pt-4 text-center">{error}</p>}
+          {}
+          {success && (
+              <p className="text-green-500 font-medium pt-4 text-center">
+               Password reset link sent successfully. Please check your email.
+              </p>
+              )}
+
+          {error && <p className="text-red-500 pt-4 font-medium text-center">{error}</p>}
           
         </div>
       </main>
