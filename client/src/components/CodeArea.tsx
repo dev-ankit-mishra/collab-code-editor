@@ -85,8 +85,9 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
     <main className="w-full h-full flex items-center justify-between gap-1 px-1">
       <div className="w-[56rem] flex flex-col p-4 gap-4">
         <div className="flex items-center gap-4">
-          <Button className="w-fit" onClick={handleSaveBtn} disabled={saving}>
-            <Save size={18} /> {saving ? "Saving..." : "Save"}
+          <Button className="w-20 h-8" onClick={handleSaveBtn} disabled={saving}>
+            {saving ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) : (<><Save size={18} /> Save</>)}
+
           </Button>
           <p className="text-gray-300 text-base">
             Last Updated:{" "}
