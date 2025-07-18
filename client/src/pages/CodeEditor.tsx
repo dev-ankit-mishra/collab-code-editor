@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
 import { useAuth } from "../context/useAuth";
+import SplashScreen from "../components/SplashScreen";
+
 
 interface LocationState {
   projectObject?: ProjectDetails;
@@ -64,7 +66,7 @@ export default function CodeEditor() {
           {project ? (
             <CodeArea projectObject={project} />
           ) : (
-            <div className="text-center p-8 text-white">Loading project...</div>
+            <SplashScreen/>
           )}
         </div>
       </main>
