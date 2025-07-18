@@ -12,8 +12,9 @@ import Button from "./Button";
 import {NavLink,useNavigate} from "react-router-dom"
 import { useAuth } from "../context/useAuth";
 import { useState,useEffect } from "react";
+import type { MenuProps } from "./Types";
 
-export default function Menu(){
+export default function Menu({setShowModals}:MenuProps){
 
   const [error,setError] =useState<string | undefined>(undefined)
   const [loading,setLoading]=useState(false)
@@ -63,7 +64,7 @@ export default function Menu(){
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
                 <Users size={18} /> Share with me
               </li>
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
+              <li onClick={()=>setShowModals(true)} className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
                 <FileStack size={18} /> Templates
               </li>
               
