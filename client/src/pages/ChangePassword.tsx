@@ -3,11 +3,15 @@ import Input from "../components/Input";
 import NavBar from "../components/NavBar";
 import { useState } from "react";
 import { useAuth } from "../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
-export default function ConfirmPassword() {
+
+export default function ChangePassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const {updateUser}=useAuth()
+  const navigate=useNavigate()
+
 
   async function handleSubmit(e:React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -28,7 +32,7 @@ export default function ConfirmPassword() {
         throw new Error(data.error)
       }
 
-      
+      navigate("/dashboard");
 
     }catch (err:any){
       setError(err?.message || "Something Went wrong")
