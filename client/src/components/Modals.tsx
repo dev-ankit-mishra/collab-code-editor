@@ -13,6 +13,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
   const [lang, setLang] = useState(language[0]);
   const { session } = useAuth();
   const userId = session?.user?.id;
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isError) {
@@ -22,12 +23,14 @@ export default function Modals({ setShowModals, create }: ModalProps) {
   }, [isError]);
 
   async function actionFunction(formData: FormData) {
+    setLoading(true);
     const projectRawValue = formData.get("project");
     const projectName =
       typeof projectRawValue === "string" ? projectRawValue.trim() : "";
 
     if (!projectName || !userId) {
       setIsError(true);
+      setLoading(false);
       return;
     }
 
@@ -52,6 +55,8 @@ export default function Modals({ setShowModals, create }: ModalProps) {
       }
     } catch (err) {
       setIsError(true);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -74,7 +79,14 @@ export default function Modals({ setShowModals, create }: ModalProps) {
           <X size={18} />
         </button>
 
-        <form className="space-y-2" action={actionFunction}>
+        <form
+          className="space-y-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            actionFunction(formData);
+          }}
+        >
           <div className="flex flex-col gap-1.5">
             <h2 className="text-2xl font-semibold mb-4">Create New Project</h2>
 
@@ -89,6 +101,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
               placeholder="Project Name"
               className="py-1 px-3 border border-white/10 bg-gray-800 text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
               required
+              disabled={loading}
             />
 
             <label htmlFor="template" className="block font-medium mt-5">
@@ -99,6 +112,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
               className="px-3 py-1 rounded bg-gray-800 border border-white/10 text-gray-100"
               value={lang.label}
               onChange={handleLangChange}
+              disabled={loading}
             >
               {language.map((lang) => (
                 <option key={lang.label} value={lang.label}>
@@ -108,8 +122,8 @@ export default function Modals({ setShowModals, create }: ModalProps) {
             </select>
           </div>
 
-          <Button type="submit" className="w-full block mt-8">
-            <PlusCircle size={18} /> Create
+          <Button type="submit" disabled={loading} className="w-full block mt-8">
+            <PlusCircle size={18} /> {loading ? "Creating..." : "Create"}
           </Button>
 
           {isError && (
