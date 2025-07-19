@@ -74,8 +74,8 @@ export default function Menu({setShowModals}:MenuProps){
             </ul>
           
           <div className="mb-4 w-full">
-              <Button className="mx-8 w-36" isTransparent={true} disabled={loading} onClick={handleSignOut} ><LogOut size={18} />
-              {loading ? "Signing out" :"Sign out"}</Button>
+              <Button className="mx-8 w-36 h-8" isTransparent={true} disabled={loading} onClick={handleSignOut} >
+              {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) :<><LogOut size={18} /> Sign out</>}</Button>
               {error!=undefined && (
                 <p className="pt-2 text-center text-sm text-red-500">Error Occured</p>
                 )}
