@@ -101,7 +101,7 @@ async function handleGithubClick() {
               <Input id="password" name="password" type="password" placeholder="••••••••" />
             </div>
 
-            <Button type="submit" disabled={loading} className="mt-4">{loading?"Logging...":"Log in"}</Button>
+            <Button type="submit" disabled={loading} className="mt-4 h-8">{loading?(<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>):"Log in"}</Button>
           </form>
 
           {error && <p className="text-red-500 pt-4 text-center">{error}</p>}
