@@ -128,7 +128,7 @@ async function handleGithubClick() {
               />
             </div>
             <Button type="submit" disabled={loading}
-             className="mt-4">
+             className="mt-4 h-8">
               {loading ?(<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) :"Sign up"}
             </Button>
             {
