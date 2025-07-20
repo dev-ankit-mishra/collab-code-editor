@@ -129,7 +129,7 @@ async function handleGithubClick() {
             </div>
             <Button type="submit" disabled={loading}
              className="mt-4">
-              {loading ?"Signing up" :"Sign up"}
+              {loading ?(<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) :"Sign up"}
             </Button>
             {
               error && <p className="text-red-500 pt-2 text-center">{error}</p>
