@@ -5,7 +5,6 @@ import { useState, useEffect} from "react";
 import { language } from "./languages";
 import { useAuth } from "../context/useAuth";
 import type { Language } from "./Types";
-
 import type { ModalProps, ProjectDetails } from "./Types";
 
 export default function Modals({ setShowModals, create }: ModalProps) {
@@ -113,19 +112,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
             <label htmlFor="template" className="block  mt-5">
               Select Template
             </label>
-            {/* <select
-              id="template"
-              className="px-3 py-1 rounded bg-gray-800 border border-white/10 text-gray-100"
-              value={lang.label}
-              onChange={handleLangChange}
-              disabled={loading}
-            >
-              {language.map((lang) => (
-                <option key={lang.label} value={lang.label}>
-                  {lang.label}
-                </option>
-              ))}
-            </select> */}
+            
             <div className="grid grid-cols-3 gap-12 gap-x-16 py-8 p-6">
               {
                 language.map((item)=>{
