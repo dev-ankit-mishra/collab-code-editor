@@ -4,18 +4,16 @@ import {Link} from "react-router-dom"
 import { useAuth } from "../context/useAuth" ;
 import  Logo  from '../assets/default.svg?react';
 import {useNavigate } from 'react-router-dom';
+import ShareModal from "./shareModal";
 
 import type { NavbarProp } from './Types';
 import { useState,useEffect,useRef } from 'react';
 
 export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
 
-  useEffect(()=>{
-
-  },[])
-
   const [isOpen,setIsOpen]=useState(false)
   const {session}=useAuth()
+  const [showModals,setShowModals]=useState(false)
   const userId=session?.user?.email?.split("@")[0]
   const navigate=useNavigate()
 
@@ -74,7 +72,15 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
       <div className='flex gap-4 items-center'>
         {
         shareRequired && (
-          <Button isTransparent><UserPlus size={20}/> Share  </Button>
+          <div>
+            <Button isTransparent onClick={()=>setShowModals(true)}><UserPlus size={20}/> Share  </Button>
+            {showModals && <ShareModal roomId={projectName.split("/")[0] || "room-id"} onClose={() => setShowModals(false)} />}
+
+          </div>
+          
+          
+            
+          
         )
       }
         {authRequired && (
