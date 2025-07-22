@@ -10,6 +10,7 @@ import type { codeAreaProps } from './Types';
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../context/useAuth';
+import socket from './Socket';
 
 export default function CodeArea({ projectObject }: codeAreaProps) {
   const [value, setValue] = useState<string>(
@@ -38,6 +39,27 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
 
   setValue(initialCode);
 }, [projectObject]);
+
+useEffect(()=>{
+  if(!projectObject._id){
+    return
+  }
+
+  socket.emit("join-room",projectObject._id)
+
+  socket.on("code-change",(incomingCode:string)=>{
+    if(incomingCode!==editorRef.current?.getValue()){
+      editorRef.current?.setValue(incomingCode); 
+    }
+  })
+
+  return ()=>{
+    socket.emit("leave-room",projectObject._id)
+    socket.off("code-change")
+  }
+
+
+},[projectObject._id])
 
 
   const result = async () => {
@@ -85,6 +107,14 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
     }
   }
 
+  function handleChange(val:string){
+    setValue(val || "")
+    socket.emit("code-change",{
+      roomId:projectObject._id,
+      code:val
+    })
+  }
+
   return (
     <main className="w-full h-full flex items-center justify-between gap-1 px-1">
       <div className="w-[56rem] flex flex-col p-4 gap-4">
@@ -114,7 +144,7 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
             }
             value={value}
             onMount={onMount}
-            onChange={(val) => setValue(val || "")}
+            onChange={(val) => handleChange(val || "")}
           />
         </div>
       </div>
