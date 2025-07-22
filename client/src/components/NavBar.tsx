@@ -3,14 +3,14 @@ import Button from './Button';
 import {Link} from "react-router-dom"
 import { useAuth } from "../context/useAuth" ;
 import  Logo  from '../assets/default.svg?react';
-import {useNavigate } from 'react-router-dom';
+import {useNavigate,useParams } from 'react-router-dom';
 import ShareModal from "./ShareModal";
 
 import type { NavbarProp } from './Types';
 import { useState,useEffect,useRef } from 'react';
 
 export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
-
+  const {id:roomId}=useParams()
   const [isOpen,setIsOpen]=useState(false)
   const {session,signOutUser}=useAuth()
   const [showModals,setShowModals]=useState(false)
@@ -87,7 +87,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
         shareRequired && (
           <div>
             <Button isTransparent onClick={()=>setShowModals(true)}><UserPlus size={20}/> Share  </Button>
-            {showModals && <ShareModal roomId={projectName.split("/")[0] || "room-id"} onClose={() => setShowModals(false)} />}
+            {showModals && <ShareModal roomId={roomId || ""} onClose={() => setShowModals(false)} />}
 
           </div>
           
