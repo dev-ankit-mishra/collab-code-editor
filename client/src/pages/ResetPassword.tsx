@@ -50,7 +50,7 @@ export default function ResetPassword(){
               <Input id="email" name="email" type="email" placeholder="you@example.com" />
             </div>
 
-            <Button type="submit" disabled={loading} className="mt-4">{loading?"Submitting...":"Submit"}</Button>
+            <Button type="submit" disabled={loading} className="mt-4 h-8">{loading?(<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>):"Submit"}</Button>
           </form>
 
           {}
