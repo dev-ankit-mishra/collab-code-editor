@@ -8,6 +8,7 @@ interface ShareModalProps {
 }
 
 export default function ShareModal({ roomId, onClose }: ShareModalProps) {
+
   const [copied, setCopied] = useState(false);
   const shareURL = `${window.location.origin}/editor/${roomId}`;
 
@@ -38,7 +39,7 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
 
   return createPortal(
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-      <div className="bg-neutral-900 text-white p-6 rounded-md shadow-lg relative w-[90%] max-w-md">
+      <div className="bg-neutral-900 text-white p-6 rounded-md shadow-lg relative ">
         <button
           className="absolute top-3 right-3 text-white text-xl cursor-pointer"
           onClick={onClose}
