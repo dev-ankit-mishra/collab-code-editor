@@ -21,6 +21,7 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
   const [output, setOutput] = useState("Waiting for output...");
   const [consoleText, setConsoleText] = useState<string>("text-white");
   const [saving, setSaving] = useState(false);
+  const [loading,setLoading]=useState(false)
   const { session } = useAuth();
   const userId = session?.user?.id;
 
@@ -42,6 +43,7 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
   const result = async () => {
     const sourceCode = editorRef.current?.getValue();
     if (!sourceCode) return;
+    setLoading(true)
     try {
       const { label, version } = projectObject.template;
       const { run: result } = await executeCode({ label, version }, sourceCode);
@@ -56,6 +58,8 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
       setConsoleText('bg-red-500');
       console.error("Execution error:", err.response?.data || err.message);
       setOutput("Error running code. Check the console.");
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -115,7 +119,7 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
         </div>
       </div>
 
-      <Output onClick={result} bgClass={consoleText}>
+      <Output onClick={result} bgClass={consoleText} isLoading={loading}>
         {output}
       </Output>
     </main>
