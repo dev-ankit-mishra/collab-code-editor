@@ -35,7 +35,7 @@ export default function Button({
           disabled={disabled}
           onClick={onClick}
           type={type}
-          className={`px-2 py-1 bg-green-800 text-white rounded-md flex gap-2 justify-center items-center hover:bg-green-700 hover:scale-102 transition-all duration-200 shadow-md shadow-black/20 cursor-pointer ${className}`}
+          className={`px-2 py-1 bg-green-800 text-white rounded-md flex gap-2 justify-center items-center hover:bg-green-700 hover:scale-102 transition-all duration-200 shadow-md shadow-black/20 cursor-pointer disabled:bg-green-600 disabled:cursor-not-allowed ${className}`}
         >
           {children}
         </button>
