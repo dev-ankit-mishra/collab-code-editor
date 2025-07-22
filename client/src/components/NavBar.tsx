@@ -4,7 +4,7 @@ import {Link} from "react-router-dom"
 import { useAuth } from "../context/useAuth" ;
 import  Logo  from '../assets/default.svg?react';
 import {useNavigate } from 'react-router-dom';
-import ShareModal from "./shareModal";
+import ShareModal from "./ShareModal";
 
 import type { NavbarProp } from './Types';
 import { useState,useEffect,useRef } from 'react';
@@ -12,7 +12,7 @@ import { useState,useEffect,useRef } from 'react';
 export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
 
   const [isOpen,setIsOpen]=useState(false)
-  const {session}=useAuth()
+  const {session,signOutUser}=useAuth()
   const [showModals,setShowModals]=useState(false)
   const userId=session?.user?.email?.split("@")[0]
   const navigate=useNavigate()
@@ -41,7 +41,20 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
   };
 }, [isOpen]);
 
-// Separate useEffect for route change
+
+    async function handleSignOut(){
+    try{
+      const data =await signOutUser()
+      if(!data?.success){
+        throw new Error(data.error)
+      }
+      else{
+        navigate("/")
+      }
+    }catch (err){ 
+      console.log(err)
+    }
+  }
 
 
 
@@ -107,6 +120,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
                     navigate("/settings")
                     setIsOpen(false)
                   }} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Settings</li>
+                  <li onClick={handleSignOut} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Sign Out</li>
                 </ul>
               </div>
             )}
