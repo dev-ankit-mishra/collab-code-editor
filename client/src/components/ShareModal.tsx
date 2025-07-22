@@ -58,7 +58,7 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
           onClick={handleCopy}
           className="w-full"
         >
-          {copied ? "✅ Copied!" : "Copy to Clipboard"}
+          {copied ? "Copied!" : "Copy to Clipboard"}
         </Button>
       </div>
     </div>,
