@@ -33,7 +33,7 @@ export default function Menu({setShowModals}:MenuProps){
   async function handleSignOut(){
     try{
       setLoading(true)
-      const data =await signOutUser!()
+      const data =await signOutUser()
       if(!data?.success){
         setError(data.error)
         throw new Error(data.error)
