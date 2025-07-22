@@ -75,7 +75,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="w-[400px] bg-neutral-900 px-6 py-8 rounded-xl relative border border-white/10 shadow-md">
+      <div className="w-md bg-neutral-900  px-6 py-8 rounded-xl relative border border-white/10 shadow-md">
         <button
           className="absolute top-5 right-5 cursor-pointer"
           onClick={() => setShowModals(false)}
@@ -140,8 +140,8 @@ export default function Modals({ setShowModals, create }: ModalProps) {
             </div>
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full block">
-            <PlusCircle size={18} /> {loading ? "Creating..." : "Create"}
+          <Button type="submit" disabled={loading} className="w-full h-8 block">
+            <PlusCircle size={18} /> {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) : "Create"}
           </Button>
 
           {isError && (
