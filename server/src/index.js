@@ -6,7 +6,6 @@ import {createServer} from "http"
 import {Server} from "socket.io"
 import projectRouter from "./routes/projectRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-
 dotenv.config();
 
 const app = express();
