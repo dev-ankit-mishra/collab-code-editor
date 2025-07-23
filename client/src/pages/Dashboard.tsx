@@ -46,6 +46,10 @@ export default function Dashboard() {
     }
   }
 
+  function handleDelete(_id:string){
+    setProject(prev=>prev.filter(p=>p._id!=_id))
+  }
+
   return (
     <section className="h-screen w-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#000000] text-white">
       <NavBar authRequired={true} />
@@ -53,7 +57,7 @@ export default function Dashboard() {
       <main className="flex flex-1">
         <Menu setShowModals={setShowModals} />
 
-        {loading? <SplashScreen/>: <Outlet context={{ project, setShowModals }} />}
+        {loading? <SplashScreen/>: <Outlet context={{ project, setShowModals ,handleDelete }} />}
       </main>
 
       {showModals && (
