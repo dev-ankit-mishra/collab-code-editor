@@ -7,7 +7,7 @@ import { useAuth } from "../context/useAuth";
 
 
 
-export default function RecentCard({ project }: RecentCardProps) {
+export default function RecentCard({ project,onDelete }: RecentCardProps) {
   const navigate=useNavigate()
   const[showOptionId,setShowOptionId]=useState<string | undefined>(undefined)
   const {session}=useAuth()
@@ -19,12 +19,13 @@ export default function RecentCard({ project }: RecentCardProps) {
       return
     }
     try{
-      const res=await fetch(`https://codevspace-aqhw.onrender.com/api/${session?.user?.id}/${_id}`,{method:"DELETE"})
+      const res=await fetch(`https://codevspace-aqhw.onrender.com/api/projects/${session?.user?.id}/${_id}`,{method:"DELETE"})
        const data=await res.json()
 
       if(!data){
         throw new Error("Could not Delete")
        }
+       onDelete(_id)
        console.log("Deleted Successfully")
     }catch (err){
       console.log(err)
@@ -57,7 +58,10 @@ export default function RecentCard({ project }: RecentCardProps) {
         <div className="absolute top-full mt-0.5 w-fit bg-neutral-900 rounded shadow">
           <ul className="p-2">
             <li  className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Rename</li>
-            <li onClick={()=>handleClick(p._id)} className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Delete</li>
+            <li onClick={(e)=>{
+              e.stopPropagation()
+              handleClick(p._id)
+              }} className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Delete</li>
           </ul>
         </div>
     )}
