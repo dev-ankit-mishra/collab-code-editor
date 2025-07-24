@@ -38,8 +38,8 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-      <div className="bg-neutral-900 text-white p-6 rounded-md shadow-lg relative ">
+    <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center">
+      <div className="bg-neutral-900 border border-white/10 text-gray-100 p-6 rounded-md shadow-lg relative ">
         <button
           className="absolute top-3 right-3 text-white text-xl cursor-pointer"
           onClick={onClose}
@@ -51,7 +51,7 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
           Anyone with this link can collaborate in real-time.
         </p>
 
-        <div className="bg-neutral-800 p-2 rounded tracking-wide  text-sm mb-4">
+        <div className="bg-neutral-800 text-gray-200 p-2 rounded tracking-wide  text-sm mb-4">
           {shareURL}
         </div>
 
