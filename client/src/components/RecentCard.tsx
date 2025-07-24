@@ -2,15 +2,47 @@ import type {RecentCardProps } from "./Types";
 import { formatDistanceToNow  } from "date-fns";
 import {useNavigate} from "react-router-dom"
 import { Code, User, Clock,Ellipsis } from "lucide-react";
-import { useState } from "react";
+import { useState,useRef, useEffect } from "react";
 import { useAuth } from "../context/useAuth";
+import RenameModals from "./RenameModals";
+
 
 
 
 export default function RecentCard({ project,onDelete }: RecentCardProps) {
+
+  
+
+
+
   const navigate=useNavigate()
   const[showOptionId,setShowOptionId]=useState<string | undefined>(undefined)
+  const [open,setOpen]=useState(false)
   const {session}=useAuth()
+  const cardDropDownRef=useRef<HTMLButtonElement>(null) 
+
+  useEffect(()=>{
+    function handleOutside(e:MouseEvent){
+      if(cardDropDownRef.current && !cardDropDownRef.current.contains(e.target as Node)){
+        setShowOptionId(undefined)
+      }
+    }
+
+    function handleEsc(e:KeyboardEvent){
+      if(e.key==="Escape"){
+        setShowOptionId(undefined)
+      }
+    }
+
+    document.addEventListener("mousedown",handleOutside)
+    document.addEventListener("keydown",handleEsc)
+
+    return ()=>{
+      document.removeEventListener("mousedown",handleOutside)
+      document.removeEventListener("keydown",handleEsc)
+    }
+
+  },[showOptionId])
 
 
 
@@ -46,6 +78,7 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
     <span className="text-lg font-semibold text-white">{p.projectName}</span>
     <div>
         <button
+        ref={cardDropDownRef}
       className="text-gray-400 hover:text-white cursor-pointer"
       onClick={(e) => {
         e.stopPropagation();
@@ -57,13 +90,22 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
     {showOptionId===p._id && (
         <div className="absolute top-full mt-0.5 w-fit bg-neutral-900 rounded shadow">
           <ul className="p-2">
-            <li  className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Rename</li>
+            <li onClick={(e)=>{
+              e.stopPropagation()
+              setOpen(true)
+            }
+            } className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Rename</li>
             <li onClick={(e)=>{
               e.stopPropagation()
               handleClick(p._id)
               }} className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Delete</li>
           </ul>
+          {
+            open && <RenameModals setOpen={setOpen}/> 
+          }
+          
         </div>
+
     )}
     </div>
     
