@@ -141,7 +141,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
           </div>
 
           <Button type="submit" disabled={loading} className="w-full h-8 block">
-            <PlusCircle size={18} /> {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) : "Create"}
+             {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) : <> <PlusCircle size={18} /> Create</>}
           </Button>
 
           {isError && (
