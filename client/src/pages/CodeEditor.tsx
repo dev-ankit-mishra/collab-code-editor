@@ -1,6 +1,5 @@
 import NavBar from "../components/NavBar";
 import CodeArea from "../components/CodeArea";
-import SideBar from "../components/SideBar";
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
@@ -56,12 +55,11 @@ export default function CodeEditor() {
         authRequired
         projectName={
           project
-            ? `${project.projectName} / ${project.template?.label || "No Label"}`
+            ? `${project.projectName} /  ${project.template?.label || "No Label"}`
             : ""
         }
       />
       <main className="w-full h-full flex-1 flex">
-        <SideBar />
         <div className="flex-1">
           {project ? (
             <CodeArea projectObject={project} />
