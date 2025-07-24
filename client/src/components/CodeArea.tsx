@@ -4,13 +4,13 @@ import Output from './Output';
 import { executeCode } from './Api';
 import { editor } from 'monaco-editor';
 import Editor from "@monaco-editor/react";
-import Button from './Button';
-import { Save } from "lucide-react";
 import type { codeAreaProps } from './Types';
-import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from 'date-fns';
+import debounce from "lodash/debounce";
 import { useAuth } from '../context/useAuth';
 import socket from './Socket';
+import { useDebounce } from './useDebounce';
+import { FaCloudUploadAlt } from "react-icons/fa";
 
 export default function CodeArea({ projectObject }: codeAreaProps) {
   const [value, setValue] = useState<string>(
@@ -18,13 +18,15 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
       ? projectObject?.template?.boilerplate || ""
       : projectObject?.code || ""
   );
+  const debouncedCode=useDebounce<string>(value,2000)
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const [output, setOutput] = useState("Waiting for output...");
+  const [output, setOutput] = useState("Press the 'Run' button to execute your code.");
   const [consoleText, setConsoleText] = useState<string>("text-white");
-  const [saving, setSaving] = useState(false);
   const [loading,setLoading]=useState(false)
   const { session } = useAuth();
+  const [lastUpdate,setLastUpdate]=useState<Date | undefined>();
   const userId = session?.user?.id;
+  let isRemoteUpdate=false;
 
   useEffect(() => {
   if (!projectObject) return;
@@ -48,8 +50,10 @@ useEffect(()=>{
   socket.emit("join-room",projectObject._id)
 
   socket.on("code-change",(incomingCode:string)=>{
-    if(incomingCode!==editorRef.current?.getValue()){
-      editorRef.current?.setValue(incomingCode); 
+    const current = editorRef.current?.getValue();
+    if (incomingCode !== current) {
+      isRemoteUpdate = true;
+      setValue(incomingCode);
     }
   })
 
@@ -90,65 +94,75 @@ useEffect(()=>{
     editor.focus();
   }
 
-  async function handleSaveBtn() {
-    const sourceCode = editorRef.current?.getValue();
-    setSaving(true);
-    try {
+  useEffect(()=>{
+    const saveCode=async ()=>{
+      try {
       await axios.put(
         `https://codevspace-aqhw.onrender.com/api/projects/${userId}/${projectObject._id}`,
-        { code: sourceCode }
+        { code: debouncedCode }
       );
-      toast.success("Code saved successfully!");
+      setLastUpdate(new Date());
     } catch (err) {
       console.error("Error Occurred:", err);
-      toast.error("Failed to save code.");
-    } finally {
-      setSaving(false);
     }
-  }
+    }
+    saveCode();
+  },[debouncedCode])
 
-  function handleChange(val:string){
-    setValue(val || "")
-    socket.emit("code-change",{
-      roomId:projectObject._id,
-      code:val
-    })
+
+
+
+const emitChange = debounce((val: string) => {
+  socket.emit("code-change", {
+    roomId: projectObject._id,
+    code: val,
+  });
+}, 300); // 300ms delay
+
+function handleChange(val: string) {
+  if (isRemoteUpdate) {
+    isRemoteUpdate = false;
+    return;
   }
+  setValue(val || "");
+  emitChange(val); // use debounced version
+}
+
 
   return (
-    <main className="w-full h-full flex items-center justify-between gap-1 px-1">
-      <div className="w-[56rem] flex flex-col p-4 gap-4">
-        <div className="flex items-center gap-4">
-          <Button className="w-20 h-8" onClick={handleSaveBtn} disabled={saving}>
-            {saving ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) : (<><Save size={18} /> Save</>)}
+    <main className="w-full h-full flex items-center justify-between gap-1">
+      <div className="w-[56rem] flex flex-col px-4  gap-4 max-h-screen">
+  {/* Save Button Row */}
+  <div className="flex items-center gap-4 mt-4">
+    <p className="text-gray-300 text-sm flex gap-2">
+      <FaCloudUploadAlt size={18}/> Last Updated:{" "}
+      <span>
+        {lastUpdate
+          ? formatDistanceToNow(new Date(lastUpdate), {
+              addSuffix: true,
+            })
+          : "Not updated yet"}
+      </span>
+    </p>
+  </div>
 
-          </Button>
-          <p className="text-gray-300 text-base">
-            Last Updated:{" "}
-            <span>
-              {projectObject.updatedAt
-                ? formatDistanceToNow(new Date(projectObject.updatedAt), {
-                    addSuffix: true,
-                  })
-                : "Not updated yet"}
-            </span>
-          </p>
-        </div>
+  {/* Editor Container (Fix Height) */}
+  <div className="h-[38rem] rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+    <Editor
+      theme="vs-dark"
+      height="100%"
+      width={"100%"}
+      language={
+        projectObject?.template?.label?.toLowerCase() || "javascript"
+      }
+      value={value}
+      onMount={onMount}
+      onChange={(val) => handleChange(val || "")}
+    />
+  </div>
+</div>
 
-        <div className="flex-1 rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-          <Editor
-            theme="vs-dark"
-            height="38vw"
-            language={
-              projectObject?.template?.label?.toLowerCase() || "javascript"
-            }
-            value={value}
-            onMount={onMount}
-            onChange={(val) => handleChange(val || "")}
-          />
-        </div>
-      </div>
-
+      
       <Output onClick={result} bgClass={consoleText} isLoading={loading}>
         {output}
       </Output>
