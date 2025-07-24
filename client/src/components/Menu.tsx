@@ -4,20 +4,21 @@ import {
   UserPlus,
   Users,
   FileStack,
-
   Settings,
   LogOut,
 } from "lucide-react";
 import Button from "./Button";
 import {NavLink,useNavigate} from "react-router-dom"
 import { useAuth } from "../context/useAuth";
-import { useState,useEffect } from "react";
+import { useState,useEffect} from "react";
 import type { MenuProps } from "./Types";
 
 export default function Menu({setShowModals}:MenuProps){
 
   const [error,setError] =useState<string | undefined>(undefined)
   const [loading,setLoading]=useState(false)
+
+
 
     const navigate=useNavigate()
 
@@ -51,31 +52,31 @@ export default function Menu({setShowModals}:MenuProps){
   return(
     <nav className="w-52   py-6  border-r border-r-white/10  flex flex-col justify-between">
   
-            <ul className="space-y-5 text-gray-300">
+            <ul className="space-y-4 text-gray-300">
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded cursor-pointer transition-all duration-200">
-                <NavLink to="/dashboard" end className={({isActive})=>`w-full px-8 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Clock size={18} /> Recent</NavLink>
+                <NavLink to="/dashboard" end className={({isActive})=>`w-full px-6.5 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Clock size={16} /> Recent</NavLink>
               </li>
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded  cursor-pointer transition-all duration-200">
-                <NavLink to="/dashboard/allrepository" className={({isActive})=>`w-full px-8 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Folder size={18} /> All Repository</NavLink>
+                <NavLink to="/dashboard/allrepository" className={({isActive})=>`w-full px-6.5 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Folder size={16} /> All Repository</NavLink>
               </li>
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
-                <UserPlus size={18} /> Invite Members
+              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
+                <UserPlus size={16} /> Invite Members
               </li>
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
-                <Users size={18} /> Share with me
+              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
+                <Users size={16} /> Share with me
               </li>
-              <li onClick={()=>setShowModals(true)} className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
-                <FileStack size={18} /> Templates
+              <li onClick={()=>setShowModals(true)} className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
+                <FileStack size={16} /> Templates
               </li>
               
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-8 py-2  cursor-pointer transition-all duration-200">
-                <Settings size={18} /> Settings
+              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
+                <Settings size={16} /> Settings
               </li>
             </ul>
           
           <div className="mb-4 w-full">
-              <Button className="mx-8 w-36 h-8" isTransparent={true} disabled={loading} onClick={handleSignOut} >
-              {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) :<><LogOut size={18} /> Sign out</>}</Button>
+              <Button className="mx-6.5 w-36 h-8" isTransparent={true} disabled={loading} onClick={handleSignOut} >
+              {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) :<><LogOut size={16} /> Sign out</>}</Button>
               {error!=undefined && (
                 <p className="pt-2 text-center text-sm text-red-500">Error Occured</p>
                 )}
