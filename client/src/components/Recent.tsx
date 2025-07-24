@@ -23,7 +23,7 @@ export default function Recent(){
             <Button
               onClick={()=>setShowModals(true)}
              >
-              <PlusCircle size={18}/> New Projects
+              <PlusCircle size={16}/> New Projects
             </Button>
           </div>
           <div className="flex items-center flex-wrap gap-8 p-6">
