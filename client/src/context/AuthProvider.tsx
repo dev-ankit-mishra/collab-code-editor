@@ -122,7 +122,7 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
-          redirectTo: "http://localhost:5173/dashboard",
+          redirectTo: "http://codevspace/dashboard",
         },
       });
       if (error) return { success: false, error: error.message };
@@ -135,7 +135,7 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword=async (email:string)=>{
     try{
       const {error}=await supabase.auth.resetPasswordForEmail(email,{
-        redirectTo:"http://localhost:5173/change-password",
+        redirectTo:"http://codevspace/change-password",
       })
       if(error){
         return {success:false,error:error.message}
