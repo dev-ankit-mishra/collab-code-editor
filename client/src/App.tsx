@@ -10,6 +10,7 @@ import ProtectedRoutes from "./routes/ProtectedRoutes";
 import SplashScreen from "./components/SplashScreen";
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
+import ProfilePage from "./pages/Profile";
 
 // Lazy load only heavy components
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -109,7 +110,15 @@ export default function App() {
           }
         />
 
+        <Route
+        path="/profile"
+        element={
+          <ProfilePage/>
+        }
+        />
+
         <Route path="*" element={<NotFoundPage />} />
+
       </Routes>
     </BrowserRouter>
   );
