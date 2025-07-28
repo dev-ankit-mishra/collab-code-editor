@@ -39,11 +39,11 @@ export default function Features() {
           {features.map(({ id, title, description, icon }) => (
             <div
               key={id}
-              className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-sm p-6 hover:shadow-lg transition"
+              className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-sm p-5 hover:shadow-lg transition"
             >
               <div className="mb-4 flex items-center justify-center">{icon}</div>
               <h3 className="text-xl font-semibold text-center mb-3">{title}</h3>
-              <p className="text-white/80 text-center tracking-wide leading-relaxed">{description}</p>
+              <p className="text-white/80 text-[15px] text-center tracking-wide leading-relaxed">{description}</p>
             </div>
           ))}
         </div>
