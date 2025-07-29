@@ -19,7 +19,7 @@ const projectSchema = new Schema(
     template: {
       label: { type: String, default: "custom" },
       version: { type: String, default: "1.0.0" },
-      alias: {type:String, default:"text"},
+      alias: {type:String, default:"txt"},
       boilerplate: { type: String, default: "" }
     }
   },
