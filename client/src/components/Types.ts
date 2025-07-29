@@ -4,6 +4,7 @@ import type { IconType } from "react-icons";
 export type Language = {
   label: string;
   version: string;
+  alias:string,
   icon?: IconType;
   color?: string;
   boilerplate: string;
