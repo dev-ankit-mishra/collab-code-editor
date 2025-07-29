@@ -11,6 +11,8 @@ import { useAuth } from '../context/useAuth';
 import socket from './Socket';
 import { useDebounce } from './useDebounce';
 import { FaCloudUploadAlt } from "react-icons/fa";
+import Button from './Button';
+import { Download } from 'lucide-react';
 
 export default function CodeArea({ projectObject }: codeAreaProps) {
   const [value, setValue] = useState<string>(
@@ -27,6 +29,30 @@ export default function CodeArea({ projectObject }: codeAreaProps) {
   const [lastUpdate,setLastUpdate]=useState<Date | undefined>();
   const userId = session?.user?.id;
   let isRemoteUpdate=false;
+  
+  const mimeMap = {
+  javascript: 'text/javascript',
+  c: 'text/x-csrc',
+  cpp: 'text/x-c++src',
+  go: 'text/x-go',
+  java: 'text/x-java-source',
+  kotlin: 'text/x-kotlin',
+  python: 'text/x-python',
+  ruby: 'text/x-ruby',
+  rust: 'text/x-rustsrc'
+};
+
+const extensionMap = {
+  javascript: 'js',
+  c: 'c',
+  cpp: 'cpp',
+  go: 'go',
+  java: 'java',
+  kotlin: 'kt',
+  python: 'py',
+  ruby: 'rb',
+  rust: 'rs'
+};
 
   useEffect(() => {
   if (!projectObject) return;
@@ -128,12 +154,34 @@ function handleChange(val: string) {
   emitChange(val); // use debounced version
 }
 
+function handleDownload() {
+  const label = projectObject.template.label?.toLowerCase() || 'text';
+
+  const mimeType = mimeMap[label as keyof typeof mimeMap] || 'text/plain';
+  const extension = extensionMap[label as keyof typeof extensionMap] || 'txt';
+
+  const blob = new Blob([editorRef.current?.getValue() || ""], {
+    type: mimeType
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${projectObject.projectName || 'download'}.${extension}`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+
 
   return (
     <main className="w-full h-full flex items-center justify-between gap-1">
       <div className="w-[56rem] flex flex-col px-4  gap-4 max-h-screen">
   {/* Save Button Row */}
-  <div className="flex items-center gap-4 mt-4">
+  <div className="flex items-center gap-4 mt-2">
+    <Button onClick={handleDownload}><Download size={16}/>Download</Button>
     <p className="text-gray-300 text-sm flex gap-2">
       <FaCloudUploadAlt size={18}/> Last Updated:{" "}
       <span>
