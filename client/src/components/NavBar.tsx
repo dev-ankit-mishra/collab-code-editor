@@ -74,7 +74,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
         {
           projectName==="" ? null : (
             <span className='flex gap-1.5 text-gray-200 items-center'>
-              <FolderOpen size={20} />
+              <FolderOpen size={16} />
               {projectName}
             </span>
           )
@@ -82,7 +82,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
       </div>
 
 
-      <div className='flex gap-4 items-center'>
+      <div className='flex gap-6 items-center'>
         {
         shareRequired && (
           <div>
@@ -104,8 +104,8 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
           <Link to="/signup"><Button>Sign Up</Button></Link>
         </div>) : (
           <div className='relative flex flex-col' ref={dropDownRef}>
-            <div onClick={()=>setIsOpen(prev=>!prev)} className=' text-white flex  gap-2 items-center cursor-pointer'>
-             <CircleUserRound size={24} />
+            <div onClick={()=>setIsOpen(prev=>!prev)} className=' text-white flex  gap-1.5 items-center cursor-pointer'>
+             <CircleUserRound size={20} />
              <span>{userId}</span>
             </div>
             {isOpen &&
