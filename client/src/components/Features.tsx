@@ -9,40 +9,44 @@ export default function Features() {
       title: "Real-Time Team Collaboration",
       description:
         "Code together with your team or friends in real time, from anywhere. Instantly see changes, follow collaborators' cursors, and avoid merge conflicts with seamless live editing.",
-      icon: <FiUsers className="text-4xl text-blue-200" />
+      icon: <FiUsers className="text-4xl text-blue-300" />
     },
     {
       id: 2,
       title: "Live Coding Interviews",
       description:
         "Conduct technical interviews in a shared coding environment. Interviewers and candidates can solve problems collaboratively, review code instantly, and communicate effectively.",
-      icon: <BsKeyboard className="text-4xl text-blue-200" />
+      icon: <BsKeyboard className="text-4xl text-blue-300" />
     },
     {
       id: 3,
       title: "Remote Learning & Mentorship",
       description:
         "Empower virtual classrooms and mentorship with live code sharing. Instructors and learners can work on the same code, ask questions, and solve problems together in real time.",
-      icon: <HiOutlineAcademicCap className="text-4xl text-blue-200" />
+      icon: <HiOutlineAcademicCap className="text-4xl text-blue-300" />
     }
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-950 to-slate-900 py-16 px-4 text-white">
+    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-zinc-900 to-neutral-900 py-16 px-4 text-white">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-2xl md:text-3xl mt-4 font-bold">
+        <div>
+          <h2 className="text-2xl md:text-4xl mt-4 mb-1 font-bold">
           Collaborate, Interview, and Learn—All in One Place
         </h2>
-        <div className="w-20 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-600  rounded-lg mx-auto mt-8 mb-12 hover:w-28 transition duration-300" />
+          <p className="text-gray-400 text-[17px] mb-6">A seamless coding experience for teams, interviews, and classrooms.</p>
+        </div>
+        
+        <div className="w-20 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-600  rounded-lg mx-auto  mb-12 hover:w-32 transition duration-500" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 justify-items-center pt-22">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 justify-items-center pt-16">
           {features.map(({ id, title, description, icon }) => (
             <div
               key={id}
-              className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-sm p-5 hover:shadow-lg transition"
+              className="bg-zinc-800 border border-white/10 rounded-2xl w-full max-w-sm p-5 hover:shadow-xl hover:scale-102 transition-all duration-300 ease-in-out"
             >
-              <div className="mb-3 flex items-center justify-center">{icon}</div>
-              <h3 className="text-xl font-semibold text-center mb-3">{title}</h3>
+              <div className="mb-3 flex items-center justify-center"><div className='bg-blue-500/10 rounded-full p-4'>{icon}</div></div>
+              <h3 className="text-xl font-semibold text-center mb-2">{title}</h3>
               <p className="text-white/80 text-[15px] text-center tracking-wide leading-relaxed">{description}</p>
             </div>
           ))}
