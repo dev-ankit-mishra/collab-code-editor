@@ -37,6 +37,7 @@ export default function Modals({ setShowModals, create }: ModalProps) {
     const langObj={
       label:lang.label,
       version:lang.version,
+      alias:lang.alias,
       boilerplate:lang.boilerplate
     }
 
