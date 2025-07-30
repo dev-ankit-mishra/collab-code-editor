@@ -9,6 +9,8 @@ import RenameModals from "./RenameModals";
 
 
 
+
+
 export default function RecentCard({ project,onDelete }: RecentCardProps) {
 
   
@@ -17,9 +19,9 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
 
   const navigate=useNavigate()
   const[showOptionId,setShowOptionId]=useState<string | undefined>(undefined)
-  const [open,setOpen]=useState(false)
   const {session}=useAuth()
-  const cardDropDownRef=useRef<HTMLButtonElement>(null) 
+  const[open,setOpen]=useState<boolean>(false)
+  const cardDropDownRef=useRef<HTMLDivElement>(null) 
 
   useEffect(()=>{
     function handleOutside(e:MouseEvent){
@@ -46,7 +48,7 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
 
 
 
-  async function handleClick(_id:string|undefined){
+  async function handleDelete(_id:string|undefined){
     if(!_id){
       return
     }
@@ -64,6 +66,10 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
     }
     
   }
+  
+  function handleRename(_id:string | undefined){
+    setOpen(true);
+  }
 
   return (
     <>
@@ -78,7 +84,7 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
     <span className="text-lg font-semibold text-white">{p.projectName}</span>
     <div>
         <button
-        ref={cardDropDownRef}
+        
       className="text-gray-400 hover:text-white cursor-pointer"
       onClick={(e) => {
         e.stopPropagation();
@@ -88,21 +94,20 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
       <Ellipsis size={16} />
     </button>
     {showOptionId===p._id && (
-        <div className="absolute top-full mt-0.5 w-fit bg-neutral-900 rounded shadow">
+        <div ref={cardDropDownRef} className="absolute top-full mt-0.5 w-fit bg-neutral-900 rounded shadow">
           <ul className="p-2">
             <li onClick={(e)=>{
               e.stopPropagation()
-              setOpen(true)
-            }
-            } className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Rename</li>
+              handleRename(p._id)
+            }}
+             className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Rename</li>
             <li onClick={(e)=>{
               e.stopPropagation()
-              handleClick(p._id)
+              handleDelete(p._id)
               }} className="hover:bg-gray-800 text-sm tracking-wide px-3 py-1 rounded cursor-pointer">Delete</li>
           </ul>
-          {
-            open && <RenameModals setOpen={setOpen}/> 
-          }
+          
+          
           
         </div>
 
@@ -131,6 +136,7 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
 </div>
 
       ))}
+      
     </>
   );
 }
