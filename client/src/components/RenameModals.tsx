@@ -4,9 +4,16 @@ import { BiRename } from "react-icons/bi";
 
 type RenameModalsProp = {
   setOpen: (val: boolean) => void;
+  id:string | undefined
 };
 
-export default function RenameModals({ setOpen }: RenameModalsProp) {
+export default function RenameModals({ setOpen,id }: RenameModalsProp) {
+
+
+  async function handleSubmit(){
+    console.log(id)
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
       {/* Modal Container */}
@@ -25,6 +32,7 @@ export default function RenameModals({ setOpen }: RenameModalsProp) {
           onSubmit={(e) => {
             e.preventDefault();
             // handle rename logic here
+            handleSubmit()
             setOpen(false);
           }}
           className="space-y-4"
