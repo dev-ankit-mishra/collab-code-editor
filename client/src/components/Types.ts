@@ -36,12 +36,14 @@ export type ProjectDetails={
 export interface RecentCardProps {
   project: ProjectDetails[];
   onDelete:(val:string)=>void
+  onRename:(id:string,val:string)=>void
 }
 
 export type DashboardOutlet={
   project:ProjectDetails[],
   setShowModals:(val:boolean)=>void
   handleDelete:(val:string)=>void
+  handleRename:(id:string,val:string)=>void
 }
 
 
