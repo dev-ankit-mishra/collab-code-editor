@@ -11,7 +11,7 @@ import RenameModals from "./RenameModals";
 
 
 
-export default function RecentCard({ project,onDelete }: RecentCardProps) {
+export default function RecentCard({ project,onDelete,onRename }: RecentCardProps) {
 
   
 
@@ -22,6 +22,7 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
   const {session}=useAuth()
   const[open,setOpen]=useState<boolean>(false)
   const cardDropDownRef=useRef<HTMLDivElement>(null) 
+  const [currentId,setCurrentId]=useState<string | undefined>()
 
   useEffect(()=>{
     function handleOutside(e:MouseEvent){
@@ -68,6 +69,7 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
   }
   
   function handleRename(_id:string | undefined){
+    setCurrentId(_id)
     setOpen(true);
   }
 
@@ -136,7 +138,9 @@ export default function RecentCard({ project,onDelete }: RecentCardProps) {
 </div>
 
       ))}
-      
+      {
+        open && <RenameModals setOpen={setOpen} id={currentId} onRename={onRename}/>
+      }
     </>
   );
 }
