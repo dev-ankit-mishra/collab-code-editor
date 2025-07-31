@@ -6,7 +6,7 @@ import type { DashboardOutlet } from "./Types"
 
 
 export default function Recent(){
-  const {project,setShowModals,handleDelete}:DashboardOutlet=useOutletContext()
+  const {project,setShowModals,handleDelete,handleRename}:DashboardOutlet=useOutletContext()
 
   const top5Projects = project
   .filter(p => p.updatedAt) // optional: exclude undefined timestamps
@@ -28,7 +28,7 @@ export default function Recent(){
           </div>
           <div className="flex items-center flex-wrap gap-8 p-6">
             
-            <RecentCard project={top5Projects} onDelete={handleDelete}/>
+            <RecentCard project={top5Projects} onDelete={handleDelete} onRename={handleRename}/>
             
           </div>
         </div>
