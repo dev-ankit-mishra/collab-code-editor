@@ -95,6 +95,31 @@ projectRouter.put("/:userId/:projectId", async (req, res) => {
     });
   }
 });
+
+//update Project name
+
+projectRouter.put("/:userId/:projectId",async (req,res)=>{
+  const { projectId } = req.params;
+  const { projectName } = req.body;
+
+  if (!projectName) {
+    return res.status(400).json({ message: "Project name is required" });
+  }
+  try{
+    const project=await Project.findByIdAndUpdate({
+      projectId,
+      projectName:req.body,
+      new:true
+    })
+    if(!project) return res.status(404).json({ message: 'Project not found' });
+
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+})
+
+
 projectRouter.delete("/:userId/:projectId", async (req, res) => {
   const { userId, projectId } = req.params;
 
