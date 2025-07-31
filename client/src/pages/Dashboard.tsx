@@ -50,6 +50,10 @@ export default function Dashboard() {
     setProject(prev=>prev.filter(p=>p._id!=_id))
   }
 
+  function handleRename(_id:string | undefined,projectName:string){
+    setProject(prev=>prev.map(p=>p._id===_id ? {...p,projectName:projectName} : p))
+  }
+
   return (
     <section className="h-screen w-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#000000] text-white">
       <NavBar authRequired={true} />
@@ -57,7 +61,7 @@ export default function Dashboard() {
       <main className="flex flex-1">
         <Menu setShowModals={setShowModals} />
 
-        {loading? <SplashScreen/>: <Outlet context={{ project, setShowModals ,handleDelete }} />}
+        {loading? <SplashScreen/>: <Outlet context={{ project, setShowModals ,handleDelete,handleRename }} />}
       </main>
 
       {showModals && (
