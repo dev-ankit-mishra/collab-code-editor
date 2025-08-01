@@ -3,7 +3,7 @@ import Button from "./Button";
 import { BiRename } from "react-icons/bi";
 import { useAuth } from "../context/useAuth";
 import axios from "axios";
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
 
 type RenameModalsProp = {
@@ -15,17 +15,21 @@ type RenameModalsProp = {
 export default function RenameModals({ setOpen,id,onRename }: RenameModalsProp) {
 
   const {session}=useAuth();
+  const [loading,setLoading]=useState(false)
 async function renameProject(e: FormEvent<HTMLFormElement>) {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
   const name = formData.get("name")?.toString().trim();
   const userId = session?.user.id;
+  
 
   if (!id || !userId || !name) {
     return;
   }
 
+
   try {
+    setLoading(true);
     await axios.put(
       `https://codevspace-aqhw.onrender.com/api/projects/${userId}/${id}`,
       { projectName: name }
@@ -35,7 +39,9 @@ async function renameProject(e: FormEvent<HTMLFormElement>) {
   } catch (err) {
     console.log(err);
   } finally {
+    setLoading(false);
     setOpen(false);
+    
   }
 }
 
@@ -63,9 +69,9 @@ async function renameProject(e: FormEvent<HTMLFormElement>) {
           </label>
           <Input id="name" name="name" type="text" placeholder="New project name" />
 
-          <Button type="submit" className="w-full flex items-center justify-center gap-2">
-            <BiRename size={16} />
-            Rename
+          <Button disabled={loading} type="submit" className="w-full h-8 flex items-center justify-center gap-2">
+            {loading? <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" /> :<><BiRename size={16} />
+            Rename</>}
           </Button>
         </form>
       </div>
