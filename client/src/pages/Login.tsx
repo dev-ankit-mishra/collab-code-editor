@@ -36,7 +36,7 @@ export default function LogIn() {
         throw new Error(error || "Login failed");
       }
 
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard", { replace: true,state: { showToast: true } });
 
     } catch (err) {
       console.error("Login error:", err);
