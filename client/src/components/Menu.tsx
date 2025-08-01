@@ -69,8 +69,11 @@ export default function Menu({setShowModals}:MenuProps){
                 <FileStack size={16} /> Templates
               </li>
               
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
-                <Settings size={16} /> Settings
+              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded  cursor-pointer transition-all duration-200">
+                <NavLink to={"/dashboard/settings"} className={({isActive})=>`w-full px-6.5 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}>
+                    <Settings size={16} /> Settings
+                </NavLink>
+                
               </li>
             </ul>
           
