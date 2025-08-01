@@ -11,12 +11,15 @@ import SplashScreen from "./components/SplashScreen";
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
 import ProfilePage from "./pages/Profile";
+import {ToastContainer} from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 
 // Lazy load only heavy components
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CodeEditor = lazy(() => import("./pages/CodeEditor"));
 const AllRepository = lazy(() => import("./components/AllRepository"));
 const Recent = lazy(() => import("./components/Recent"));
+const Settings= lazy(()=>import("./components/Settings"));
 
 export default function App() {
   return (
@@ -86,6 +89,14 @@ export default function App() {
               </Suspense>
             }
           />
+          <Route
+            path="settings"
+            element={
+              <Suspense fallback={<SplashScreen />}>
+                <Settings />
+              </Suspense>
+            }
+          />
         </Route>
 
         <Route
@@ -120,6 +131,7 @@ export default function App() {
         <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </BrowserRouter>
   );
 }
