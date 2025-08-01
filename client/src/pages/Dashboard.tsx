@@ -7,6 +7,8 @@ import { useAuth } from "../context/useAuth"
 import Menu from "../components/Menu";
 import { Outlet } from "react-router-dom";
 import SplashScreen from "../components/SplashScreen";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 export default function Dashboard() {
@@ -15,6 +17,19 @@ export default function Dashboard() {
   const [loading,setLoading] = useState(false);
   const { session } = useAuth();
   const id = session?.user?.id;
+
+  const location = useLocation();
+const navigate = useNavigate();
+
+useEffect(() => {
+  if (location.state?.showToast) {
+    toast.success("Successfully signed in!");
+
+    // Remove toast flag from history so it doesn't show again on refresh
+    navigate(location.pathname, { replace: true });
+  }
+}, [location, navigate]);
+
 
   useEffect(() => {
     if (!id) return;
