@@ -1,7 +1,6 @@
 import {
   Clock,
   Folder,
-  UserPlus,
   Users,
   FileStack,
   Settings,
@@ -59,11 +58,8 @@ export default function Menu({setShowModals}:MenuProps){
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded  cursor-pointer transition-all duration-200">
                 <NavLink to="/dashboard/allrepository" className={({isActive})=>`w-full px-6.5 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Folder size={16} /> All Repository</NavLink>
               </li>
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
-                <UserPlus size={16} /> Invite Members
-              </li>
-              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
-                <Users size={16} /> Share with me
+              <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded  cursor-pointer transition-all duration-200">
+                <NavLink to={"/dashboard/sharewithme"} className={({isActive})=>`w-full rounded px-6.5 py-2  flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Users size={16} /> Share with me</NavLink>
               </li>
               <li onClick={()=>setShowModals(true)} className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
                 <FileStack size={16} /> Templates
