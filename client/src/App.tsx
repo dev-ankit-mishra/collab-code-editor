@@ -20,6 +20,7 @@ const CodeEditor = lazy(() => import("./pages/CodeEditor"));
 const AllRepository = lazy(() => import("./components/AllRepository"));
 const Recent = lazy(() => import("./components/Recent"));
 const Settings= lazy(()=>import("./components/Settings"));
+const SharedWithMe=lazy(()=>import("./components/shareWithMe"))
 
 export default function App() {
   return (
@@ -86,6 +87,14 @@ export default function App() {
             element={
               <Suspense fallback={<SplashScreen />}>
                 <AllRepository />
+              </Suspense>
+            }
+          />
+          <Route
+            path="sharewithme"
+            element={
+              <Suspense fallback={<SplashScreen />}>
+                <SharedWithMe />
               </Suspense>
             }
           />
