@@ -22,10 +22,16 @@ export default function Dashboard() {
 const navigate = useNavigate();
 
 useEffect(() => {
-  if (location.state?.showToast) {
-    toast.success("Successfully signed in!");
-
-    // Remove toast flag from history so it doesn't show again on refresh
+  if (location.state?.showToast==="SignIn") {
+    toast.success("Successfully Logged in!");
+    console.log(location.pathname)
+    navigate(location.pathname, { replace: true });
+  }else if(location.state?.showToast==="SignUp"){
+    toast.success("Successfully Signed up!");
+    navigate(location.pathname, { replace: true });
+  }
+  else if(location.state?.showToast==="PasswordChanged"){
+    toast.success("Successfully Changed Password!");
     navigate(location.pathname, { replace: true });
   }
 }, [location, navigate]);
