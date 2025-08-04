@@ -20,11 +20,12 @@ const CodeEditor = lazy(() => import("./pages/CodeEditor"));
 const AllRepository = lazy(() => import("./components/AllRepository"));
 const Recent = lazy(() => import("./components/Recent"));
 const Settings= lazy(()=>import("./components/Settings"));
-const SharedWithMe=lazy(()=>import("./components/shareWithMe"))
+const SharedWithMe=lazy(()=>import("./components/ShareWithMe"))
 
 export default function App() {
   return (
     <BrowserRouter>
+    <ToastContainer position="bottom-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<HomePage />} />
 
@@ -140,7 +141,7 @@ export default function App() {
         <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
-      <ToastContainer position="bottom-right" autoClose={3000} />
+      
     </BrowserRouter>
   );
 }
