@@ -32,7 +32,9 @@ export default function ChangePassword() {
         throw new Error(data.error)
       }
 
-      navigate("/dashboard");
+      navigate("/dashboard", {replace:true,state:{
+        showToast:"PasswordChanged"
+      }});
 
     }catch (err:any){
       setError(err?.message || "Something Went wrong")
