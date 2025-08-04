@@ -41,7 +41,7 @@ async function handleSignUp(e: FormEvent<HTMLFormElement>) {
     }
 
     if (success && data?.session) {
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard", { replace: true ,state: {showToast:"SignUp"} });
 
     }
   } catch (err) {
