@@ -34,7 +34,7 @@ export default function Features() {
           <h2 className="text-2xl md:text-4xl mt-4 mb-1 font-bold">
           Collaborate, Interview, and Learn—All in One Place
         </h2>
-          <p className="text-gray-400 text-[17px] mb-6">A seamless coding experience for teams, interviews, and classrooms.</p>
+          <p className="text-gray-400 text-[17px] mb-8">A seamless coding experience for teams, interviews, and classrooms.</p>
         </div>
         
         <div className="w-20 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-600  rounded-lg mx-auto  mb-12 hover:w-32 transition duration-500" />
