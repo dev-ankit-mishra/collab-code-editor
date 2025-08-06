@@ -28,18 +28,19 @@ export default function Features() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-zinc-900 to-neutral-900 py-16 px-4 text-white">
-      <div className="max-w-7xl mx-auto text-center">
+    <main className=" min-h-screen  bg-gradient-to-br from-gray-900 via-zinc-900 to-neutral-900 py-8 text-white">
+      <div className="flex flex-col items-center justify-center gap-20 max-w-7xl mx-auto mt-4 text-center">
         <div>
-          <h2 className="text-2xl md:text-4xl mt-4 mb-1 font-bold">
+          <h2 className="text-2xl md:text-4xl mb-1 font-bold">
           Collaborate, Interview, and Learn—All in One Place
         </h2>
           <p className="text-gray-400 text-[17px] mb-8">A seamless coding experience for teams, interviews, and classrooms.</p>
+           <div className="w-20 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-600  rounded-lg mx-auto  mb-12 hover:w-32 transition duration-500" />
         </div>
         
-        <div className="w-20 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-600  rounded-lg mx-auto  mb-12 hover:w-32 transition duration-500" />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 justify-items-center pt-16">
+       
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  place-items-center gap-20 ">
           {features.map(({ id, title, description, icon }) => (
             <div
               key={id}
