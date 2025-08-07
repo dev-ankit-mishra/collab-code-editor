@@ -29,7 +29,7 @@ export default function Features() {
 
   return (
     <main className=" min-h-screen  bg-gradient-to-br from-gray-900 via-zinc-900 to-neutral-900 py-8 text-white">
-      <div className="flex flex-col items-center justify-center gap-20 max-w-7xl mx-auto mt-4 text-center">
+      <div className="flex flex-col items-center justify-center gap-y-20 max-w-7xl mx-auto mt-4 text-center">
         <div>
           <h2 className="text-2xl md:text-4xl mb-1 font-bold">
           Collaborate, Interview, and Learn—All in One Place
