@@ -1,3 +1,3 @@
 export default function Settings(){
-  return <div>In Progress...</div>
+  return <div>Coming Soon...</div>
 }
