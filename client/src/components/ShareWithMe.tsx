@@ -1,3 +1,3 @@
 export default function ShareWithMe(){
-  return <div>In Progress...</div>;
+  return <div>Coming soon...</div>;
 }
