@@ -4,7 +4,7 @@ export default function Footer(){
         <span className="text-center py-2 text-sm  text-gray-400 tracking-wide">
          Copyright © 2025 CoDevSpace
         </span>
-        <a href="mailto:contact@ankitmishra.pro" className="text-center py-2 text-sm   text-gray-400 tracking-wide cursor-pointer">
+        <a href="mailto:developer.ankitmishra@gmail.com" className="text-center py-2 text-sm   text-gray-400 tracking-wide cursor-pointer">
           developer.ankitmishra@gmail.com
         </a>
       </footer>
