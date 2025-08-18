@@ -117,7 +117,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
                     setIsOpen(false)
                   }} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Dashboard</li>
                   <li onClick={()=>{
-                    navigate("/settings")
+                    navigate("/dashboard/settings")
                     setIsOpen(false)
                   }} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Settings</li>
                   <li onClick={handleSignOut} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Sign Out</li>
