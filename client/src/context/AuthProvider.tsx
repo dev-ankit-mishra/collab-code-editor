@@ -107,7 +107,7 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:5173/dashboard",
+          redirectTo: "http://codevspace/dashboard",
         },
       });
       if (error) return { success: false, error: error.message };
