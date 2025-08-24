@@ -107,7 +107,7 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://codevspace.netlify.app/dashboard",
+          redirectTo: "https://codevspace.netlify.app/dashboard",
         },
       });
       if (error) return { success: false, error: error.message };
@@ -122,7 +122,7 @@ export  function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
-          redirectTo: "http://codevspace.netlify.app/dashboard",
+          redirectTo: "https://codevspace.netlify.app/dashboard",
         },
       });
       if (error) return { success: false, error: error.message };
