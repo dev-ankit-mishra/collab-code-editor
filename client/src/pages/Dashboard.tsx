@@ -3,53 +3,49 @@ import { useState, useEffect } from "react";
 import Modals from "../components/Modals";
 import type { ProjectDetails } from "../components/Types";
 import axios from "axios";
-import { useAuth } from "../context/useAuth"
+import { useAuth } from "../context/useAuth";
 import Menu from "../components/Menu";
 import { Outlet } from "react-router-dom";
 import SplashScreen from "../components/SplashScreen";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-
 export default function Dashboard() {
   const [showModals, setShowModals] = useState(false);
   const [project, setProject] = useState<ProjectDetails[]>([]);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { session } = useAuth();
   const id = session?.user?.id;
 
   const location = useLocation();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-useEffect(() => {
-  if (location.state?.showToast==="SignIn") {
-    toast.success("Successfully Logged in!");
-    console.log(location.pathname)
-    navigate(location.pathname, { replace: true });
-  }else if(location.state?.showToast==="SignUp"){
-    toast.success("Successfully Signed up!");
-    navigate(location.pathname, { replace: true });
-  }
-  else if(location.state?.showToast==="PasswordChanged"){
-    toast.success("Successfully Changed Password!");
-    navigate(location.pathname, { replace: true });
-  }
-}, [location, navigate]);
-
+  useEffect(() => {
+    if (location.state?.showToast === "SignIn") {
+      toast.success("Successfully Logged in!");
+      navigate(location.pathname, { replace: true });
+    } else if (location.state?.showToast === "SignUp") {
+      toast.success("Successfully Signed up!");
+      navigate(location.pathname, { replace: true });
+    } else if (location.state?.showToast === "PasswordChanged") {
+      toast.success("Successfully Changed Password!");
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     if (!id) return;
 
     const fetchProjects = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
         const res = await fetch(`https://codevspace-aqhw.onrender.com/api/projects/${id}`);
         const data = await res.json();
         setProject(data);
       } catch (err) {
         console.error("Fetch failed:", err);
-      } finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -58,21 +54,26 @@ useEffect(() => {
 
   async function handleCreate(project: ProjectDetails) {
     try {
-      const response = await axios.post(`https://codevspace-aqhw.onrender.com/api/projects/${id}`, project);
+      const response = await axios.post(
+        `https://codevspace-aqhw.onrender.com/api/projects/${id}`,
+        project
+      );
       const newProject = response.data;
-      setProject(prev => [...prev, newProject]);
+      setProject((prev) => [...prev, newProject]);
       return newProject._id;
     } catch (err) {
       console.error(err);
     }
   }
 
-  function handleDelete(_id:string){
-    setProject(prev=>prev.filter(p=>p._id!=_id))
+  function handleDelete(_id: string) {
+    setProject((prev) => prev.filter((p) => p._id !== _id));
   }
 
-  function handleRename(_id:string | undefined,projectName:string){
-    setProject(prev=>prev.map(p=>p._id===_id ? {...p,projectName:projectName} : p))
+  function handleRename(_id: string | undefined, projectName: string) {
+    setProject((prev) =>
+      prev.map((p) => (p._id === _id ? { ...p, projectName: projectName } : p))
+    );
   }
 
   return (
@@ -82,7 +83,20 @@ useEffect(() => {
       <main className="flex flex-1">
         <Menu setShowModals={setShowModals} />
 
-        {loading? <SplashScreen/>: <Outlet context={{ project, setShowModals ,handleDelete,handleRename }} />}
+        {loading ? (
+          <SplashScreen />
+        ) : project.length > 0 ? (
+          <Outlet context={{ project, setShowModals, handleDelete, handleRename }} />
+        ) : (
+          <div className="w-full flex flex-col">
+            <Outlet context={{ project, setShowModals, handleDelete, handleRename }} />
+            <div className="flex items-center justify-center mt-6">
+              <h2 className="text-xl">
+                You don’t have any projects yet. Click <span className="font-semibold">New Project</span> to get started!
+              </h2>
+            </div>
+          </div>
+        )}
       </main>
 
       {showModals && (
