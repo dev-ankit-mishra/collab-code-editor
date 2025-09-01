@@ -37,7 +37,7 @@ export default function ChangePassword() {
       }});
 
     }catch (err:any){
-      setError(err?.message || "Something Went wrong")
+      setError(err?.message || "Something Went wrong.")
       console.error(err)
     }finally{
       setLoading(false)
