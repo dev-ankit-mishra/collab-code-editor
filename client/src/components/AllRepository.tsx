@@ -5,7 +5,7 @@ import type { DashboardOutlet } from "./Types"
 export default function AllRepository(){
   const {project,handleDelete,handleRename}:DashboardOutlet=useOutletContext()
   const latestProjects = project
-  .filter(p => p.updatedAt) // optional: exclude undefined timestamps
+  .filter(p => p.updatedAt) 
   .sort((a, b) =>
     new Date(b.updatedAt!).getTime() - new Date(a.updatedAt!).getTime()
   )
