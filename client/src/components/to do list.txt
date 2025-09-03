@@ -1,0 +1,7 @@
+Things to do-
+1.Add setting ui
+2.Add Share with me ui
+3.Add chat features
+4.Add ai llm model for auto completion and code explain and debugging
+5.improve the compiler
+6.improve the scalibilty
