@@ -68,3 +68,6 @@ export type AuthContextType ={
 export type MenuProps={
   setShowModals:(val:boolean)=>void
 }
+export type AvatarProps={
+  name:string | undefined
+}
