@@ -5,3 +5,6 @@ Things to do-
 4.Add ai llm model for auto completion and code explain and debugging
 5.improve the compiler
 6.improve the scalibilty
+7.improve responsiveness
+8.improve accessibility
+9.
