@@ -6,12 +6,10 @@ import  Logo  from '../assets/default.svg?react';
 import {useNavigate,useParams } from 'react-router-dom';
 import ShareModal from "./ShareModal";
 
-import type { NavbarProp } from './Types';
+import type { NavbarProp,AvatarProps } from './Types';
 import { useState,useEffect,useRef } from 'react';
 
-type Avatar={
-  name:string | undefined
-}
+
 
 export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
   const {id:roomId}=useParams()
@@ -20,6 +18,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
   const [loading,setLoading]=useState(false);
   const [showModals,setShowModals]=useState(false)
   const userId=session?.user?.email?.split("@")[0]
+  const userName=session?.user?.user_metadata?.full_name
   const navigate=useNavigate()
 
   const dropDownRef=useRef<HTMLDivElement>(null)
@@ -72,7 +71,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
   return `hsl(${hash % 360}, 70%, 50%)`;
 }
 
-const Avatar = ({ name }:Avatar) => {
+const Avatar = ({ name }:AvatarProps) => {
   if (!name) return null;
 
   const initials = name
@@ -137,7 +136,7 @@ const Avatar = ({ name }:Avatar) => {
         </div>) : (
           <div className='relative flex flex-col' ref={dropDownRef}>
             <div onClick={()=>setIsOpen(prev=>!prev)} className=' text-white flex  gap-1.5 items-center cursor-pointer'>
-             <Avatar name={userId || "Guest"} />
+             <Avatar name={userName || "Guest"} />
             <span>{userId || "Guest"}</span>
             </div>
             {isOpen &&
