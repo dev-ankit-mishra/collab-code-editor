@@ -9,6 +9,10 @@ import ShareModal from "./ShareModal";
 import type { NavbarProp } from './Types';
 import { useState,useEffect,useRef } from 'react';
 
+type Avatar={
+  name:string | undefined
+}
+
 export default function NavBar({ authRequired = false,shareRequired=false,projectName=""}:NavbarProp) {
   const {id:roomId}=useParams()
   const [isOpen,setIsOpen]=useState(false)
@@ -60,6 +64,34 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
     }
   }
 
+  function stringToColor(str:string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return `hsl(${hash % 360}, 70%, 50%)`;
+}
+
+const Avatar = ({ name }:Avatar) => {
+  if (!name) return null;
+
+  const initials = name
+    .split(" ")
+    .map(n => n[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div
+      className="w-7 h-7 flex items-center justify-center rounded-full text-white text-xs font-bold"
+      style={{ backgroundColor: stringToColor(name) }}
+    >
+      {initials}
+    </div>
+  );
+};
+
+
 
 
   
@@ -109,7 +141,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
         </div>) : (
           <div className='relative flex flex-col' ref={dropDownRef}>
             <div onClick={()=>setIsOpen(prev=>!prev)} className=' text-white flex  gap-1.5 items-center cursor-pointer'>
-             <CircleUserRound size={20} />
+             <Avatar name={userId} />
              <span>{userId}</span>
             </div>
             {isOpen &&
