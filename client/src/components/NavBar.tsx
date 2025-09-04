@@ -126,10 +126,6 @@ const Avatar = ({ name }:Avatar) => {
             {showModals && <ShareModal roomId={roomId || ""} onClose={() => setShowModals(false)} />}
 
           </div>
-          
-          
-            
-          
         )
       }
         {authRequired && (
@@ -141,8 +137,8 @@ const Avatar = ({ name }:Avatar) => {
         </div>) : (
           <div className='relative flex flex-col' ref={dropDownRef}>
             <div onClick={()=>setIsOpen(prev=>!prev)} className=' text-white flex  gap-1.5 items-center cursor-pointer'>
-             <Avatar name={userId} />
-             <span>{userId}</span>
+             <Avatar name={userId || "Guest"} />
+            <span>{userId || "Guest"}</span>
             </div>
             {isOpen &&
             (
