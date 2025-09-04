@@ -82,7 +82,7 @@ const Avatar = ({ name }:AvatarProps) => {
 
   return (
     <div
-      className="w-7 h-7 flex items-center justify-center rounded-full text-white text-xs font-bold"
+      className="w-8 h-8 flex items-center justify-center rounded-full text-white text-xs font-bold"
       style={{ backgroundColor: stringToColor(name) }}
     >
       {initials}
