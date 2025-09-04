@@ -1,4 +1,4 @@
-import { CircleUserRound,UserPlus,FolderOpen } from 'lucide-react';
+import { UserPlus,FolderOpen } from 'lucide-react';
 import Button from './Button';
 import {Link} from "react-router-dom"
 import { useAuth } from "../context/useAuth" ;
