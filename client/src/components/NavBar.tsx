@@ -13,6 +13,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
   const {id:roomId}=useParams()
   const [isOpen,setIsOpen]=useState(false)
   const {session,signOutUser}=useAuth()
+  const [loading,setLoading]=useState(false);
   const [showModals,setShowModals]=useState(false)
   const userId=session?.user?.email?.split("@")[0]
   const navigate=useNavigate()
@@ -43,6 +44,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
 
 
     async function handleSignOut(){
+      setLoading(true);
     try{
       const data =await signOutUser()
       if(!data?.success){
@@ -53,6 +55,8 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
       }
     }catch (err){ 
       console.log(err)
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -110,7 +114,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
             </div>
             {isOpen &&
             (
-              <div className='w-fit  absolute top-full mt-2 rounded bg-neutral-900'>
+              <div className='w-fit  absolute top-full right-1 mt-2 rounded bg-neutral-900'>
                 <ul className='p-2'>
                   <li onClick={()=>{
                     navigate("/dashboard")
@@ -120,7 +124,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
                     navigate("/dashboard/settings")
                     setIsOpen(false)
                   }} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Settings</li>
-                  <li onClick={handleSignOut} className='px-3 py-1 cursor-pointer hover:bg-gray-800'>Sign Out</li>
+                  <li onClick={handleSignOut} className={`px-3 py-1  ${loading ? "cursor-progress" : "cursor-pointer"} hover:bg-gray-800`}>Sign Out</li>
                 </ul>
               </div>
             )}
