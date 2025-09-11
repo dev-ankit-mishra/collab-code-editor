@@ -57,8 +57,6 @@ io.on("connection",(socket)=>{
 })
 
 
-
-// Start server only after DB connects
 connectDB()
   .then(() => {
     httpServer.listen(PORT, () => {

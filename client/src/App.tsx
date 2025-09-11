@@ -14,7 +14,6 @@ import ProfilePage from "./pages/Profile";
 import {ToastContainer} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 
-// Lazy load only heavy components
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CodeEditor = lazy(() => import("./pages/CodeEditor"));
 const AllRepository = lazy(() => import("./components/AllRepository"));
