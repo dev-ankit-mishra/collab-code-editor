@@ -18,7 +18,7 @@ export default function Output({onClick,children,bgClass,isLoading}:OutputProps)
       <Button className="h-8 px-3 w-18" onClick={onClick} disabled={isLoading}>{isLoading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) : <><Play size={16}/> Run</>}</Button>
       <div className={`flex-1 p-4 text-sm rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] ${bgClass}`}>
         <h1 className="text-lg font-medium mb-4">Output -</h1>
-          {children}
+          <pre className="whitespace-pre-wrap">{children}</pre>
       </div>
     </main>
   )
