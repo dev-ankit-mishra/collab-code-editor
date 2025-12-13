@@ -1,4 +1,4 @@
-import {Project} from "../models/Project"
+import {Project} from "../models/Project.js"
 
 export const requireProjectOwner= async (req,res,next)=>{
   try{
