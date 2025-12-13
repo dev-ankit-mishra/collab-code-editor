@@ -37,24 +37,32 @@ app.get("/", (req, res) => {
 });
 
 
-io.on("connection",(socket)=>{
-  console.log(`new client connected ${socket.id}`)
+io.on("connection", (socket) => {
+  console.log(`new client connected ${socket.id}`);
 
-  socket.on("join-room",(roomId)=>{
-    socket.join(roomId)
-    console.log(`${socket.id} joined ${roomId}`)
-  })
+  socket.on("join-room", (roomId) => {
+    socket.join(roomId);
+    console.log(`${socket.id} joined ${roomId}`);
+  });
 
-  socket.on("code-change",({roomId,code})=>{
-    socket.to(roomId).emit("code-change",code)
-  })
+  socket.on("code-change", ({ roomId, code }) => {
+    socket.to(roomId).emit("code-change", code);
+  });
 
-  socket.on("disconnect",()=>{
-    console.log(`client-disconnected ${socket.id}`)
-  })
+  // 🔥 CHAT EVENT
+  socket.on("chat-message", ({ roomId, user, text, time }) => {
+    socket.to(roomId).emit("chat-message", {
+      user,
+      text,
+      time,
+    });
+  });
 
+  socket.on("disconnect", () => {
+    console.log(`client-disconnected ${socket.id}`);
+  });
+});
 
-})
 
 
 connectDB()
