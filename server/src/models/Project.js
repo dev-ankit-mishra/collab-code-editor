@@ -26,4 +26,4 @@ const projectSchema = new Schema(
   { timestamps: true,collection:"Project"}
 );
 
-export const Project = model("Project", projectSchema);
+export  const Project = model("Project", projectSchema);
