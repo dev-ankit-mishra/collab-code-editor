@@ -6,6 +6,11 @@ import {createServer} from "http"
 import {Server} from "socket.io"
 import projectRouter from "./routes/projectRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import projectInviteRoutes from "./routes/projectInviteRoutes.js";
+import projectSharedRoutes from "./routes/projectSharedRoutes.js";
+import projectInviteActions from "./routes/projectInviteActions.js";
+
+
 dotenv.config();
 
 const app = express();
@@ -30,6 +35,9 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRouter);
 app.use("/api/projects", projectRouter);
+app.use("/api/projects", projectInviteRoutes);
+app.use("/api/projects", projectSharedRoutes);
+app.use("/api/projects", projectInviteActions);
 
 // Default route
 app.get("/", (req, res) => {
