@@ -7,8 +7,8 @@ const UserSpecificSchema = new Schema(
     userId: {
       type: String,
       required: true,
-      unique: true, // Supabase user ID — must be unique
-      index: true   // indexing for faster lookups
+      unique: true,
+      index: true // Supabase UUID
     },
     userName: {
       type: String,
@@ -18,6 +18,8 @@ const UserSpecificSchema = new Schema(
     userEmail: {
       type: String,
       required: true,
+      lowercase: true,
+      trim: true
     },
     projectObject: [
       {
@@ -26,7 +28,10 @@ const UserSpecificSchema = new Schema(
       }
     ]
   },
-  { timestamps: true,collection:"UserData"}
+  {
+    timestamps: true,
+    collection: "UserData"
+  }
 );
 
 export const UserData = model("UserData", UserSpecificSchema);
