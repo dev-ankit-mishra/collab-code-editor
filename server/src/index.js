@@ -32,12 +32,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Routes
 app.use("/api/users", userRouter);
-app.use("/api/projects", projectRouter);
-app.use("/api/projects", projectInviteRoutes);
-app.use("/api/projects", projectSharedRoutes);
-app.use("/api/projects", projectInviteActions);
+
+// 🔥 SPECIFIC project routes FIRST
+app.use("/api/projects", projectSharedRoutes);     // /shared-with-me
+app.use("/api/projects", projectInviteActions);    // /:projectId/invite/accept etc
+app.use("/api/projects", projectInviteRoutes);     // /:projectId/invite
+
+// 🔥 GENERIC project routes LAST
+app.use("/api/projects", projectRouter);   
 
 // Default route
 app.get("/", (req, res) => {

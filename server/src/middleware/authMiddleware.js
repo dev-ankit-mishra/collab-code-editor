@@ -9,22 +9,20 @@ export const requireAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    // 1️⃣ Check header exists
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Not Authenticated" });
+      return res.status(401).json({ message: "Authorization failed" });
     }
 
-    // 2️⃣ Extract token
     const token = authHeader.split(" ")[1];
 
-    // 3️⃣ VERIFY TOKEN WITH SUPABASE (ASYNC!)
+    // 🔥 MUST await
     const { data, error } = await supabase.auth.getUser(token);
 
     if (error || !data?.user) {
-      return res.status(401).json({ message: "Invalid Token" });
+      return res.status(401).json({ message: "Authorization failed" });
     }
 
-    // 4️⃣ Attach user to request
+    // 🔥 THIS IS REQUIRED FOR ALL DOWNSTREAM ROUTES
     req.user = {
       id: data.user.id,
       email: data.user.email,
@@ -32,6 +30,7 @@ export const requireAuth = async (req, res, next) => {
 
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Authentication failed" });
+    console.error("Auth error:", err);
+    return res.status(401).json({ message: "Authorization failed" });
   }
 };
