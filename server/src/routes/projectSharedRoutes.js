@@ -5,32 +5,34 @@ import { ProjectCollaborator } from "../models/ProjectCollaborator.js";
 const router = Router();
 
 /**
- * Get all projects shared with the logged-in user
+ * GET /api/projects/shared-with-me
+ * Returns projects where the logged-in user is an ACCEPTED collaborator
  */
 router.get("/shared-with-me", requireAuth, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const sharedProjects = await ProjectCollaborator.find({
+    // 1️⃣ Find accepted collaborations and populate project
+    const collaborations = await ProjectCollaborator.find({
       userId,
       status: "ACCEPTED",
-    })
-      .populate("projectId")
-      .sort({ updatedAt: -1 });
+    }).populate("projectId");
 
-    /**
-     * Format response for frontend
-     */
-    const result = sharedProjects.map((entry) => ({
-      project: entry.projectId,
-      role: entry.role,
-      invitedBy: entry.invitedBy,
-      joinedAt: entry.createdAt,
-    }));
+    // 2️⃣ Remove deleted projects (safety)
+    const projects = collaborations
+      .filter(c => c.projectId) // 👈 IMPORTANT
+      .map(c => ({
+        _id: c.projectId._id,
+        projectName: c.projectId.projectName,
+        template: c.projectId.template,
+        role: c.role,            // VIEWER | EDITOR
+        ownerId: c.projectId.userId,
+        updatedAt: c.projectId.updatedAt,
+      }));
 
-    res.status(200).json(result);
+    res.json(projects);
   } catch (err) {
-    console.error(err);
+    console.error("Shared-with-me error:", err);
     res.status(500).json({
       message: "Failed to fetch shared projects",
     });
