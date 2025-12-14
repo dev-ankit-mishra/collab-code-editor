@@ -81,3 +81,6 @@ router.delete("/invites/:inviteId/reject", requireAuth, async (req, res) => {
     res.status(500).json({ message: "Failed to reject invite" });
   }
 });
+
+
+export default router; 
