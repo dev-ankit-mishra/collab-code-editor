@@ -28,18 +28,21 @@ router.post("/", async (req, res) => {
   res.status(201).json(project);
 });
 
-/* MY PROJECTS */
+/* MY PROJECTS (OWNER ONLY) */
 router.get("/", async (req, res) => {
   const projects = await Project.find({ userId: req.user.id });
   res.json(projects);
 });
 
-/* OPEN PROJECT (OWNER + VIEWER + EDITOR) */
+/* OPEN PROJECT (OWNER + EDITOR + VIEWER) */
 router.get(
   "/:projectId",
   requireProjectAccess("VIEWER"),
   (req, res) => {
-    res.json(req.project);
+    res.status(200).json({
+      project: req.project,
+      role: req.role,
+    });
   }
 );
 
@@ -60,10 +63,12 @@ router.delete(
   requireProjectAccess("OWNER"),
   async (req, res) => {
     await req.project.deleteOne();
+
     await UserData.updateOne(
       { userId: req.user.id },
       { $pull: { projectObject: req.project._id } }
     );
+
     res.json({ message: "Project deleted" });
   }
 );
