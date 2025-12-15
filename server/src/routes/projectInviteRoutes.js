@@ -16,13 +16,12 @@ router.post(
   async (req, res) => {
     try {
       const { projectId } = req.params;
-      const { email, role } = req.body;
+      const { email, permission } = req.body;
 
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
 
-      // 1️⃣ Find user by email
       const user = await UserData.findOne({
         userEmail: email.toLowerCase(),
       });
@@ -33,18 +32,19 @@ router.post(
           .json({ message: "User not found. Ask them to sign up first." });
       }
 
-      // 2️⃣ Prevent inviting yourself
       if (user.userId === req.user.id) {
         return res
           .status(400)
           .json({ message: "You already own this project" });
       }
 
-      // 3️⃣ Create collaborator entry
+      const role =
+        permission === "edit" ? "EDITOR" : "VIEWER";
+
       const collaborator = await ProjectCollaborator.create({
         projectId,
         userId: user.userId,
-        role: role || "EDITOR",
+        role,
         invitedBy: req.user.id,
       });
 
@@ -53,7 +53,6 @@ router.post(
         collaborator,
       });
     } catch (err) {
-      // Duplicate invite
       if (err.code === 11000) {
         return res
           .status(409)
