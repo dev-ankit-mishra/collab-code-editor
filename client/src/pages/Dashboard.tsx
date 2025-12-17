@@ -14,12 +14,18 @@ export default function Dashboard() {
   const [showModals, setShowModals] = useState(false);
   const [project, setProject] = useState<ProjectDetails[]>([]);
   const [loading, setLoading] = useState(false);
-  const { session } = useAuth();
-  const id = session?.user?.id;
+
+  const { session } = useAuth(); // Supabase session
+  const accessToken = session?.access_token;
+ // 🔑 JWT
 
   const location = useLocation();
   const navigate = useNavigate();
 
+
+  /* ==========================================
+     TOAST HANDLING (unchanged)
+     ========================================== */
   useEffect(() => {
     if (location.state?.showToast === "SignIn") {
       toast.success("Successfully Logged in!");
@@ -33,13 +39,28 @@ export default function Dashboard() {
     }
   }, [location, navigate]);
 
+  /* ==========================================
+     FETCH PROJECTS (SECURE VERSION)
+     ========================================== */
   useEffect(() => {
-    if (!id) return;
+    if (!accessToken) return;
 
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`https://codevspace-aqhw.onrender.com/api/projects/${id}`);
+        const res = await fetch(
+          "https://codevspace-aqhw.onrender.com/api/projects",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`, // 🔐 REQUIRED
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Unauthorized or failed to fetch");
+        }
+
         const data = await res.json();
         setProject(data);
       } catch (err) {
@@ -50,29 +71,43 @@ export default function Dashboard() {
     };
 
     fetchProjects();
-  }, [id]);
+  }, [accessToken]);
 
+  /* ==========================================
+     CREATE PROJECT (SECURE VERSION)
+     ========================================== */
   async function handleCreate(project: ProjectDetails) {
     try {
       const response = await axios.post(
-        `https://codevspace-aqhw.onrender.com/api/projects/${id}`,
-        project
+        "https://codevspace-aqhw.onrender.com/api/projects",
+        project,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // 🔐 REQUIRED
+          },
+        }
       );
+
       const newProject = response.data;
       setProject((prev) => [...prev, newProject]);
       return newProject._id;
     } catch (err) {
-      console.error(err);
+      console.error("Create project failed:", err);
     }
   }
 
+  /* ==========================================
+     UI HELPERS (unchanged)
+     ========================================== */
   function handleDelete(_id: string) {
     setProject((prev) => prev.filter((p) => p._id !== _id));
   }
 
   function handleRename(_id: string | undefined, projectName: string) {
     setProject((prev) =>
-      prev.map((p) => (p._id === _id ? { ...p, projectName: projectName } : p))
+      prev.map((p) =>
+        p._id === _id ? { ...p, projectName } : p
+      )
     );
   }
 
@@ -86,13 +121,18 @@ export default function Dashboard() {
         {loading ? (
           <SplashScreen />
         ) : project.length > 0 ? (
-          <Outlet context={{ project, setShowModals, handleDelete, handleRename }} />
+          <Outlet
+            context={{ project, setShowModals, handleDelete, handleRename }}
+          />
         ) : (
           <div className="w-full flex flex-col">
-            <Outlet context={{ project, setShowModals, handleDelete, handleRename }} />
+            <Outlet
+              context={{ project, setShowModals, handleDelete, handleRename }}
+            />
             <div className="flex items-center justify-center mt-6">
               <h2 className="text-xl">
-                You don’t have any projects yet. Click <span className="font-semibold">New Project</span> to get started!
+                You don’t have any projects yet. Click{" "}
+                <span className="font-semibold">New Project</span> to get started!
               </h2>
             </div>
           </div>
