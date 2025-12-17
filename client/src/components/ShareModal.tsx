@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 import Button from "./Button";
+import { useAuth } from "../context/useAuth";
 
 interface ShareModalProps {
   roomId: string;
@@ -8,11 +9,17 @@ interface ShareModalProps {
 }
 
 export default function ShareModal({ roomId, onClose }: ShareModalProps) {
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState("");
+  const [permission, setPermission] = useState<"view" | "edit">("view");
+  const { session } = useAuth();
+
+
   const shareURL = `${window.location.origin}/editor/${roomId}`;
 
-  // Close on Escape key
+  /* ---------- ESC CLOSE ---------- */
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -21,45 +28,151 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
+  /* ---------- COPY FEEDBACK ---------- */
   useEffect(() => {
     if (copied) {
-      const timeout = setTimeout(() => setCopied(false), 2000);
-      return () => clearTimeout(timeout);
+      const t = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(t);
     }
   }, [copied]);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(shareURL);
-      setCopied(true);
-    } catch (err) {
-      console.error("Failed to copy:", err);
-    }
+    await navigator.clipboard.writeText(shareURL);
+    setCopied(true);
   };
+
+ const handleInvite = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!email) return;
+
+  // 🔁 UI → Backend mapping
+  const role = permission === "edit" ? "EDITOR" : "VIEWER";
+
+  try {
+    setLoading(true);
+    setError(null);
+
+    const res = await fetch(
+      `https://codevspace-aqhw.onrender.com/api/projects/${roomId}/invite`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          email,
+          role, // ✅ CORRECT FIELD
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Invite failed");
+    }
+
+    // ✅ UX success
+    setEmail("");
+    setPermission("view");
+    alert("Invite sent successfully");
+
+  } catch (err: any) {
+    setError(err.message || "Failed to send invite");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+  /* ---------- INVITE SUBMIT (UI ONLY FOR NOW) ---------- */
 
   return createPortal(
     <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center">
-      <div className="bg-neutral-900 border border-white/10 text-gray-100 p-6 rounded-md shadow-lg relative ">
+      <div className="bg-neutral-900 border border-white/10 text-gray-100 p-6 rounded-xl shadow-lg w-full max-w-md relative">
+        
+        {/* Close */}
         <button
-          className="absolute top-3 right-3 text-white text-xl cursor-pointer"
+          className="absolute top-3 right-3 text-white text-lg"
           onClick={onClose}
         >
           ✕
         </button>
-        <h2 className="text-xl font-bold mb-2">Share this link</h2>
-        <p className="text-sm tracking-wide mb-5">
-          Anyone with this link can collaborate in real-time.
+
+        {/* Title */}
+        <h2 className="text-xl font-semibold mb-1">Share Project</h2>
+        <p className="text-sm text-gray-400 mb-5">
+          Invite people or share a link to collaborate.
         </p>
 
-        <div className="bg-neutral-800 text-gray-200 p-2 rounded tracking-wide  text-sm mb-4">
+        {/* ---------- INVITE FORM ---------- */}
+        <form onSubmit={handleInvite} className="space-y-4">
+          <div>
+            <label className="text-sm text-gray-300">Invite by email</label>
+            <input
+              type="email"
+              placeholder="user@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 w-full px-3 py-2 rounded-md bg-neutral-800 border border-white/10 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-300 mb-1 block">
+              Permission
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  checked={permission === "view"}
+                  onChange={() => setPermission("view")}
+                />
+                Can view
+              </label>
+
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  checked={permission === "edit"}
+                  onChange={() => setPermission("edit")}
+                />
+                Can edit
+              </label>
+            </div>
+          </div>
+
+          <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Sending..." : "Send Invite"}
+          </Button>
+          {error && (
+  <p className="text-red-500 text-sm mt-2 text-center">
+    {error}
+  </p>
+)}
+
+
+        </form>
+
+        {/* ---------- DIVIDER ---------- */}
+        <div className="my-5 border-t border-white/10" />
+
+        {/* ---------- SHARE LINK ---------- */}
+        <p className="text-sm text-gray-400 mb-2">
+          Or share this link
+        </p>
+
+        <div className="bg-neutral-800 text-gray-200 p-2 rounded text-sm mb-3 break-all">
           {shareURL}
         </div>
 
-        <Button
-          onClick={handleCopy}
-          className="w-full"
-        >
-          {copied ? "Copied!" : "Copy to Clipboard"}
+        <Button onClick={handleCopy} className="w-full">
+          {copied ? "Copied!" : "Copy Link"}
         </Button>
       </div>
     </div>,
