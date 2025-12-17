@@ -13,6 +13,7 @@ import ChangePassword from "./pages/ChangePassword";
 import ProfilePage from "./pages/Profile";
 import {ToastContainer} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import Invititions from "./components/Invititions";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CodeEditor = lazy(() => import("./pages/CodeEditor"));
@@ -24,10 +25,12 @@ const SharedWithMe=lazy(()=>import("./components/ShareWithMe"))
 export default function App() {
   return (
     <BrowserRouter>
-    <ToastContainer position="bottom-right" autoClose={3000} />
+      <ToastContainer position="bottom-right" autoClose={3000} />
+
       <Routes>
         <Route path="/" element={<HomePage />} />
 
+        {/* ---------- PUBLIC ROUTES ---------- */}
         <Route
           path="/login"
           element={
@@ -55,12 +58,13 @@ export default function App() {
           }
         />
 
+        {/* ---------- PROTECTED ROUTES ---------- */}
         <Route
           path="/change-password"
           element={
             <ProtectedRoutes>
               <ChangePassword />
-            </ProtectedRoutes> 
+            </ProtectedRoutes>
           }
         />
 
@@ -74,50 +78,12 @@ export default function App() {
             </ProtectedRoutes>
           }
         >
-          <Route
-            index
-            element={
-              <Suspense fallback={<SplashScreen />}>
-                <Recent />
-              </Suspense>
-            }
-          />
-          <Route
-            path="allrepository"
-            element={
-              <Suspense fallback={<SplashScreen />}>
-                <AllRepository />
-              </Suspense>
-            }
-          />
-          <Route
-            path="sharewithme"
-            element={
-              <Suspense fallback={<SplashScreen />}>
-                <SharedWithMe />
-              </Suspense>
-            }
-          />
-          <Route
-            path="settings"
-            element={
-              <Suspense fallback={<SplashScreen />}>
-                <Settings />
-              </Suspense>
-            }
-          />
+          <Route index element={<Recent />} />
+          <Route path="allrepository" element={<AllRepository />} />
+          <Route path="invititions" element={<Invititions />} />
+          <Route path="sharewithme" element={<SharedWithMe />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
-
-        <Route
-          path="/editor"
-          element={
-            <ProtectedRoutes>
-              <Suspense fallback={<SplashScreen />}>
-                <CodeEditor />
-              </Suspense>
-            </ProtectedRoutes>
-          }
-        />
 
         <Route
           path="/editor/:id"
@@ -131,16 +97,16 @@ export default function App() {
         />
 
         <Route
-        path="/profile"
-        element={
-          <ProfilePage/>
-        }
+          path="/profile"
+          element={
+            <ProtectedRoutes>
+              <ProfilePage />
+            </ProtectedRoutes>
+          }
         />
 
         <Route path="*" element={<NotFoundPage />} />
-
       </Routes>
-      
     </BrowserRouter>
   );
 }
