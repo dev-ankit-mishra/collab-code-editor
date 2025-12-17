@@ -6,27 +6,36 @@ import type { ProjectDetails } from "../components/Types";
 import { useAuth } from "../context/useAuth";
 import SplashScreen from "../components/SplashScreen";
 
-
 interface LocationState {
   projectObject?: ProjectDetails;
+  accessRole?: "OWNER" | "EDITOR" | "VIEWER";
 }
 
 export default function CodeEditor() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const state = location.state as LocationState | null;
+
   const [project, setProject] = useState<ProjectDetails | null>(null);
+  const [accessRole, setAccessRole] = useState<
+    "OWNER" | "EDITOR" | "VIEWER"
+  >("VIEWER");
+
   const { session } = useAuth();
-  const userId = session?.user?.id;
+  const accessToken = session?.access_token;
 
   useEffect(() => {
-    // Only fetch if no state is passed
-    const fetchByProject = async () => {
-      if (!userId || !id) return;
+    const fetchProject = async () => {
+      if (!id || !accessToken) return;
 
       try {
         const res = await fetch(
-          `https://codevspace-aqhw.onrender.com/api/projects/${userId}/${id}`
+          `https://codevspace-aqhw.onrender.com/api/projects/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
         );
 
         if (!res.ok) {
@@ -34,37 +43,47 @@ export default function CodeEditor() {
           throw new Error(`Fetch failed: ${res.status} - ${errMsg}`);
         }
 
-        const data: ProjectDetails = await res.json();
-        setProject(data);
+        /**
+         * ✅ EXPECTED RESPONSE:
+         * {
+         *   project: {...},
+         *   role: "VIEWER" | "EDITOR" | "OWNER"
+         * }
+         */
+        const data = await res.json();
+
+        setProject(data.project);
+        setAccessRole(data.role);
       } catch (err) {
-        console.error("❌ Failed to load project code:", err);
+        console.error("❌ Failed to load project:", err);
       }
     };
 
-    if (state?.projectObject) {
-      setProject(state.projectObject);
-    } else {
-      fetchByProject();
-    }
-  }, [id, state?.projectObject, userId]);
+    // Prefer backend data over route state (security)
+    fetchProject();
+  }, [id, accessToken]);
 
   return (
     <section className="w-full h-screen flex flex-col bg-gradient-to-br from-neutral-950 via-neutral-800 to-neutral-950 text-white">
       <NavBar
-        shareRequired
+        shareRequired={accessRole === "OWNER"}
         authRequired
         projectName={
           project
-            ? `${project.projectName} /  ${project.template?.label || "No Label"}`
+            ? `${project.projectName} / ${project.template?.label || "No Label"}`
             : ""
         }
       />
+
       <main className="w-full h-full flex-1 flex">
         <div className="flex-1">
           {project ? (
-            <CodeArea projectObject={project} />
+            <CodeArea
+              projectObject={project}
+              accessRole={accessRole} // ✅ CRITICAL
+            />
           ) : (
-            <SplashScreen/>
+            <SplashScreen />
           )}
         </div>
       </main>
