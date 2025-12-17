@@ -3,16 +3,23 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import SplashScreen from "../components/SplashScreen";
 
-export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
-  const { session } = useAuth();
+export default function ProtectedRoutes({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { session, loading } = useAuth();
 
-  if (session === undefined) {
-    return <SplashScreen/> // or a spinner
+  // ⏳ Wait until Supabase finishes restoring session
+  if (loading) {
+    return <SplashScreen />;
   }
 
+  // 🔐 Not authenticated
   if (!session) {
     return <Navigate to="/login" replace />;
   }
 
+  // ✅ Authenticated
   return <>{children}</>;
 }
