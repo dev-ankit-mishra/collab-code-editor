@@ -1,9 +1,8 @@
 import Button from "./Button";
 import { PlusCircle, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { language } from "./languages";
-import { useAuth } from "../context/useAuth";
 import type { Language } from "./Types";
 import type { ModalProps, ProjectDetails } from "./Types";
 
@@ -11,8 +10,6 @@ export default function Modals({ setShowModals, create }: ModalProps) {
   const navigate = useNavigate();
   const [isError, setIsError] = useState(false);
   const [lang, setLang] = useState(language[0]);
-  const { session } = useAuth();
-  const userId = session?.user?.id;
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,37 +21,35 @@ export default function Modals({ setShowModals, create }: ModalProps) {
 
   async function actionFunction(formData: FormData) {
     setLoading(true);
-    const projectRawValue = formData.get("project");
-    const projectName =
-      typeof projectRawValue === "string" ? projectRawValue.trim() : "";
 
-    if (!projectName || !userId) {
+    const rawName = formData.get("project");
+    const projectName =
+      typeof rawName === "string" ? rawName.trim() : "";
+
+    if (!projectName) {
       setIsError(true);
       setLoading(false);
       return;
     }
 
-    const langObj={
-      label:lang.label,
-      version:lang.version,
-      alias:lang.alias,
-      boilerplate:lang.boilerplate
-    }
-
+    // ✅ Template only (no userId)
     const projectObj: ProjectDetails = {
       projectName,
-      userId,
       code: "",
-      template: langObj,
+      template: {
+        label: lang.label,
+        version: lang.version,
+        alias: lang.alias,
+        boilerplate: lang.boilerplate,
+      },
     };
 
     try {
       const newId = await create(projectObj);
 
       if (newId) {
-        const projectObject = { ...projectObj, _id: newId };
         navigate(`/editor/${newId}`, {
-          state: { projectObject },
+          state: { projectObject: { ...projectObj, _id: newId } },
         });
         setShowModals(false);
       } else {
@@ -68,13 +63,10 @@ export default function Modals({ setShowModals, create }: ModalProps) {
   }
 
   function handleLangChange(selectedLang: Language) {
-  console.log("Selected:", selectedLang.label);
-  setLang(selectedLang);
+    setLang(selectedLang);
   }
 
-
-
-  return (
+return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
       <div className="w-md bg-neutral-900  px-6 py-8 rounded-xl relative border border-white/10 shadow-md">
         <button
@@ -155,3 +147,4 @@ export default function Modals({ setShowModals, create }: ModalProps) {
     </div>
   );
 }
+
