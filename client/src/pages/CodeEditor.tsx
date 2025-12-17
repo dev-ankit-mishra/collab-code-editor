@@ -1,20 +1,13 @@
 import NavBar from "../components/NavBar";
 import CodeArea from "../components/CodeArea";
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
 import { useAuth } from "../context/useAuth";
 import SplashScreen from "../components/SplashScreen";
 
-interface LocationState {
-  projectObject?: ProjectDetails;
-  accessRole?: "OWNER" | "EDITOR" | "VIEWER";
-}
-
 export default function CodeEditor() {
   const { id } = useParams<{ id: string }>();
-  const location = useLocation();
-  const state = location.state as LocationState | null;
 
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [accessRole, setAccessRole] = useState<
@@ -44,10 +37,10 @@ export default function CodeEditor() {
         }
 
         /**
-         * ✅ EXPECTED RESPONSE:
+         * Expected backend response:
          * {
-         *   project: {...},
-         *   role: "VIEWER" | "EDITOR" | "OWNER"
+         *   project: ProjectDetails,
+         *   role: "OWNER" | "EDITOR" | "VIEWER"
          * }
          */
         const data = await res.json();
@@ -59,15 +52,14 @@ export default function CodeEditor() {
       }
     };
 
-    // Prefer backend data over route state (security)
     fetchProject();
   }, [id, accessToken]);
 
   return (
     <section className="w-full h-screen flex flex-col bg-gradient-to-br from-neutral-950 via-neutral-800 to-neutral-950 text-white">
       <NavBar
-        shareRequired={accessRole === "OWNER"}
         authRequired
+        shareRequired={accessRole === "OWNER"}
         projectName={
           project
             ? `${project.projectName} / ${project.template?.label || "No Label"}`
@@ -80,7 +72,7 @@ export default function CodeEditor() {
           {project ? (
             <CodeArea
               projectObject={project}
-              accessRole={accessRole} // ✅ CRITICAL
+              accessRole={accessRole}
             />
           ) : (
             <SplashScreen />
