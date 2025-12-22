@@ -27,6 +27,7 @@ router.get("/shared-with-me", requireAuth, async (req, res) => {
         template: c.projectId.template,
         role: c.role,            // VIEWER | EDITOR
         ownerId: c.projectId.userId,
+        ownerName:c.userName,
         updatedAt: c.projectId.updatedAt,
       }));
 
