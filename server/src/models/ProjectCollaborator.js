@@ -16,6 +16,11 @@ const ProjectCollaboratorSchema = new Schema(
       required: true,
       index: true,
     },
+    userName: {
+      type: String,
+      required: true,
+      trim: true
+    },
 
     role: {
       type: String,

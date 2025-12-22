@@ -43,6 +43,7 @@ router.post(
       const collaborator = await ProjectCollaborator.create({
         projectId,
         userId: user.userId,
+        userName: user.userName,
         role,
         invitedBy: req.user.id,
       });
