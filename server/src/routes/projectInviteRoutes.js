@@ -16,7 +16,7 @@ router.post(
   async (req, res) => {
     try {
       const { projectId } = req.params;
-      const { email, permission } = req.body;
+      const { email, role } = req.body;
 
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
@@ -38,8 +38,7 @@ router.post(
           .json({ message: "You already own this project" });
       }
 
-      const role =
-        permission === "edit" ? "EDITOR" : "VIEWER";
+    
 
       const collaborator = await ProjectCollaborator.create({
         projectId,
