@@ -40,4 +40,57 @@ router.get("/shared-with-me", requireAuth, async (req, res) => {
   }
 });
 
+/**
+ * DELETE /api/projects/:projectId/collaborators/:collaboratorId
+ * Remove a collaborator or allow collaborator to leave project
+ */
+router.delete(
+  "/:projectId/collaborators/:collaboratorId",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const { projectId, collaboratorId } = req.params;
+      const loggedInUserId = req.user.id;
+
+      // 1️⃣ Find collaboration
+      const collaboration = await ProjectCollaborator.findOne({
+        projectId,
+        userId: collaboratorId,
+      });
+
+      if (!collaboration) {
+        return res.status(404).json({
+          message: "Collaborator not found",
+        });
+      }
+
+      // 2️⃣ Check permission
+      const isOwner = collaboration.ownerId?.toString() === loggedInUserId;
+      const isSelf = collaboratorId === loggedInUserId;
+
+      if (!isOwner && !isSelf) {
+        return res.status(403).json({
+          message: "Not authorized to remove this collaborator",
+        });
+      }
+
+      // 3️⃣ Delete collaborator
+      await ProjectCollaborator.deleteOne({
+        projectId,
+        userId: collaboratorId,
+      });
+
+      res.json({
+        message: "Collaborator removed successfully",
+      });
+    } catch (err) {
+      console.error("Delete collaborator error:", err);
+      res.status(500).json({
+        message: "Failed to remove collaborator",
+      });
+    }
+  }
+);
+
+
 export default router;
