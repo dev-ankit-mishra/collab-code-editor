@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import jwt from "jsonwebtoken";
+import { socketAuth } from "./middleware/socketAuth.js";
 
 import { connectDB } from "./db.js";
 import projectRouter from "./routes/projectRoutes.js";
@@ -20,50 +20,34 @@ const httpServer = createServer(app);
 /* ================= SOCKET.IO SETUP ================= */
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
+    origin: [
+      "http://localhost:5173",
+      "https://codevspace.netlify.app", // 🔥 your frontend
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
   },
+  transports: ["websocket"], // 🔥 IMPORTANT for Render
 });
 
-/* ================= SOCKET AUTH MIDDLEWARE ================= */
-io.use((socket, next) => {
-  const token = socket.handshake.auth?.token;
-
-  if (!token) {
-    return next(new Error("Unauthorized socket connection"));
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = {
-      id: decoded.id,
-      name: decoded.name,
-      email: decoded.email,
-    };
-    next();
-  } catch (err) {
-    return next(new Error("Invalid token"));
-  }
-});
+/* ================= SOCKET AUTH ================= */
+io.use(socketAuth);
 
 /* ================= SOCKET EVENTS ================= */
 io.on("connection", (socket) => {
-  console.log("🟢 Socket connected:", socket.id, socket.user.name);
+  console.log("🟢 Socket connected:", socket.id, socket.user.email);
 
-  /* JOIN PROJECT ROOM */
   socket.on("join-room", ({ roomId }) => {
     if (!roomId) return;
     socket.join(roomId);
-    console.log(`📦 ${socket.user.name} joined room ${roomId}`);
+    console.log(`📦 ${socket.user.email} joined room ${roomId}`);
   });
 
-  /* REAL-TIME CODE SYNC */
   socket.on("code-change", ({ roomId, code }) => {
     if (!socket.rooms.has(roomId)) return;
     socket.to(roomId).emit("code-change", code);
   });
 
-  /* 💬 CHAT MESSAGE */
   socket.on("chat-message", ({ roomId, text }) => {
     if (!socket.rooms.has(roomId)) return;
 
@@ -83,7 +67,10 @@ io.on("connection", (socket) => {
 /* ================= EXPRESS MIDDLEWARE ================= */
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://codevspace.netlify.app",
+    ],
     credentials: true,
   })
 );
