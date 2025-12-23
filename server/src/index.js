@@ -49,15 +49,15 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat-message", ({ roomId, text }) => {
-    if (!socket.rooms.has(roomId)) return;
+  if (!socket.rooms.has(roomId)) return;
 
-    io.to(roomId).emit("chat-message", {
-      userId: socket.user.id,
-      user: socket.user.name,
-      text,
-      time: new Date().toISOString(),
-    });
+  io.to(roomId).emit("chat-message", {
+    user: socket.user.name,
+    text,
+    time: new Date().toISOString(),
   });
+});
+
 
   socket.on("disconnect", () => {
     console.log("🔴 Socket disconnected:", socket.id);
