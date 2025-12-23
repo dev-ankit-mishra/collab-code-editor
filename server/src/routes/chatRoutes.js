@@ -18,7 +18,7 @@ router.get(
       const messages = await ChatMessage.find({ projectId })
         .sort({ createdAt: 1 }) // oldest → newest
         .limit(200); // safety limit
-
+      console.log(messages);
       res.json(messages);
     } catch (err) {
       console.error("❌ Chat history error:", err);
