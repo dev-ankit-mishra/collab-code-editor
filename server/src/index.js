@@ -11,6 +11,11 @@ import userRouter from "./routes/userRoutes.js";
 import projectInviteRoutes from "./routes/projectInviteRoutes.js";
 import projectSharedRoutes from "./routes/projectSharedRoutes.js";
 import projectInviteActions from "./routes/projectInviteActions.js";
+import { ChatMessage } from "./models/ChatMessage.js";
+import chatRoutes from "./routes/chatRoutes.js";
+
+
+
 
 dotenv.config();
 
@@ -48,15 +53,30 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("code-change", code);
   });
 
-  socket.on("chat-message", ({ roomId, text }) => {
+  socket.on("chat-message", async ({ roomId, text }) => {
   if (!socket.rooms.has(roomId)) return;
+  if (!text?.trim()) return;
 
-  io.to(roomId).emit("chat-message", {
-    user: socket.user.name,
-    text,
-    time: new Date().toISOString(),
-  });
+  try {
+    const message = await ChatMessage.create({
+      projectId: roomId,
+      userId: socket.user.id,
+      userName: socket.user.name,
+      text,
+    });
+
+    // Broadcast to everyone INCLUDING sender
+    io.to(roomId).emit("chat-message", {
+      user: message.userName,
+      text: message.text,
+      time: message.createdAt,
+    });
+  } catch (err) {
+    console.error("❌ Failed to save chat message:", err);
+  }
 });
+
+
 
 
   socket.on("disconnect", () => {
@@ -77,7 +97,9 @@ app.use(
 app.use(express.json());
 
 /* ================= ROUTES ================= */
+app.use("/api", chatRoutes);
 app.use("/api/users", userRouter);
+
 
 // 🔥 ORDER MATTERS
 app.use("/api/projects", projectSharedRoutes);
