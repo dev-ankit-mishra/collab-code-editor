@@ -83,7 +83,7 @@ export default function SignUp() {
   };
 
   return (
-    <section className="w-full h-screen flex flex-col">
+    <section className="w-full h-screen pt-12 flex flex-col">
       <NavBar authRequired={false} />
 
       <main className="flex-1 flex flex-col text-gray-300 text-sm bg-gradient-to-b from-black via-gray-900 to-[#0c0f1a]">
