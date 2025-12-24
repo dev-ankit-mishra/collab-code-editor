@@ -7,10 +7,9 @@ import SignUp from "./pages/SignUp";
 import NotFoundPage from "./pages/NotFound";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
-import SplashScreen from "./components/SplashScreen";
+import SplashScreen from "./components/FullScreenLoader";
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
-import ProfilePage from "./pages/Profile";
 import {ToastContainer} from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import Invititions from "./components/Invititions";
@@ -96,14 +95,6 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoutes>
-              <ProfilePage />
-            </ProtectedRoutes>
-          }
-        />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
