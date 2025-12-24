@@ -8,11 +8,15 @@ import type { codeAreaProps } from "./Types";
 import { formatDistanceToNow } from "date-fns";
 import debounce from "lodash/debounce";
 import { useAuth } from "../context/useAuth";
-import socket from "./Socket";
+import { getSocket } from "../socket/socket_temp";
 import { useDebounce } from "./useDebounce";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import Button from "./Button";
 import { Download } from "lucide-react";
+
+/* ============================================================
+   CODE AREA COMPONENT
+   ============================================================ */
 
 export default function CodeArea({
   projectObject,
@@ -43,13 +47,15 @@ export default function CodeArea({
 
   const { session } = useAuth();
   const accessToken = session?.access_token;
-  const userId = session?.user?.id;
 
   /* ---------- SOCKET ---------- */
-  useEffect(() => {
-    if (!projectObject._id) return;
+  const socket = getSocket();
 
-    socket.emit("join-room", projectObject._id);
+  /* JOIN ROOM + RECEIVE CODE UPDATES */
+  useEffect(() => {
+    if (!socket || !projectObject._id) return;
+
+    socket.emit("join-room", { roomId: projectObject._id });
 
     socket.on("code-change", (incomingCode: string) => {
       const current = editorRef.current?.getValue();
@@ -60,10 +66,58 @@ export default function CodeArea({
     });
 
     return () => {
-      socket.emit("leave-room", projectObject._id);
       socket.off("code-change");
     };
-  }, [projectObject._id]);
+  }, [socket, projectObject._id]);
+
+  /* ---------- SAVE CODE (EDITORS ONLY) ---------- */
+  useEffect(() => {
+    if (!canEdit || !accessToken) return;
+
+    const saveCode = async () => {
+      try {
+        await axios.put(
+          `https://codevspace-aqhw.onrender.com/api/projects/${projectObject._id}`,
+          { code: debouncedCode },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setLastUpdate(new Date());
+      } catch (err) {
+        console.error("Save failed:", err);
+      }
+    };
+
+    saveCode();
+  }, [debouncedCode, accessToken, projectObject._id, canEdit]);
+
+  /* ---------- EMIT CODE CHANGE (DEBOUNCED, SAFE) ---------- */
+  const emitChangeRef = useRef(
+    debounce((val: string) => {
+      const socket = getSocket();
+      if (!socket) return;
+
+      socket.emit("code-change", {
+        roomId: projectObject._id,
+        code: val,
+      });
+    }, 300)
+  );
+
+  function handleChange(val: string) {
+    if (!canEdit) return;
+
+    if (isRemoteUpdate.current) {
+      isRemoteUpdate.current = false;
+      return;
+    }
+
+    setValue(val);
+    emitChangeRef.current(val);
+  }
 
   /* ---------- RUN CODE ---------- */
   const runCode = async () => {
@@ -90,50 +144,6 @@ export default function CodeArea({
     }
   };
 
-  /* ---------- SAVE (EDITORS ONLY) ---------- */
-  useEffect(() => {
-    if (!canEdit || !accessToken) return;
-
-    const saveCode = async () => {
-      try {
-        await axios.put(
-          `https://codevspace-aqhw.onrender.com/api/projects/${projectObject._id}`,
-          { code: debouncedCode },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setLastUpdate(new Date());
-      } catch (err) {
-        console.error("Save failed:", err);
-      }
-    };
-
-    saveCode();
-  }, [debouncedCode, accessToken, projectObject._id, canEdit]);
-
-  /* ---------- EDIT HANDLER ---------- */
-  const emitChange = debounce((val: string) => {
-    socket.emit("code-change", {
-      roomId: projectObject._id,
-      code: val,
-    });
-  }, 300);
-
-  function handleChange(val: string) {
-    if (!canEdit) return;
-
-    if (isRemoteUpdate.current) {
-      isRemoteUpdate.current = false;
-      return;
-    }
-
-    setValue(val);
-    emitChange(val);
-  }
-
   /* ---------- DOWNLOAD ---------- */
   function handleDownload() {
     const blob = new Blob([editorRef.current?.getValue() || ""], {
@@ -158,7 +168,7 @@ export default function CodeArea({
             <Download size={16} /> Download
           </Button>
 
-          <p className="text-gray-300 text-sm flex gap-2">
+          <p className="pr-8 text-gray-300 text-sm flex gap-2">
             <FaCloudUploadAlt size={18} />
             Last Updated:
             <span>
@@ -167,13 +177,13 @@ export default function CodeArea({
                 : "Not updated yet"}
             </span>
           </p>
-        </div>
 
-        {isReadOnly && (
-          <p className="text-xs text-yellow-400">
-            View-only access — ask the owner for edit permission
-          </p>
-        )}
+          {isReadOnly && (
+            <p className="text-xs text-yellow-400">
+              View-only access — ask the owner for edit permission
+            </p>
+          )}
+        </div>
 
         {/* EDITOR */}
         <div className="h-[38rem] rounded-xl border border-white/10">
@@ -203,7 +213,6 @@ export default function CodeArea({
         bgClass={consoleText}
         isLoading={loading}
         roomId={projectObject._id}
-        userId={userId}
         accessRole={accessRole}
       />
     </main>
