@@ -1,7 +1,7 @@
 // routes/PublicRoute.tsx
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
-import SplashScreen from "../components/SplashScreen";
+import SplashScreen from "../components/FullScreenLoader";
 
 export default function PublicRoute({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
