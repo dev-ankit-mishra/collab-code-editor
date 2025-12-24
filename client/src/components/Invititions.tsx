@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/useAuth";
 import Button from "./Button";
-import SplashScreen from "./SplashScreen";
+import SplashScreen from "./PageScreenLoader";
+import type { Language } from "./Types";
+import { Code, User ,Eye ,Pencil} from "lucide-react";
 
 type Invitation = {
   _id: string;
   role: "VIEWER" | "EDITOR";
+  userName: string;
   projectId: {
     _id: string;
     projectName: string;
+    template:Language
   };
 };
 
@@ -38,6 +42,7 @@ export default function Invitations() {
         }
 
         setInvites(data);
+        console.log(data)
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -49,24 +54,37 @@ export default function Invitations() {
   }, [session]);
 
   /* ---------- ACTIONS ---------- */
-  async function handleAction(inviteId: string, action: "accept" | "reject") {
-    try {
-      await fetch(
-        `https://codevspace-aqhw.onrender.com/api/projects/invites/${inviteId}/${action}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
-      );
+  async function handleAction(
+  inviteId: string,
+  action: "accept" | "reject"
+) {
+  if (!session?.access_token) return;
 
-      // Remove invite from UI instantly
-      setInvites((prev) => prev.filter((i) => i._id !== inviteId));
-    } catch (err) {
-      console.error("Invite action failed", err);
+  try {
+    const method = action === "accept" ? "POST" : "DELETE";
+
+    const res = await fetch(
+      `https://codevspace-aqhw.onrender.com/api/projects/invites/${inviteId}/${action}`,
+      {
+        method,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Invite action failed");
     }
+
+    // ✅ Optimistic UI update
+    setInvites((prev) => prev.filter((i) => i._id !== inviteId));
+  } catch (err) {
+    console.error("❌ Invite action failed:", err);
   }
+}
+
 
   /* ---------- UI STATES ---------- */
   if (loading) return <SplashScreen />;
@@ -77,30 +95,47 @@ export default function Invitations() {
 
   if (invites.length === 0) {
     return (
-      <p className="text-gray-400 text-center mt-10">
+      <div className="w-full text-gray-400 text-xl text-center mt-10 flex justify-center ">
         No pending invitations.
-      </p>
+      </div>
     );
   }
 
   /* ---------- UI ---------- */
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
+    <section className="p-6">
+
+    
+    <h1 className="text-2xl font-semibold tracking-wide pt-2 pb-10">Invititions</h1>
+    <div className="grid grid-cols-2 gap-8">
       {invites.map((invite) => (
         <div
           key={invite._id}
-          className="bg-neutral-800 border border-white/10 rounded-lg p-4"
+          className="p-4 w-68 h-46 bg-gray-700/30 border cursor-pointer border-white/10 shadow-md hover:shadow-xl transition-all duration-300 rounded-md flex flex-col text-sm text-zinc-400"
         >
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-lg font-semibold text-white">
             {invite.projectId.projectName}
           </h3>
-
-          <p className="text-sm text-gray-400 mt-1">
-            Permission:{" "}
-            {invite.role === "EDITOR" ? "Can edit" : "Can view"}
+          <div className="pt-2">
+            <p className="mt-1 flex gap-2 items-center">
+            <Code size={14}/>
+            <span>Language:{" "}
+            {invite.projectId.template.label}
+            </span>
           </p>
+          <p className=" mt-1 ">
+            {invite.role === "EDITOR" ? <span className="flex gap-2 items-center"><Pencil size={14}/>Permission: Can edit</span> : <span className="flex gap-2 items-center"><Eye size={14}/>Permission: Can view</span>}
+          </p>
+            <p className=" mt-1 flex gap-2 items-center">
+            <User size={14}/>
+            <span>Invited By: {invite.userName?.split(" ")[0]}
+            </span>
+            
+          </p>
+          </div>
+          
 
-          <div className="flex gap-3 mt-4">
+          <div className="flex justify-between mt-4">
             <Button
               className="bg-green-600 hover:bg-green-700"
               onClick={() => handleAction(invite._id, "accept")}
@@ -118,5 +153,6 @@ export default function Invitations() {
         </div>
       ))}
     </div>
+    </section>
   );
 }
