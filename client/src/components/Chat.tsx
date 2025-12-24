@@ -1,115 +1,126 @@
 import { useEffect, useRef, useState } from "react";
-import socket from "./Socket";
+import { getSocket } from "../socket/socket_temp";
 import { IoSend } from "react-icons/io5";
+import { useAuth } from "../context/useAuth";
 
 type ChatMessage = {
   user: string;
   text: string;
   time: string;
+  userId: string;
 };
 
-type ChatProps = {
-  roomId: string | undefined;
-  user: string | undefined;
-};
+export default function Chat({ roomId }: { roomId?: string }) {
+  const socket = getSocket();
+  const { session } = useAuth();
 
-export default function Chat({ roomId, user }: ChatProps) {
-  // Stores all messages
+  const myUserId = session?.user?.id;
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-  // Stores current input text
   const [text, setText] = useState("");
+  const endRef = useRef<HTMLDivElement | null>(null);
 
-  // Used for auto-scroll
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  /* =========================
-     LISTEN FOR MESSAGES
-     ========================= */
+  /* 🔥 LOAD CHAT HISTORY */
   useEffect(() => {
-    const handleChatMessage = (msg: ChatMessage) => {
+    if (!roomId || !session?.access_token) return;
+
+    fetch(
+      `https://codevspace-aqhw.onrender.com/api/projects/${roomId}/chat`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const history = data.map((m: any) => ({
+          user: m.userName,
+          text: m.text,
+          time: m.createdAt,
+          userId: m.userId,
+        }));
+        setMessages(history);
+      })
+      .catch((err) => console.error("❌ Failed to load chat:", err));
+  }, [roomId, session]);
+
+  /* 🔌 REALTIME MESSAGES */
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleMessage = (msg: ChatMessage) => {
       setMessages((prev) => [...prev, msg]);
     };
 
-    socket.on("chat-message", handleChatMessage);
+    socket.on("chat-message", handleMessage);
+    return () => {socket.off("chat-message", handleMessage);}
+  }, [socket]);
 
-    // Cleanup to avoid duplicate listeners
-    return () => {
-      socket.off("chat-message", handleChatMessage);
-    };
-  }, []);
-
-  /* =========================
-     AUTO SCROLL TO BOTTOM
-     ========================= */
+  /* 🔽 AUTO SCROLL */
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* =========================
-     SEND MESSAGE
-     ========================= */
+  /* 📤 SEND MESSAGE */
   function sendMessage() {
-    if (!text.trim() || !user) return;
+    if (!text.trim() || !roomId || !socket) return;
 
-    const message: ChatMessage = {
-      user,
-      text,
-      time: new Date().toLocaleTimeString(),
-    };
-
-    socket.emit("chat-message", {
-      roomId,
-      ...message,
-    });
-
+    socket.emit("chat-message", { roomId, text });
     setText("");
   }
 
+  if (!socket) return null;
+
   return (
-    <section className="flex flex-col h-[16rem] p-4 mb-1 text-sm rounded-xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-      
-      {/* HEADER */}
-      <header className="shrink-0 pb-2 text-base border-b border-white/10 font-medium">
+    <section className="flex flex-col h-[16rem] px-4 py-3 border border-white/10 rounded-xl">
+      <h1 className="pb-1.5 text-base border-b border-white/10 font-medium mb-3">
         Project Chat
-      </header>
+      </h1>
 
       {/* MESSAGES */}
-      <div className="flex-1 overflow-y-auto py-2 space-y-2">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`max-w-[85%] p-2 rounded ${
-              msg.user === user
-                ? "ml-auto bg-green-600/20 text-right"
-                : "mr-auto bg-white/5"
-            }`}
-          >
-            <div className="text-xs text-gray-400">
-              {msg.user} • {msg.time}
+      <div className="flex-1 overflow-y-auto space-y-2">
+        {messages.map((m, i) => {
+          const isMe = m.userId === myUserId;
+
+          return (
+            <div
+              key={i}
+              className={`max-w-[75%] px-3 py-1.5 flex items-center justify-between gap-4 rounded-lg text-sm ${
+                isMe
+                  ? "ml-auto bg-green-900 text-white text-right"
+                  : "mr-auto bg-neutral-800 text-white"
+              }`}
+            >
+              <div className="text-left break-words">{m.text}</div>
+              <div className="text-left text-xs text-zinc-300 mt-1 ">
+                {isMe ? "You" : m.user} •{" "}
+                {new Date(m.time).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </div>
             </div>
-            <div className="text-white break-words">
-              {msg.text}
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+          );
+        })}
+        <div ref={endRef} />
       </div>
 
       {/* INPUT */}
-      <div className="shrink-0 pt-2 border-t border-white/10 flex gap-2">
+      <div className="flex gap-3 pt-2">
         <input
-          className="flex-1 bg-transparent border border-white/10 rounded-md px-2 py-1 text-white outline-none"
-          placeholder="Type a message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          className="flex-1 bg-transparent border px-2 py-1 rounded-md text-sm"
+          placeholder="Type a message..."
         />
         <button
+          className="bg-green-700 hover:bg-green-600 rounded-2xl p-2"
           onClick={sendMessage}
-          className="px-3 rounded-full cursor-pointer bg-green-600 hover:bg-green-500"
         >
-          <IoSend/>
+          <IoSend />
         </button>
       </div>
     </section>
