@@ -1,6 +1,6 @@
 // src/socket/useSocket.ts
 import { useEffect } from "react";
-import { connectSocket, disconnectSocket } from "./socket_temp";
+import { connectSocket } from "./socket_temp";
 import { useAuth } from "../context/useAuth";
 
 export function useSocket() {
