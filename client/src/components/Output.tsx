@@ -11,7 +11,6 @@ type OutputProps = {
   bgClass: string;
   isLoading: boolean;
   roomId?: string;
-  userId?: string;
   accessRole: "OWNER" | "EDITOR" | "VIEWER";
 };
 
@@ -23,7 +22,6 @@ export default function Output({
   bgClass,
   isLoading,
   roomId,
-  userId,
   accessRole,
 }: OutputProps): JSX.Element {
   const canExecute = accessRole === "OWNER" || accessRole === "EDITOR";
@@ -73,7 +71,7 @@ export default function Output({
       </div>
 
       {/* CHAT (allowed for all roles) */}
-      <Chat roomId={roomId} user={userId} />
+      <Chat roomId={roomId} />
     </main>
   );
 }
