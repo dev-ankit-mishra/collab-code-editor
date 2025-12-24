@@ -6,7 +6,6 @@ import axios from "axios";
 import { useAuth } from "../context/useAuth";
 import Menu from "../components/Menu";
 import { Outlet } from "react-router-dom";
-import SplashScreen from "../components/SplashScreen";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -115,29 +114,28 @@ export default function Dashboard() {
     <section className="h-screen w-full flex flex-col bg-gradient-to-br from-[#0a0a0a] to-[#000000] text-white">
       <NavBar authRequired={true} />
 
-      <main className="flex flex-1">
+      <div className="flex flex-1">
         <Menu setShowModals={setShowModals} />
+        
+        <main className="ml-52 pt-14 bg-neutral-950 flex-1 overflow-y-auto">
+  <Outlet
+    context={{
+      project,
+      setShowModals,
+      handleDelete,
+      handleRename,
+    }}
+  />
 
-        {loading ? (
-          <SplashScreen />
-        ) : project.length > 0 ? (
-          <Outlet
-            context={{ project, setShowModals, handleDelete, handleRename }}
-          />
-        ) : (
-          <div className="w-full flex flex-col">
-            <Outlet
-              context={{ project, setShowModals, handleDelete, handleRename }}
-            />
-            <div className="flex items-center justify-center mt-6">
-              <h2 className="text-xl">
-                You don’t have any projects yet. Click{" "}
-                <span className="font-semibold">New Project</span> to get started!
-              </h2>
-            </div>
-          </div>
-        )}
-      </main>
+  {!loading && project.length === 0 && (
+    <div className="text-gray-400 text-xl text-center mt-10">
+      You don’t have any projects yet. Click{" "}
+      <span className="font-semibold">New Project</span>{" "}
+      to get started!
+    </div>
+  )}
+</main>
+      </div>
 
       {showModals && (
         <Modals setShowModals={setShowModals} create={handleCreate} />
