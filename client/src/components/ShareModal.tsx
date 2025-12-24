@@ -28,18 +28,7 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
-  /* ---------- COPY FEEDBACK ---------- */
-  useEffect(() => {
-    if (copied) {
-      const t = setTimeout(() => setCopied(false), 2000);
-      return () => clearTimeout(t);
-    }
-  }, [copied]);
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(shareURL);
-    setCopied(true);
-  };
+ 
 
  const handleInvite = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -74,10 +63,11 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
       throw new Error(data.message || "Invite failed");
     }
 
+    console.log(data);
     // ✅ UX success
     setEmail("");
     setPermission("view");
-    alert("Invite sent successfully");
+  
 
   } catch (err: any) {
     setError(err.message || "Failed to send invite");
@@ -159,21 +149,7 @@ export default function ShareModal({ roomId, onClose }: ShareModalProps) {
 
         </form>
 
-        {/* ---------- DIVIDER ---------- */}
-        <div className="my-5 border-t border-white/10" />
-
-        {/* ---------- SHARE LINK ---------- */}
-        <p className="text-sm text-gray-400 mb-2">
-          Or share this link
-        </p>
-
-        <div className="bg-neutral-800 text-gray-200 p-2 rounded text-sm mb-3 break-all">
-          {shareURL}
-        </div>
-
-        <Button onClick={handleCopy} className="w-full">
-          {copied ? "Copied!" : "Copy Link"}
-        </Button>
+        
       </div>
     </div>,
     document.body
