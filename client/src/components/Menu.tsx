@@ -5,6 +5,7 @@ import {
   FileStack,
   Settings,
   LogOut,
+  Bell
 } from "lucide-react";
 import Button from "./Button";
 import {NavLink,useNavigate} from "react-router-dom"
@@ -49,7 +50,7 @@ export default function Menu({setShowModals}:MenuProps){
   }
 
   return(
-    <nav className="w-52   py-6  border-r border-r-white/10  flex flex-col justify-between">
+    <nav className="w-52 h-screen fixed left-0 top-12 bg-[#0c0f1a] opacity-96    py-6  border-r border-r-white/10  flex flex-col justify-between">
   
             <ul className="space-y-4 text-gray-300">
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded cursor-pointer transition-all duration-200">
@@ -59,10 +60,10 @@ export default function Menu({setShowModals}:MenuProps){
                 <NavLink to="/dashboard/allrepository" className={({isActive})=>`w-full px-6.5 py-2 rounded flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Folder size={16} /> All Repository</NavLink>
               </li>
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded  cursor-pointer transition-all duration-200">
-                <NavLink to={"/dashboard/invititions"} className={({isActive})=>`w-full rounded px-6.5 py-2  flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Users size={16} />Invititions</NavLink>
+                <NavLink to={"/dashboard/invititions"} className={({isActive})=>`w-full rounded px-6.5 py-2  flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Bell size={16} />Invititions</NavLink>
               </li>
               <li className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded  cursor-pointer transition-all duration-200">
-                <NavLink to={"/dashboard/sharewithme"} className={({isActive})=>`w-full rounded px-6.5 py-2  flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Users size={16} /> Share with me</NavLink>
+                <NavLink to={"/dashboard/sharewithme"} className={({isActive})=>`w-full rounded px-6.5 py-2  flex items-center gap-2 ${isActive && "text-blue-500 bg-neutral-800"} `}><Users size={16} /> Shared with me</NavLink>
               </li>
               <li onClick={()=>setShowModals(true)} className="flex items-center gap-2 hover:bg-neutral-800 hover:text-white rounded px-6.5 py-2  cursor-pointer transition-all duration-200">
                 <FileStack size={16} /> Templates
@@ -76,7 +77,7 @@ export default function Menu({setShowModals}:MenuProps){
               </li>
             </ul>
           
-          <div className="mb-4 w-full">
+          <div className="mb-12 w-full">
               <Button className="mx-6.5 w-36 h-8" isTransparent={true} disabled={loading} onClick={handleSignOut} >
               {loading ? (<div className='w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin'/>) :<><LogOut size={16} /> Sign out</>}</Button>
               {error!=undefined && (
