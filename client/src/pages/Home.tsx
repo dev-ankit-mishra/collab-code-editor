@@ -29,7 +29,7 @@ export default function HomePage(){
   }
 
   return(
-    <section className="w-full flex flex-col text-white ">
+    <section className="w-full pt-12 flex flex-col text-white ">
       <NavBar authRequired={true}/>
       <main className="bg-gradient-to-b from-black via-gray-900 to-[#0c0f1a] w-full min-h-screen flex flex-col justify-center items-center px-6 pb-8">
         <h1 className="text-4xl text-center font-bold mb-4 tracking-wide shadow-lg">Collaborative Code Editing Made Simple</h1>
