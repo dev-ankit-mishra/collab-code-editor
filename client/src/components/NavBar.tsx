@@ -95,7 +95,7 @@ const Avatar = ({ name }:AvatarProps) => {
 
   
   return (
-    <nav className="bg-[#0c0f1a] opacity-96 shadow-md h-12 shadow-black/40 border-b border-b-white/10 w-full py-2 flex flex-row justify-between items-center pr-10 ">
+    <nav className="bg-[#0c0f1a] fixed top-0 left-0 opacity-96 shadow-md h-12 shadow-black/40 border-b border-b-white/10 w-full py-2 flex flex-row justify-between items-center pr-10 ">
       
         <div className="w-46 h-full overflow-hidden flex items-center cursor-pointer ">
           <Link to="/"><Logo className="w-full h-auto" /></Link>
