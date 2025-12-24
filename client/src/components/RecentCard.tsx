@@ -1,7 +1,7 @@
 import type { RecentCardProps } from "./Types";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { Code, User, Clock, Ellipsis } from "lucide-react";
+import { Code, User, Clock, Ellipsis,Pencil } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/useAuth";
 import RenameModals from "./RenameModals";
@@ -78,7 +78,7 @@ export default function RecentCard({ project, onDelete, onRename }: RecentCardPr
       {project.map((p) => (
         <div
           key={p._id}
-          className="w-68 h-40 bg-gray-700/30 border border-white/10 shadow-md hover:scale-[1.02] hover:shadow-xl transition-all cursor-pointer duration-300 p-5 rounded-md flex flex-col justify-between"
+          className="w-68 h-44 bg-gray-700/30 border border-white/10 shadow-md hover:scale-[1.02] hover:shadow-xl transition-all cursor-pointer duration-300 p-5 rounded-md flex flex-col justify-between"
           onClick={() => navigate(`/editor/${p._id}`)}
         >
           {/* ---------- TOP ---------- */}
@@ -100,7 +100,7 @@ export default function RecentCard({ project, onDelete, onRename }: RecentCardPr
             {showOptionId === p._id && (
               <div
                 ref={cardDropDownRef}
-                className="absolute right-0 top-full mt-1 bg-neutral-900 rounded shadow"
+                className="absolute left-45 top-full mt-1 bg-neutral-900 rounded shadow"
               >
                 <ul className="p-2">
                   <li
@@ -134,6 +134,10 @@ export default function RecentCard({ project, onDelete, onRename }: RecentCardPr
               <span>
                 Template: {p.template?.label ?? "Unknown"}
               </span>
+            </p>
+            <p className="flex items-center gap-2">
+              <Pencil size={14} />
+              Permission: Can edit
             </p>
 
             <p className="flex items-center gap-2">
