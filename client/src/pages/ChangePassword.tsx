@@ -46,7 +46,7 @@ export default function ChangePassword() {
 
   }
   return (
-    <section className="w-full h-screen flex flex-col">
+    <section className="w-full h-screen pt-12 flex flex-col">
       <NavBar authRequired={false} />
       <main className="flex-1 flex flex-col items-center text-white bg-gradient-to-b from-black via-gray-900 to-[#0c0f1a]">
         <div className="bg-black/40 border border-white/10 text-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-auto mt-20">
