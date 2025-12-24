@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import type { ProjectDetails } from "../components/Types";
 import { useAuth } from "../context/useAuth";
-import SplashScreen from "../components/SplashScreen";
+import SplashScreen from "../components/FullScreenLoader";
+import { connectSocket } from "../socket/socket_temp"; // 🔥 ADD THIS
 
 export default function CodeEditor() {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,20 @@ export default function CodeEditor() {
   const { session } = useAuth();
   const accessToken = session?.access_token;
 
+  /* 🔥 INITIALIZE SOCKET AFTER LOGIN */
+  useEffect(() => {
+  if (!session || !session.access_token) {
+    console.log("⏳ Waiting for Supabase session...");
+    return;
+  }
+
+  console.log("✅ Connecting socket with token:", session.access_token);
+
+  connectSocket(session.access_token);
+}, [session]);
+
+
+  /* FETCH PROJECT */
   useEffect(() => {
     const fetchProject = async () => {
       if (!id || !accessToken) return;
@@ -36,15 +51,7 @@ export default function CodeEditor() {
           throw new Error(`Fetch failed: ${res.status} - ${errMsg}`);
         }
 
-        /**
-         * Expected backend response:
-         * {
-         *   project: ProjectDetails,
-         *   role: "OWNER" | "EDITOR" | "VIEWER"
-         * }
-         */
         const data = await res.json();
-
         setProject(data.project);
         setAccessRole(data.role);
       } catch (err) {
@@ -67,7 +74,7 @@ export default function CodeEditor() {
         }
       />
 
-      <main className="w-full h-full flex-1 flex">
+      <main className="w-full h-full pt-12 flex-1 flex">
         <div className="flex-1">
           {project ? (
             <CodeArea
