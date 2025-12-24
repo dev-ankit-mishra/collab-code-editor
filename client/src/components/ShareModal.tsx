@@ -11,13 +11,10 @@ interface ShareModalProps {
 export default function ShareModal({ roomId, onClose }: ShareModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [email, setEmail] = useState("");
   const [permission, setPermission] = useState<"view" | "edit">("view");
   const { session } = useAuth();
 
-
-  const shareURL = `${window.location.origin}/editor/${roomId}`;
 
   /* ---------- ESC CLOSE ---------- */
   useEffect(() => {
