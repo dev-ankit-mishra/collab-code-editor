@@ -13,6 +13,7 @@ import projectSharedRoutes from "./routes/projectSharedRoutes.js";
 import projectInviteActions from "./routes/projectInviteActions.js";
 import { ChatMessage } from "./models/ChatMessage.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import deleteAccountRouter from "./routes/deleteAccount.js"
 
 
 
@@ -99,6 +100,8 @@ app.use(express.json());
 /* ================= ROUTES ================= */
 app.use("/api", chatRoutes);
 app.use("/api/users", userRouter);
+app.use("/api/users", deleteAccountRouter);
+
 
 
 // 🔥 ORDER MATTERS
