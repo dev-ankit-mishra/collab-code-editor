@@ -1,11 +1,6 @@
-import nodemailer from "nodemailer";
+// server/config/mailer.js
+import sgMail from "@sendgrid/mail";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-export default transporter;
+export default sgMail;

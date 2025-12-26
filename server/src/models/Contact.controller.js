@@ -1,11 +1,7 @@
-import transporter from "../config/mailer.js";
+// server/controllers/contact.controller.js
+import sgMail from "../config/mailer.js";
 
 export const sendContactMessage = async (req, res) => {
-  console.log("ENV CHECK →", {
-  MAIL_USER: process.env.MAIL_USER,
-  MAIL_PASS_EXISTS: !!process.env.MAIL_PASS,
-});
-
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
@@ -13,16 +9,28 @@ export const sendContactMessage = async (req, res) => {
   }
 
   try {
-    await transporter.sendMail({
-      from: email,
-      to: process.env.MAIL_USER,
+    const msg = {
+      to: process.env.SENDGRID_FROM_EMAIL,       // where you receive mail
+      from: process.env.SENDGRID_FROM_EMAIL,     // MUST be verified sender
       subject: `New Contact Message from ${name}`,
-      text: message,
-    });
+      text: `From: ${email}\n\n${message}`,
+      html: `
+        <h3>New Contact Message</h3>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p>${message}</p>
+      `,
+    };
 
-    res.json({ message: "Message sent successfully ✅" });
+    await sgMail.send(msg);
+
+    return res.status(200).json({
+      message: "Message sent successfully ✅",
+    });
   } catch (error) {
-    console.error("Mail Error:", error);
-    res.status(500).json({ message: "Failed to send message ❌" });
+    console.error("SENDGRID ERROR:", error.response?.body || error);
+    return res.status(500).json({
+      message: "Email service failed",
+    });
   }
 };
