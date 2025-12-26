@@ -3,6 +3,8 @@ import { Project } from "../models/Project.js";
 import { UserData } from "../models/UserData.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 import { requireProjectAccess } from "../middleware/requireProjectAccess.js";
+import { ProjectCollaborator } from "../models/ProjectCollaborator.js";
+
 
 const router = Router();
 
@@ -37,36 +39,31 @@ router.get("/", async (req, res) => {
 /* =========================================
    RECENT PROJECTS (OWNER + SHARED)
    ========================================= */
-router.get("/recent",requireAuth, async (req, res) => {
+router.get("/recent", async (req, res) => {
   try {
     const userId = req.user.id;
 
-    /* ---------- OWN PROJECTS ---------- */
-    const ownedProjects = await Project.find({
-      userId,
-    }).lean();
+    const ownedProjects = await Project.find({ userId }).lean();
 
-    /* ---------- SHARED PROJECT IDS ---------- */
     const sharedProjectIds =
       await ProjectCollaborator.distinct("projectId", {
         userId,
         status: "ACCEPTED",
       });
 
-    /* ---------- SHARED PROJECTS ---------- */
     const sharedProjects =
       sharedProjectIds.length === 0
         ? []
         : await Project.find({
             _id: { $in: sharedProjectIds },
-            userId: { $ne: userId }, // avoid duplicates
+            userId: { $ne: userId },
           }).lean();
 
-    /* ---------- MERGE + SORT ---------- */
     const recentProjects = [...ownedProjects, ...sharedProjects]
       .sort(
         (a, b) =>
-          new Date(b.updatedAt) - new Date(a.updatedAt)
+          new Date(b.updatedAt || 0) -
+          new Date(a.updatedAt || 0)
       )
       .slice(0, 5);
 
@@ -78,6 +75,7 @@ router.get("/recent",requireAuth, async (req, res) => {
       .json({ error: "Failed to fetch recent projects" });
   }
 });
+
 
 
 /* OPEN PROJECT (OWNER + EDITOR + VIEWER) */
