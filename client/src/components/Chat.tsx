@@ -15,6 +15,18 @@ export default function Chat({ roomId }: { roomId?: string }) {
   const { session } = useAuth();
 
   const myUserId = session?.user?.id;
+  const myUserName = session?.user?.user_metadata?.name || "Me"; // Fallback name
+
+  /* ✅ FIX PART 1: Create a Ref to track the live User ID 
+     This allows the socket listener to read the current ID 
+     without getting stuck in a "stale closure".
+  */
+  const userIdRef = useRef(myUserId);
+
+  // Keep the ref updated whenever session changes
+  useEffect(() => {
+    userIdRef.current = myUserId;
+  }, [myUserId]);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
@@ -27,9 +39,7 @@ export default function Chat({ roomId }: { roomId?: string }) {
     fetch(
       `https://codevspace-aqhw.onrender.com/api/projects/${roomId}/chat`,
       {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        headers: { Authorization: `Bearer ${session.access_token}` },
       }
     )
       .then((res) => res.json())
@@ -50,12 +60,22 @@ export default function Chat({ roomId }: { roomId?: string }) {
     if (!socket) return;
 
     const handleMessage = (msg: ChatMessage) => {
+      /* ✅ FIX PART 2: Compare against userIdRef.current 
+         This ensures we are checking against the actual logged-in ID,
+         even if it loaded asynchronously after the socket connected.
+      */
+      if (userIdRef.current && msg.userId === userIdRef.current) {
+        return; // Ignore my own message (we already added it optimistically)
+      }
+
       setMessages((prev) => [...prev, msg]);
     };
 
     socket.on("chat-message", handleMessage);
-    return () => {socket.off("chat-message", handleMessage);}
-  }, [socket]);
+    return () => {
+      socket.off("chat-message", handleMessage);
+    };
+  }, [socket]); // Dependency array is clean now
 
   /* 🔽 AUTO SCROLL */
   useEffect(() => {
@@ -66,8 +86,19 @@ export default function Chat({ roomId }: { roomId?: string }) {
   function sendMessage() {
     if (!text.trim() || !roomId || !socket) return;
 
-    socket.emit("chat-message", { roomId, text });
+    // 1. Optimistic Update (Show immediately)
+    const optimisticMsg: ChatMessage = {
+      user: myUserName,
+      text: text,
+      time: new Date().toISOString(),
+      userId: myUserId || "temp-id", // Ensure string type
+    };
+
+    setMessages((prev) => [...prev, optimisticMsg]);
     setText("");
+
+    // 2. Send to server
+    socket.emit("chat-message", { roomId, text });
   }
 
   if (!socket) return null;
@@ -78,9 +109,9 @@ export default function Chat({ roomId }: { roomId?: string }) {
         Project Chat
       </h1>
 
-      {/* MESSAGES */}
       <div className="flex-1 overflow-y-auto space-y-2">
         {messages.map((m, i) => {
+          // Use the variable directly here for rendering
           const isMe = m.userId === myUserId;
 
           return (
@@ -107,17 +138,16 @@ export default function Chat({ roomId }: { roomId?: string }) {
         <div ref={endRef} />
       </div>
 
-      {/* INPUT */}
       <div className="flex gap-3 pt-2">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1 bg-transparent border px-2 py-1 rounded-md text-sm"
+          className="flex-1 bg-transparent border border-white/40 px-2 py-1 rounded-md text-sm"
           placeholder="Type a message..."
         />
         <button
-          className="bg-green-700 hover:bg-green-600 rounded-2xl p-2"
+          className="bg-green-800 hover:bg-green-600 rounded-2xl p-2"
           onClick={sendMessage}
         >
           <IoSend />
