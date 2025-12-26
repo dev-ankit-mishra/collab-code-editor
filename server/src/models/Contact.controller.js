@@ -1,6 +1,11 @@
 import transporter from "../config/mailer.js";
 
 export const sendContactMessage = async (req, res) => {
+  console.log("ENV CHECK →", {
+  MAIL_USER: process.env.MAIL_USER,
+  MAIL_PASS_EXISTS: !!process.env.MAIL_PASS,
+});
+
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
