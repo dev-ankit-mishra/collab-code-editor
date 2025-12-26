@@ -34,6 +34,52 @@ router.get("/", async (req, res) => {
   res.json(projects);
 });
 
+/* =========================================
+   RECENT PROJECTS (OWNER + SHARED)
+   ========================================= */
+router.get("/recent",requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    /* ---------- OWN PROJECTS ---------- */
+    const ownedProjects = await Project.find({
+      userId,
+    }).lean();
+
+    /* ---------- SHARED PROJECT IDS ---------- */
+    const sharedProjectIds =
+      await ProjectCollaborator.distinct("projectId", {
+        userId,
+        status: "ACCEPTED",
+      });
+
+    /* ---------- SHARED PROJECTS ---------- */
+    const sharedProjects =
+      sharedProjectIds.length === 0
+        ? []
+        : await Project.find({
+            _id: { $in: sharedProjectIds },
+            userId: { $ne: userId }, // avoid duplicates
+          }).lean();
+
+    /* ---------- MERGE + SORT ---------- */
+    const recentProjects = [...ownedProjects, ...sharedProjects]
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt) - new Date(a.updatedAt)
+      )
+      .slice(0, 5);
+
+    return res.json(recentProjects);
+  } catch (err) {
+    console.error("❌ Recent projects error:", err);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch recent projects" });
+  }
+});
+
+
 /* OPEN PROJECT (OWNER + EDITOR + VIEWER) */
 router.get(
   "/:projectId",
