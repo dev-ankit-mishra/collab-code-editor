@@ -43,7 +43,12 @@ export default function CodeArea({
   );
   const [consoleText, setConsoleText] = useState("text-white");
   const [loading, setLoading] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<Date>();
+
+  /* ---------- LAST UPDATE INFO ---------- */
+  const [lastUpdateInfo, setLastUpdateInfo] = useState<{
+    time?: Date;
+    userName?: string;
+  }>({});
 
   const { session } = useAuth();
   const accessToken = session?.access_token;
@@ -51,7 +56,21 @@ export default function CodeArea({
   /* ---------- SOCKET ---------- */
   const socket = getSocket();
 
-  /* JOIN ROOM + RECEIVE CODE UPDATES */
+  /* =====================================
+     INITIALIZE LAST UPDATE FROM BACKEND
+     ===================================== */
+  useEffect(() => {
+    if (projectObject.updatedAt) {
+      setLastUpdateInfo({
+        time: new Date(projectObject.updatedAt),
+        userName: projectObject.lastUpdatedBy?.userName,
+      });
+    }
+  }, [projectObject]);
+
+  /* =====================================
+     JOIN ROOM + RECEIVE CODE UPDATES
+     ===================================== */
   useEffect(() => {
     if (!socket || !projectObject._id) return;
 
@@ -70,7 +89,9 @@ export default function CodeArea({
     };
   }, [socket, projectObject._id]);
 
-  /* ---------- SAVE CODE (EDITORS ONLY) ---------- */
+  /* =====================================
+     SAVE CODE (EDITORS ONLY)
+     ===================================== */
   useEffect(() => {
     if (!canEdit || !accessToken) return;
 
@@ -85,7 +106,15 @@ export default function CodeArea({
             },
           }
         );
-        setLastUpdate(new Date());
+
+        // ✅ Instant UI update
+        setLastUpdateInfo({
+          time: new Date(),
+          userName:
+            session?.user?.user_metadata?.full_name ||
+            session?.user?.email ||
+            "You",
+        });
       } catch (err) {
         console.error("Save failed:", err);
       }
@@ -94,7 +123,9 @@ export default function CodeArea({
     saveCode();
   }, [debouncedCode, accessToken, projectObject._id, canEdit]);
 
-  /* ---------- EMIT CODE CHANGE (DEBOUNCED, SAFE) ---------- */
+  /* =====================================
+     EMIT CODE CHANGE (DEBOUNCED)
+     ===================================== */
   const emitChangeRef = useRef(
     debounce((val: string) => {
       const socket = getSocket();
@@ -119,7 +150,9 @@ export default function CodeArea({
     emitChangeRef.current(val);
   }
 
-  /* ---------- RUN CODE ---------- */
+  /* =====================================
+     RUN CODE
+     ===================================== */
   const runCode = async () => {
     if (!editorRef.current) return;
 
@@ -144,21 +177,35 @@ export default function CodeArea({
     }
   };
 
-  /* ---------- DOWNLOAD ---------- */
-  function handleDownload() {
-    const blob = new Blob([editorRef.current?.getValue() || ""], {
-      type: "text/plain",
-    });
+  /* =====================================
+     DOWNLOAD
+     ===================================== */
+ function handleDownload() {
+  const code = editorRef.current?.getValue() || "";
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${projectObject.projectName}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
+  const extension =
+    projectObject.template?.alias || "txt";
 
-  /* ---------- UI ---------- */
+  const fileName = `${projectObject.projectName}.${extension}`;
+
+  const blob = new Blob([code], {
+    type: "text/plain",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = fileName;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
+  /* =====================================
+     UI
+     ===================================== */
   return (
     <main className="w-full h-full flex gap-1">
       <div className="w-[56rem] flex flex-col px-4 gap-4">
@@ -168,13 +215,24 @@ export default function CodeArea({
             <Download size={16} /> Download
           </Button>
 
-          <p className="pr-8 text-gray-300 text-sm flex gap-2">
+          <p className="pr-8 text-gray-300 text-sm flex gap-2 items-center">
             <FaCloudUploadAlt size={18} />
-            Last Updated:
+            Last updated
+            {lastUpdateInfo.userName && (
+              <>
+                {" "}
+                by{" "}
+                <span className="font-medium">
+                  {lastUpdateInfo.userName}
+                </span>
+              </>
+            )}
             <span>
-              {lastUpdate
-                ? formatDistanceToNow(lastUpdate, { addSuffix: true })
-                : "Not updated yet"}
+              {lastUpdateInfo.time
+                ? formatDistanceToNow(lastUpdateInfo.time, {
+                    addSuffix: true,
+                  })
+                : "—"}
             </span>
           </p>
 
