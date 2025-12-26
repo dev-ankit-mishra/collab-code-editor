@@ -2,29 +2,75 @@ import { useEffect, useState } from "react";
 import SettingItem from "./SettingItem";
 import StatCard from "./StatCard";
 import SplashScreen from "./PageScreenLoader";
+import ResetPassword from "./ResetPasswordModals";
+import Modal from "./SettingModals";
+import DeleteAccountModal from "./DeleteAccountModal";
+import { useAuth } from "../context/useAuth";
 
 export default function Settings() {
+  const { session } = useAuth();
+
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  /* ---------- SIMULATE / FETCH SETTINGS DATA ---------- */
+  const [showResetPassword, setShowResetPassword] =
+    useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] =
+    useState(false);
+
+  const [stats, setStats] = useState({
+    totalWorkedOn: 0,
+    createdByYou: 0,
+    collaboratedProjects: 0,
+  });
+
+  /* ===============================
+     FETCH PROJECT STATS
+     =============================== */
   useEffect(() => {
-    // Replace this timeout with real API calls later
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 800);
+    if (!session?.access_token) return;
 
-    return () => clearTimeout(timer);
-  }, []);
+    setLoading(true);
+    setError(null);
 
-  /* ---------- PAGE LOADER ---------- */
-  if (loading) {
-    return <SplashScreen />;
-  }
+    fetch(
+      "https://codevspace-aqhw.onrender.com/api/users/project-stats",
+      {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }
+    )
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to load stats");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setStats({
+          totalWorkedOn: data.totalWorkedOn,
+          createdByYou: data.createdByYou,
+          collaboratedProjects: data.collaboratedProjects,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load account statistics");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [session]);
 
-  /* ---------- PAGE CONTENT ---------- */
+  /* ===============================
+     LOADING STATE
+     =============================== */
+  if (loading) return <SplashScreen />;
+
   return (
     <section className="w-full p-6 max-w-7xl">
-      {/* PAGE HEADER */}
+      {/* HEADER */}
       <h1 className="text-2xl font-semibold tracking-wide">
         Settings
       </h1>
@@ -32,48 +78,48 @@ export default function Settings() {
         Manage your account preferences and security
       </p>
 
-      {/* ACCOUNT OVERVIEW */}
+      {/* STATS */}
       <div className="mt-6">
-        <h2 className="text-lg font-medium text-white mb-3">
+        <h2 className="text-lg font-medium mb-3">
           Account Overview
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard value={10} label="Total projects worked on" />
-          <StatCard value={6} label="Created by you" />
-          <StatCard value={4} label="Collaborated projects" />
-        </div>
+        {error ? (
+          <p className="text-red-500 text-sm">
+            {error}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard
+              value={stats.totalWorkedOn}
+              label="Total projects worked on"
+            />
+            <StatCard
+              value={stats.createdByYou}
+              label="Created by you"
+            />
+            <StatCard
+              value={stats.collaboratedProjects}
+              label="Collaborated projects"
+            />
+          </div>
+        )}
       </div>
 
-      {/* ACCOUNT SETTINGS */}
+      {/* SETTINGS */}
       <div className="mt-10">
-        <h2 className="text-lg font-medium text-white mb-3">
+        <h2 className="text-lg font-medium mb-3">
           Account Settings
         </h2>
 
         <div className="space-y-4">
           <SettingItem
-            title="Change username"
-            description="Update how your name appears across projects and chats"
-            actionLabel="Update"
-          />
-
-          <SettingItem
-            title="Update profile photo"
-            description="Change your avatar visible to collaborators"
-            actionLabel="Update"
-          />
-
-          <SettingItem
-            title="Change email address"
-            description="Update your registered email"
-            actionLabel="Change"
-          />
-
-          <SettingItem
             title="Reset password"
             description="Secure your account with a new password"
             actionLabel="Reset"
+            settingFunction={() =>
+              setShowResetPassword(true)
+            }
           />
 
           <SettingItem
@@ -81,9 +127,30 @@ export default function Settings() {
             description="This action is permanent and cannot be undone"
             actionLabel="Delete"
             danger
+            settingFunction={() =>
+              setShowDeleteAccount(true)
+            }
           />
         </div>
       </div>
+
+      {/* RESET PASSWORD MODAL */}
+      {showResetPassword && (
+        <Modal onClose={() => setShowResetPassword(false)}>
+          <ResetPassword
+            onClose={() => setShowResetPassword(false)}
+          />
+        </Modal>
+      )}
+
+      {/* DELETE ACCOUNT MODAL */}
+      {showDeleteAccount && (
+        <Modal onClose={() => setShowDeleteAccount(false)}>
+          <DeleteAccountModal
+            onClose={() => setShowDeleteAccount(false)}
+          />
+        </Modal>
+      )}
     </section>
   );
 }
