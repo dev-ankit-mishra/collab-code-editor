@@ -43,7 +43,63 @@ userRouter.post("/create-user", async (req, res) => {
 });
 
 /* =================================================
-   GET USER DATA
+   🔥 PROJECT STATS (MUST COME FIRST)
+   ================================================= */
+userRouter.get("/project-stats", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error,
+    } = await supabaseAdmin.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const userId = user.id;
+
+    const createdByYou = await Project.countDocuments({
+      userId,
+    });
+
+    const collaboratedProjectIds =
+      await ProjectCollaborator.distinct("projectId", {
+        userId,
+        status: "ACCEPTED",
+      });
+
+    const collaboratedProjects =
+      collaboratedProjectIds.length === 0
+        ? 0
+        : await Project.countDocuments({
+            _id: { $in: collaboratedProjectIds },
+            userId: { $ne: userId },
+          });
+
+    const totalWorkedOn =
+      createdByYou + collaboratedProjects;
+
+    return res.json({
+      totalWorkedOn,
+      createdByYou,
+      collaboratedProjects,
+    });
+  } catch (err) {
+    console.error("❌ Project stats error:", err);
+    return res.status(500).json({
+      error: "Failed to fetch project stats",
+    });
+  }
+});
+
+/* =================================================
+   GET USER DATA (KEEP THIS LAST)
    ================================================= */
 userRouter.get("/:id", async (req, res) => {
   try {
@@ -65,67 +121,6 @@ userRouter.get("/:id", async (req, res) => {
     return res.status(500).json({
       message: "Something went wrong",
       error: error.message,
-    });
-  }
-});
-
-/* =================================================
-   GET USER PROJECT STATS ✅ (FIXED)
-   ================================================= */
-userRouter.get("/project-stats", async (req, res) => {
-  try {
-    /* ---------- AUTH ---------- */
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-
-    const {
-      data: { user },
-      error,
-    } = await supabaseAdmin.auth.getUser(token);
-
-    if (error || !user) {
-      return res.status(401).json({ error: "Invalid token" });
-    }
-
-    const userId = user.id;
-
-    /* ---------- CREATED BY USER ---------- */
-    const createdByYou = await Project.countDocuments({
-      userId,
-    });
-
-    /* ---------- COLLABORATED PROJECTS ---------- */
-    const collaboratedProjectIds =
-      await ProjectCollaborator.distinct("projectId", {
-        userId,
-        status: "ACCEPTED",
-      });
-
-    const collaboratedProjects =
-      collaboratedProjectIds.length === 0
-        ? 0
-        : await Project.countDocuments({
-            _id: { $in: collaboratedProjectIds },
-            userId: { $ne: userId }, // avoid counting owned projects
-          });
-
-    /* ---------- TOTAL ---------- */
-    const totalWorkedOn =
-      createdByYou + collaboratedProjects;
-
-    return res.json({
-      totalWorkedOn,
-      createdByYou,
-      collaboratedProjects,
-    });
-  } catch (err) {
-    console.error("❌ Project stats error:", err);
-    return res.status(500).json({
-      error: "Failed to fetch project stats",
     });
   }
 });
