@@ -11,10 +11,20 @@ import {
   SiRust,
 } from "react-icons/si";
 
-
-
-
 export const language: Language[] = [];
+
+/* 🔒 Hardcoded correct aliases for Piston */
+const ALIAS_MAP: Record<string, string> = {
+  java: "java",
+  "c++": "cpp",
+  c: "c",
+  javascript: "javascript",
+  python: "python3",
+  ruby: "ruby",
+  go: "go",
+  rust: "rust",
+  kotlin: "kotlin",
+};
 
 const lang = [
   {
@@ -73,35 +83,37 @@ const lang = [
   },
 ];
 
-
-
 async function getRuntimes() {
   const res = await fetch("https://emkc.org/api/v2/piston/runtimes");
   const data = await res.json();
 
   if (data) {
-   
-    const seen = new Set<string>(); // prevent duplicates by language name
+    const seen = new Set<string>();
 
-    data.forEach((runtime: { language: string; version: string; aliases:string[] }) => {
-      const langName = runtime.language.toLowerCase();
-      const matchedLang = lang.find(l => l.label.toLowerCase() === langName);
+    data.forEach(
+      (runtime: { language: string; version: string; aliases: string[] }) => {
+        const langName = runtime.language.toLowerCase();
+        const matchedLang = lang.find(
+          (l) => l.label.toLowerCase() === langName
+        );
 
-      if (matchedLang && !seen.has(langName)) {
-        seen.add(langName);
+        if (matchedLang && !seen.has(langName)) {
+          seen.add(langName);
 
-        language.push({
-          label: matchedLang.label,
-          version: runtime.version,
-          alias:runtime.aliases[0],
-          icon: matchedLang.icon,
-          color:matchedLang.color,
-          boilerplate: matchedLang.boilerplate
-        });
+          language.push({
+            label: matchedLang.label,
+            version: runtime.version,
+            alias:
+              ALIAS_MAP[langName] ??
+              runtime.aliases?.[0] ??
+              langName,
+            icon: matchedLang.icon,
+            color: matchedLang.color,
+            boilerplate: matchedLang.boilerplate,
+          });
+        }
       }
-    });
-
-     // See the final filtered list
+    );
   }
 }
 
