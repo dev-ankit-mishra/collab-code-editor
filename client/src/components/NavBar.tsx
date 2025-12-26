@@ -5,8 +5,11 @@ import { useAuth } from "../context/useAuth" ;
 import  Logo  from '../assets/default.svg?react';
 import {useNavigate,useParams } from 'react-router-dom';
 import ShareModal from "./ShareModal";
+import Avatar from './Avatar';
+import { FaGithub } from "react-icons/fa";
 
-import type { NavbarProp,AvatarProps } from './Types';
+
+import type { NavbarProp} from './Types';
 import { useState,useEffect,useRef } from 'react';
 
 
@@ -63,32 +66,7 @@ export default function NavBar({ authRequired = false,shareRequired=false,projec
     }
   }
 
-  function stringToColor(str:string) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return `hsl(${hash % 360}, 70%, 50%)`;
-}
 
-const Avatar = ({ name }:AvatarProps) => {
-  if (!name) return null;
-
-  const initials = name
-    .split(" ")
-    .map(n => n[0])
-    .join("")
-    .toUpperCase();
-
-  return (
-    <div
-      className="w-8 h-8 flex items-center justify-center rounded-full text-white text-xs font-bold"
-      style={{ backgroundColor: stringToColor(name) }}
-    >
-      {initials}
-    </div>
-  );
-};
 
 
 
@@ -130,7 +108,14 @@ const Avatar = ({ name }:AvatarProps) => {
         {authRequired && (
           (session===undefined || session===null) ?
           (<div className="flex flex-row gap-6 items-center">
-          
+          <a
+  href="https://github.com/dev-ankit-mishra/collab-code-editor"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <FaGithub className="text-xl hover:text-gray-300" />
+</a>
+
           <Link to={"/login"}><Button isTransparent={true}>Log In</Button></Link>
           <Link to="/signup"><Button>Sign Up</Button></Link>
         </div>) : (
