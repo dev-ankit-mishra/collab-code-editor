@@ -77,6 +77,51 @@ router.get("/recent", async (req, res) => {
 });
 
 
+/* =========================================
+   ALL WORKED-ON PROJECTS (OWNER + SHARED)
+   ========================================= */
+router.get("/all", async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    /* ---------- OWN PROJECTS ---------- */
+    const ownedProjects = await Project.find({
+      userId,
+    }).lean();
+
+    /* ---------- SHARED PROJECT IDS ---------- */
+    const sharedProjectIds =
+      await ProjectCollaborator.distinct("projectId", {
+        userId,
+        status: "ACCEPTED",
+      });
+
+    /* ---------- SHARED PROJECTS ---------- */
+    const sharedProjects =
+      sharedProjectIds.length === 0
+        ? []
+        : await Project.find({
+            _id: { $in: sharedProjectIds },
+            userId: { $ne: userId },
+          }).lean();
+
+    /* ---------- MERGE + SORT ---------- */
+    const allProjects = [...ownedProjects, ...sharedProjects].sort(
+      (a, b) =>
+        new Date(b.updatedAt || 0) -
+        new Date(a.updatedAt || 0)
+    );
+
+    return res.json(allProjects);
+  } catch (err) {
+    console.error("❌ All projects error:", err);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch projects" });
+  }
+});
+
+
 
 /* OPEN PROJECT (OWNER + EDITOR + VIEWER) */
 router.get(
