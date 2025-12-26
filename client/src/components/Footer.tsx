@@ -8,13 +8,13 @@ export default function Footer(){
          Copyright © 2025 CoDevSpace
         </span>
   <a
-    href="https://github.com/dev-ankit-mishra/collab-code-editor"
+    href="https://github.com/dev-ankit-mishra/"
     target="_blank"
     rel="noopener noreferrer"
     className="flex items-center gap-2 hover:text-white"
   >
     <FaGithub size={16} />
-    Contribute on GitHub
+    Follow on GitHub
   </a>
 
 
