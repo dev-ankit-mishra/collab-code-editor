@@ -5,42 +5,41 @@ import type { ProjectDetails } from "../components/Types";
 import axios from "axios";
 import { useAuth } from "../context/useAuth";
 import Menu from "../components/Menu";
-import { Outlet } from "react-router-dom";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import SplashScreen from "../components/PageScreenLoader";
 
 export default function Dashboard() {
   const [showModals, setShowModals] = useState(false);
   const [project, setProject] = useState<ProjectDetails[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const { session } = useAuth(); // Supabase session
+  const { session } = useAuth();
   const accessToken = session?.access_token;
- // 🔑 JWT
 
   const location = useLocation();
   const navigate = useNavigate();
 
-
-  /* ==========================================
-     TOAST HANDLING (unchanged)
-     ========================================== */
+  /* =========================
+     TOAST HANDLING
+     ========================= */
   useEffect(() => {
-    if (location.state?.showToast === "SignIn") {
-      toast.success("Successfully Logged in!");
-      navigate(location.pathname, { replace: true });
-    } else if (location.state?.showToast === "SignUp") {
-      toast.success("Successfully Signed up!");
-      navigate(location.pathname, { replace: true });
-    } else if (location.state?.showToast === "PasswordChanged") {
-      toast.success("Successfully Changed Password!");
-      navigate(location.pathname, { replace: true });
-    }
+    const toastType = location.state?.showToast;
+    if (!toastType) return;
+
+    const messages: Record<string, string> = {
+      SignIn: "Successfully Logged in!",
+      SignUp: "Successfully Signed up!",
+      PasswordChanged: "Successfully Changed Password!",
+    };
+
+    toast.success(messages[toastType]);
+    navigate(location.pathname, { replace: true });
   }, [location, navigate]);
 
-  /* ==========================================
-     FETCH PROJECTS (SECURE VERSION)
-     ========================================== */
+  /* =========================
+     FETCH PROJECTS
+     ========================= */
   useEffect(() => {
     if (!accessToken) return;
 
@@ -51,19 +50,20 @@ export default function Dashboard() {
           "https://codevspace-aqhw.onrender.com/api/projects",
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`, // 🔐 REQUIRED
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
 
         if (!res.ok) {
-          throw new Error("Unauthorized or failed to fetch");
+          throw new Error("Failed to fetch projects");
         }
 
         const data = await res.json();
-        setProject(data);
+        setProject(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Fetch failed:", err);
+        setProject([]);
       } finally {
         setLoading(false);
       }
@@ -72,9 +72,9 @@ export default function Dashboard() {
     fetchProjects();
   }, [accessToken]);
 
-  /* ==========================================
-     CREATE PROJECT (SECURE VERSION)
-     ========================================== */
+  /* =========================
+     CREATE PROJECT
+     ========================= */
   async function handleCreate(project: ProjectDetails) {
     try {
       const response = await axios.post(
@@ -82,7 +82,7 @@ export default function Dashboard() {
         project,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // 🔐 REQUIRED
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -95,9 +95,9 @@ export default function Dashboard() {
     }
   }
 
-  /* ==========================================
-     UI HELPERS (unchanged)
-     ========================================== */
+  /* =========================
+     UI HELPERS
+     ========================= */
   function handleDelete(_id: string) {
     setProject((prev) => prev.filter((p) => p._id !== _id));
   }
@@ -116,29 +116,32 @@ export default function Dashboard() {
 
       <div className="flex flex-1">
         <Menu setShowModals={setShowModals} />
-        
-        <main className="ml-52 pt-14 bg-neutral-950 flex-1 overflow-y-auto">
-  <Outlet
-    context={{
-      project,
-      setShowModals,
-      handleDelete,
-      handleRename,
-    }}
-  />
 
-  {!loading && project.length === 0 && (
-    <div className="text-gray-400 text-xl text-center mt-10">
-      You don’t have any projects yet. Click{" "}
-      <span className="font-semibold">New Project</span>{" "}
-      to get started!
-    </div>
+        <main className="ml-52 pt-14 bg-neutral-950 flex-1 overflow-y-auto">
+  {loading ? (
+    <SplashScreen />
+  ) : (
+    <>
+      <Outlet
+        context={{
+          project,
+          loading,
+          setShowModals,
+          handleDelete,
+          handleRename,
+        }}
+      />
+    </>
   )}
 </main>
+
       </div>
 
       {showModals && (
-        <Modals setShowModals={setShowModals} create={handleCreate} />
+        <Modals
+          setShowModals={setShowModals}
+          create={handleCreate}
+        />
       )}
     </section>
   );
