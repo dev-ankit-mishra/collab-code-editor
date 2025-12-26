@@ -55,27 +55,39 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat-message", async ({ roomId, text }) => {
-  if (!socket.rooms.has(roomId)) return;
-  if (!text?.trim()) return;
+    if (!socket.rooms.has(roomId)) return;
+    if (!text?.trim()) return;
 
-  try {
-    const message = await ChatMessage.create({
-      projectId: roomId,
-      userId: socket.user.id,
-      userName: socket.user.name,
-      text,
-    });
+    try {
+      const message = await ChatMessage.create({
+        projectId: roomId,
+        userId: socket.user.id,
+        userName: socket.user.name,
+        text,
+      });
 
-    // Broadcast to everyone INCLUDING sender
-    io.to(roomId).emit("chat-message", {
-      user: message.userName,
-      text: message.text,
-      time: message.createdAt,
-    });
-  } catch (err) {
-    console.error("❌ Failed to save chat message:", err);
-  }
-});
+      /* 🔴 OLD CODE (caused duplicates & missing ID)
+      io.to(roomId).emit("chat-message", {
+        user: message.userName,
+        text: message.text,
+        time: message.createdAt,
+      });
+      */
+
+      // ✅ NEW CODE (Fixes duplicates & adds ID)
+      // 1. Use socket.to() instead of io.to() to exclude the sender
+      // 2. Add userId to the payload so frontend knows who sent it
+      socket.to(roomId).emit("chat-message", {
+        user: message.userName,
+        text: message.text,
+        time: message.createdAt,
+        userId: message.userId, // 🔥 CRITICAL: Frontend needs this to style bubbles!
+      });
+
+    } catch (err) {
+      console.error("❌ Failed to save chat message:", err);
+    }
+  });
 
 
 
