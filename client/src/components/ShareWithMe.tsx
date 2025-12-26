@@ -156,7 +156,10 @@ export default function SharedWithMe() {
     <section className="p-6">
 
     
-    <h1 className="text-2xl font-semibold tracking-wide pt-2 pb-10">Shared with me</h1>
+    <h1 className="text-2xl font-semibold tracking-wide pt-2">Shared with me</h1>
+    <p className="text-sm text-neutral-400 mt-1 pb-10">
+  Projects shared with you by collaborators
+</p>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ">
       
       {projects.map((project) => (
