@@ -106,7 +106,10 @@ export default function Invitations() {
     <section className="p-6">
 
     
-    <h1 className="text-2xl font-semibold tracking-wide pt-2 pb-10">Invititions</h1>
+    <h1 className="text-2xl font-semibold tracking-wide pt-2">Invititions</h1>
+    <p className="text-sm text-neutral-400 mt-1 pb-10">
+  Projects others have shared with you
+</p>
     <div className="grid grid-cols-2 gap-8">
       {invites.map((invite) => (
         <div
