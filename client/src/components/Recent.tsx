@@ -3,47 +3,80 @@ import Button from "./Button";
 import RecentCard from "./RecentCard";
 import SplashScreen from "./PageScreenLoader";
 import { PlusCircle } from "lucide-react";
+import { useAuth } from "../context/useAuth";
+import type { ProjectDetails } from "./Types";
 import { useOutletContext } from "react-router-dom";
 import type { DashboardOutlet } from "./Types";
 
 export default function Recent() {
-  const {
-    project,
-    setShowModals,
-    handleDelete,
-    handleRename,
-  }: DashboardOutlet = useOutletContext();
+  const { session } = useAuth();
+  const { setShowModals } =
+    useOutletContext<DashboardOutlet>();
 
+  const [projects, setProjects] =
+    useState<ProjectDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
-  /* ---------- PAGE LOADER ---------- */
+  /* ===============================
+     FETCH RECENT PROJECTS
+     =============================== */
   useEffect(() => {
-    // When project data is available, stop loading
-    if (project) {
-      setLoading(false);
-    }
-  }, [project]);
+    if (!session?.access_token) return;
 
-  if (loading) {
-    return <SplashScreen />;
-  }
+    setLoading(true);
 
-  const top5Projects = project
-    .filter((p) => p.updatedAt)
-    .sort(
-      (a, b) =>
-        new Date(b.updatedAt!).getTime() -
-        new Date(a.updatedAt!).getTime()
+    fetch(
+      "https://codevspace-aqhw.onrender.com/api/projects/recent",
+      {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }
     )
-    .slice(0, 5);
+      .then((res) => {
+        if (!res.ok)
+          throw new Error("Failed to fetch recent projects");
+        return res.json();
+      })
+      .then(setProjects)
+      .catch((err) =>
+        console.error("❌ Failed to load recent projects:", err)
+      )
+      .finally(() => setLoading(false));
+  }, [session]);
+
+  /* ===============================
+     OPTIMISTIC UPDATES
+     =============================== */
+  const handleDelete = (id: string) => {
+    setProjects((prev) =>
+      prev.filter((p) => p._id !== id)
+    );
+  };
+
+  const handleRename = (id: string, name: string) => {
+    setProjects((prev) =>
+      prev.map((p) =>
+        p._id === id ? { ...p, projectName: name } : p
+      )
+    );
+  };
+
+  if (loading) return <SplashScreen />;
 
   return (
     <div className="w-full flex flex-col">
       {/* HEADER */}
-      <div className="flex justify-between p-6">
-        <h1 className="text-2xl font-semibold tracking-wide">
-          Recent
-        </h1>
+      <div className="flex items-center justify-between px-6 pt-6 pb-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-wide">
+            Recent
+          </h1>
+          <p className="text-sm text-neutral-400 mt-1">
+            Your most recently updated projects
+          </p>
+        </div>
+
         <Button onClick={() => setShowModals(true)}>
           <PlusCircle size={16} /> New Project
         </Button>
@@ -51,11 +84,17 @@ export default function Recent() {
 
       {/* CONTENT */}
       <div className="flex items-center flex-wrap gap-8 p-6">
-        <RecentCard
-          project={top5Projects}
-          onDelete={handleDelete}
-          onRename={handleRename}
-        />
+        {projects.length > 0 ? (
+          <RecentCard
+            project={projects}
+            onDelete={handleDelete}
+            onRename={handleRename}
+          />
+        ) : (
+          <p className="w-full text-gray-400 text-xl text-center mt-10">
+            No recent projects found.
+          </p>
+        )}
       </div>
     </div>
   );
