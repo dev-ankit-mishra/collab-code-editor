@@ -1,4 +1,4 @@
-import type { Session } from "@supabase/supabase-js";
+
 import type { IconType } from "react-icons";
 
 export type Language = {
@@ -24,19 +24,26 @@ export type ModalProps={
 
 
 
-export type ProjectDetails={
+export type ProjectDetails = {
   _id?: string;
-  projectName:string,
-  userId?:string,
-  code:string,
-  template:Language,
-  createdAt?:Date,
-  updatedAt?:Date
-}
+  projectName: string;
+  userId?: string;
+  code: string;
+  template: Language;
+
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  lastUpdatedBy?: {
+    userId?: string;
+    userName?: string;
+  };
+};
+
 export interface RecentCardProps {
   project: ProjectDetails[];
-  onDelete:(val:string)=>void
-  onRename:(id:string,val:string)=>void
+  onDelete?:(val:string)=>void
+  onRename?:(id:string,val:string)=>void
 }
 
 export type DashboardOutlet={
@@ -52,9 +59,12 @@ export type codeAreaProps = {
   accessRole: "OWNER" | "EDITOR" | "VIEWER";
 };
 
+import type { Session } from "@supabase/supabase-js";
+
 export type AuthContextType = {
   session: Session | null;
-  loading:boolean;
+  loading: boolean;
+
   signInUser: (
     email: string,
     password: string
@@ -95,7 +105,16 @@ export type AuthContextType = {
     success: boolean;
     error?: string;
   }>;
+
+  /** 🔴 Secure backend + Supabase admin delete */
+  deleteAccount: (
+    accessToken: string
+  ) => Promise<{
+    success: boolean;
+    error?: string;
+  }>;
 };
+
 
 
 
