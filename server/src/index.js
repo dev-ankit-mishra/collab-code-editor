@@ -14,6 +14,7 @@ import projectInviteActions from "./routes/projectInviteActions.js";
 import { ChatMessage } from "./models/ChatMessage.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import deleteAccountRouter from "./routes/deleteAccount.js"
+import contactRoutes from "./routes/contact.routes.js";
 
 
 
@@ -108,6 +109,8 @@ app.use(
   })
 );
 app.use(express.json());
+
+app.use("/api/contact", contactRoutes);
 
 /* ================= ROUTES ================= */
 app.use("/api", chatRoutes);
