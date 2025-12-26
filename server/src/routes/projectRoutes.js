@@ -140,11 +140,38 @@ router.put(
   "/:projectId",
   requireProjectAccess("EDITOR"),
   async (req, res) => {
-    Object.assign(req.project, req.body);
-    await req.project.save();
-    res.json(req.project);
+    try {
+      const userId = req.user.id;
+
+      // Only allow specific fields to be updated
+      const { code, projectName } = req.body;
+
+      if (code !== undefined) {
+        req.project.code = code;
+      }
+
+      if (projectName !== undefined) {
+        req.project.projectName = projectName;
+      }
+
+      // ✅ TRACK LAST EDITOR
+      req.project.lastUpdatedBy = {
+        userId,
+        userName: req.user.email, // or fetch from UserData if you want full name
+      };
+
+      await req.project.save();
+
+      return res.json(req.project);
+    } catch (err) {
+      console.error("❌ Update project error:", err);
+      return res
+        .status(500)
+        .json({ error: "Failed to update project" });
+    }
   }
 );
+
 
 /* DELETE PROJECT (OWNER ONLY) */
 router.delete(

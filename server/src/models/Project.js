@@ -4,26 +4,46 @@ const { Schema, model } = mongoose;
 
 const projectSchema = new Schema(
   {
-    projectName: { 
-      type: String, 
-      required: true 
+    projectName: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    userId: { 
-      type: String, 
-      required: true // Supabase user ID 
+
+    userId: {
+      type: String,
+      required: true, // Supabase user ID (OWNER)
+      index: true,
     },
-    code: { 
-      type: String, 
-      default: "" 
+
+    code: {
+      type: String,
+      default: "",
     },
+
     template: {
       label: { type: String, default: "custom" },
       version: { type: String, default: "1.0.0" },
-      alias: {type:String, default:"txt"},
-      boilerplate: { type: String, default: "" }
-    }
+      alias: { type: String, default: "txt" },
+      boilerplate: { type: String, default: "" },
+    },
+
+    /* ===============================
+       LAST UPDATED BY (NEW)
+       =============================== */
+    lastUpdatedBy: {
+      userId: {
+        type: String, // Supabase user ID
+      },
+      userName: {
+        type: String, // Name or email
+      },
+    },
   },
-  { timestamps: true,collection:"Project"}
+  {
+    timestamps: true,
+    collection: "Project",
+  }
 );
 
-export  const Project = model("Project", projectSchema);
+export const Project = model("Project", projectSchema);
