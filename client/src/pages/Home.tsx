@@ -6,7 +6,7 @@ import Features from '../components/Features';
 import {useNavigate} from "react-router-dom"
 
 import { useAuth } from '../context/useAuth';
-import Contact from '../components/Contact';
+import Contact from '../components/ContactForm';
 
 export default function HomePage(){
   const {session}=useAuth()
