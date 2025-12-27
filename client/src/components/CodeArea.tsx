@@ -111,7 +111,7 @@ export default function CodeArea({
         setLastUpdateInfo({
           time: new Date(),
           userName:
-            session?.user?.user_metadata?.full_name ||
+            
             session?.user?.email ||
             "You",
         });
