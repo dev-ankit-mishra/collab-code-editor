@@ -69,7 +69,7 @@ export default function ResetPassword() {
               />
             </div>
 
-            <Button disabled={loading} className="mt-4 h-8">
+            <Button type="submit" disabled={loading} className="mt-4 h-8">
               {loading ? (
                 <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
               ) : (
