@@ -218,7 +218,7 @@ export default function CodeArea({
           <p className="pr-8 text-gray-300 text-sm flex gap-2 items-center">
             <FaCloudUploadAlt size={18} />
             Last updated
-            {lastUpdateInfo.userName && (
+            {/* {lastUpdateInfo.userName && (
               <>
                 {" "}
                 by{" "}
@@ -226,7 +226,7 @@ export default function CodeArea({
                   {lastUpdateInfo.userName}
                 </span>
               </>
-            )}
+            )} */}
             <span>
               {lastUpdateInfo.time
                 ? formatDistanceToNow(lastUpdateInfo.time, {
