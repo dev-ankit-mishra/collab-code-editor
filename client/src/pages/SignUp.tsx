@@ -3,16 +3,17 @@ import { FcGoogle } from "react-icons/fc";
 import { SiGithub } from "react-icons/si";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 
 export default function SignUp() {
   const { signUpUser, signInWithGithub, signInWithGoogle } = useAuth();
-  const navigate = useNavigate();
 
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -24,39 +25,44 @@ export default function SignUp() {
 
   /* ---------- EMAIL / PASSWORD SIGN UP ---------- */
   async function handleSignUp(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  if (loading) return;
+  setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+  setError(null);
+  setSuccess(null);
 
-    try {
-      const { success, data, error } = await signUpUser(
-        name,
-        email,
-        password
-      );
+  const formData = new FormData(e.currentTarget);
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
-      if (!success || error) {
-        setError(error || "Signup failed");
-        return;
-      }
+  try {
+    const { success: ok, error } = await signUpUser(name, email, password);
 
-      if (data?.session) {
-        navigate("/dashboard", {
-          replace: true,
-          state: { showToast: "SignUp" },
-        });
-      }
-    } catch (err) {
-      console.error("Signup error:", err);
-      setError("Signup failed");
-    } finally {
+    if (!ok || error) {
+      setError(error || "Signup failed");
       setLoading(false);
+      return;
     }
+
+    // ✅ SUCCESS MESSAGE (GREEN)
+    setSuccess(
+      "Verification email sent successfully. Please check your inbox."
+    );
+
+    // optional redirect after a delay
+   
+
+  } catch (err) {
+    console.error(err);
+    setError("Signup failed");
+  } finally {
+    setLoading(false);
   }
+}
+
+
 
   /* ---------- GOOGLE OAUTH ---------- */
   const handleGoogleClick = async () => {
@@ -117,7 +123,7 @@ export default function SignUp() {
               />
             </div>
 
-            <Button disabled={loading} className="mt-4 h-8">
+            <Button type="submit" disabled={loading} className="mt-4 h-8">
               {loading ? (
                 <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
               ) : (
@@ -126,8 +132,13 @@ export default function SignUp() {
             </Button>
 
             {error && (
-              <p className="text-red-500 pt-2 text-center">{error}</p>
+               <p className="text-red-500 pt-2 text-center">{error}</p>
             )}
+
+            {success && (
+              <p className="text-green-500 pt-2 text-center">{success}</p>
+              )}
+
           </form>
 
           <p className="text-center mt-4">
@@ -142,6 +153,7 @@ export default function SignUp() {
 
           <div className="flex gap-2 justify-between mt-4">
             <button
+              type="button"
               onClick={handleGoogleClick}
               className="rounded-md bg-gray-800 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900"
             >
@@ -150,6 +162,7 @@ export default function SignUp() {
             </button>
 
             <button
+              type="button"
               onClick={handleGithubClick}
               className="rounded-md bg-gray-800 py-2 px-3 text-xs flex items-center gap-2 hover:bg-gray-900"
             >
