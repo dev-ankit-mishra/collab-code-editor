@@ -108,7 +108,7 @@ export default function Contact() {
             />
           </div>
 
-          <Button className="w-full text-lg font-medium" disabled={loading}>
+          <Button type="submit" className="w-full text-lg font-medium" disabled={loading}>
             <FiSend size={20} />
             {loading ? "Sending..." : "Send Message"}
           </Button>

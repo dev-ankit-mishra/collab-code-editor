@@ -16,7 +16,7 @@ export default function Button({
   isTransparent = false,
   className = "",
   onClick,
-  type = "submit",
+  type = "button",
   disabled = false,
 }: ButtonProps): JSX.Element {
   return (
