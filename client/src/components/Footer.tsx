@@ -8,7 +8,7 @@ export default function Footer(){
          Copyright © 2025 CoDevSpace
         </span>
   <a
-    href="https://github.com/dev-ankit-mishra/"
+    href="https://github.com/eng-ankit-mishra/"
     target="_blank"
     rel="noopener noreferrer"
     className="flex items-center gap-2 hover:text-white"
